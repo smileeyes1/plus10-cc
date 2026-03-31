@@ -3,379 +3,192 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🧿 أسطورة الحكيم نور – الجمع حتى ١٠</title>
+<title>أسطورة الحكيم نور – نسخة مصححة</title>
 
 <style>
 body{
  margin:0;
- font-family:Tahoma,Arial,sans-serif;
+ font-family:Tahoma;
  background:radial-gradient(circle at top,#0f2b4a,#05121f);
  color:#fff;
  text-align:center;
- min-height:100vh;
-}
-.fullscreen{
- position:fixed;
- inset:0;
- display:flex;
- flex-direction:column;
- justify-content:center;
- align-items:center;
- padding:15px;
 }
 .box{
- width:580px;
- max-width:96%;
- margin:15px auto;
- padding:20px;
- border-radius:28px;
+ width:640px;
+ max-width:95%;
+ margin:20px auto;
+ padding:25px;
+ border-radius:25px;
  background:rgba(255,255,255,0.1);
- box-shadow:0 0 35px rgba(0,230,255,0.4);
- backdrop-filter:blur(8px);
+ box-shadow:0 0 30px rgba(0,230,255,0.3);
 }
 button{
- padding:16px 32px;
- font-size:20px;
- border-radius:18px;
+ padding:12px 25px;
  border:none;
- cursor:pointer;
+ border-radius:15px;
  margin:6px;
- background:#00eaff;
- color:#000;
- font-weight:bold;
- transition:all 0.3s;
- min-width:150px;
-}
-button:hover{transform:scale(1.08);box-shadow:0 0 20px #00eaff;}
-.help{background:#ffd166;color:#000;}
-.reset{background:#ef476f;}
-.report{background:#9bf6ff;color:#000;}
-.math{font-size:58px;color:#ffe066;letter-spacing:10px;}
-.mentor{color:#ffd166;font-size:20px;min-height:50px;}
-.story{color:#06d6a0;font-size:21px;line-height:1.6;}
-.msg{min-height:140px;line-height:1.8;font-size:21px; font-weight:bold;}
-input{
- padding:18px;
- font-size:30px;
- border-radius:16px;
- border:3px solid #00eaff;
- width:230px;
- text-align:center;
- background:#fff;
- color:#000;
-}
-.reportBox{
- background:rgba(0,0,0,0.85);
- padding:20px;
- border-radius:20px;
- margin:15px 0;
- display:none;
  font-size:18px;
- line-height:1.8;
- text-align:right;
+ cursor:pointer;
+ background:#00eaff;
 }
-.soundBtn{
- background:#ffd166;
- color:#000;
- font-size:17px;
- padding:10px 22px;
- border-radius:14px;
-}
-.stars{font-size:28px;color:#ffe066;}
+.math{font-size:45px;color:#ffe066}
+.enemy{font-size:22px;color:#ff6b6b}
+.assistant{color:#a0e7ff}
 </style>
 </head>
 
 <body>
 
-<audio id="successSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-fairy-arcade-sparkle-866.mp3"></audio>
+<div class="box">
 
-<div id="register" class="fullscreen">
- <h1>📖 سجل رحلتك مع الحكيم نور</h1>
- 👦 اسم الطالب<br>
- <input id="studentName" placeholder="اكتب اسمك هنا"><br><br>
- 👨‍👩‍👦 اسم ولي الأمر<br>
- <input id="parentName" placeholder="اسم الأب أو الأم"><br><br>
- <button onclick="saveNames()">✅ ابدأ الرحلة باسم الله</button>
- <div id="regMsg" style="color:#ffd166;margin-top:15px;"></div>
+<h2>🌟 الجمع حتى ١٠</h2>
+
+⭐ النقاط: <span id="score">٠</span>  
+🎚 المستوى: <span id="level">١</span>
+
+<div class="enemy">👾 صحة الوحش: <span id="enemy">٢٠</span></div>
+
+<div class="math" id="question"></div>
+<div class="assistant" id="visual"></div>
+
+<input id="answer" placeholder="٥">
+<br><br>
+
+<button onclick="check()">أجيب</button>
+<button onclick="help()">تلميح</button>
+<button onclick="speak()">🎤 اقرأ</button>
+
+<div id="msg"></div>
+<div id="helper" class="assistant"></div>
+
 </div>
 
-<div id="intro" class="fullscreen" style="display:none">
- <h1>🧿 أسطورة الحكيم نور</h1>
- <p style="font-size:23px;max-width:520px;">
- يا بطل، سنتعلم الجمع حتى ١٠<br>
- بطريقة هادئة وممتعة ومليئة بالحكمة<br><br>
- إشراف: محمد وجيه – معلم إعدادي
- </p>
- <button onclick="unlockAudio(); startLesson()">🚀 ابدأ الرحلة بسم الله</button>
-</div>
-
-<div id="lesson" class="box" style="display:none">
- <h2>📜 درس الحكمة اليوم</h2>
- <div class="mentor">قال رسول الله ﷺ: من سلك طريقا يلتمس فيه علما سهل الله له به طريقا إلى الجنة</div>
- <button onclick="unlockAudio(); startGame()">🎮 هيا نبدأ التحدي</button>
-</div>
-
-<div id="game" class="box" style="display:none">
-
- <button class="soundBtn" id="soundBtn" onclick="toggleSound()">🔊 الصوت يعمل</button>
-
- <h2>🌟 الجمع حتى ١٠</h2>
- <div class="story" id="gameStory">🏰 مرحبا بك في قصر الحكمة</div>
- <div class="mentor" id="mentorText"></div>
-
- <div style="margin:15px 0; font-size:22px;">
-  ⭐ نجوم الحكمة <span id="stars" class="stars"></span> |
-  🎚 المستوى <span id="level">١</span>
- </div>
-
- <div id="question" class="math"></div>
- <input id="answer" inputmode="numeric" maxlength="2" placeholder="اكتب الجواب">
- <br><br>
-
- <button onclick="check()">💡 أجيب</button>
- <button class="help" onclick="help()">🧠 تلميح</button>
- <button class="report" onclick="report()">📘 تقرير لوالدي</button>
-
- <div class="msg" id="msg"></div>
- <div class="reportBox" id="reportBox"></div>
-
- <button class="reset" onclick="resetAll()">🔄 إعادة الرحلة</button>
-</div>
+<audio id="success" src="https://assets.mixkit.co/sfx/preview/mixkit-fairy-arcade-sparkle-866.mp3"></audio>
+<audio id="fail" src="https://assets.mixkit.co/sfx/preview/mixkit-player-losing-or-failing-2042.mp3"></audio>
 
 <script>
+
 const q = id => document.getElementById(id);
-const toArabicNum = n => n.toString().replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
-const toEng = s => s.replace(/[٠-٩]/g, d => "0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
 
-const sound = q("successSound");
-let audioUnlocked = false;
-let muted = false;
-let errorCount = 0;
+const arabic = n => n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
+const toEng = s => s.replace(/[٠-٩]/g,d=>"0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
 
-let x = 0, y = 0;
-let askedPairs = new Set(); // لمنع تكرار ٢+٣ و ٣+٢
+let x,y;
+let score=0, level=1, streak=0;
+let enemy=20;
 
-let state = {
-  score: 0,
-  level: 1,
-  streak: 0,
-  maxStreak: 0,
-  studentName: "",
-  parentName: ""
-};
+const MAX_LEVEL = 4;
 
-const MAX_LEVEL = 5;
-
-const encouragementMessages = [
-  "أحسنت",
-  "ممتاز جداً",
-  "أنت تتطور بسرعة",
-  "بارك الله فيك",
-  "صبرك جميل",
-  "كل خطوة تقربك من الهدف",
-  "أنت قادر بإذن الله",
-  "عمل رائع",
-  "استمر هكذا",
-  "الله يبارك في جهدك",
-  "أنت حكيم صغير",
-  "فخور بك جداً"
-];
-
-function unlockAudio(){
- if(audioUnlocked) return;
- sound.volume = 0.75;
- sound.play().then(() => {sound.pause(); sound.currentTime = 0; audioUnlocked = true;}).catch(() => {});
+// تحديد المستوى
+function maxLevel(l){
+ if(l==1)return 4;
+ if(l==2)return 6;
+ if(l==3)return 8;
+ return 9;
 }
 
-function playSuccess(){
- if(muted || !audioUnlocked) return;
- sound.currentTime = 0;
- sound.play().catch(() => {});
-}
-
-function toggleSound(){
- muted = !muted;
- const btn = q("soundBtn");
- if(muted){
-  btn.textContent = "🔇 الصوت مكتوم";
-  q("msg").innerHTML = "تم كتم الصوت";
- } else {
-  btn.textContent = "🔊 الصوت يعمل";
-  q("msg").innerHTML = "الصوت يعمل الآن";
- }
- setTimeout(() => q("msg").innerHTML = "", 1500);
-}
-
-function saveNames(){
- const student = q("studentName").value.trim();
- const parent = q("parentName").value.trim();
- if(!student || !parent){
-  q("regMsg").textContent = "يرجى كتابة الاسمين";
-  return;
- }
- state.studentName = student;
- state.parentName = parent;
- q("register").style.display = "none";
- q("intro").style.display = "flex";
-}
-
-function startLesson(){
- q("intro").style.display = "none";
- q("lesson").style.display = "block";
-}
-
-function startGame(){
- q("lesson").style.display = "none";
- q("game").style.display = "block";
- loadProgress();
- if(!state.studentName) state.studentName = "يا بطل";
- if(!state.parentName) state.parentName = "ولي الأمر";
- askedPairs.clear();
- newQ();
- update();
-}
-
-function getMaxForLevel(lvl){
- if(lvl === 1) return 5;
- if(lvl === 2) return 7;
- return 10;
-}
-
-function normalizePair(a, b){
- return a < b ? a + "+" + b : b + "+" + a;
-}
-
+// توليد سؤال (مضمون <= ١٠)
 function newQ(){
- let maxNum = getMaxForLevel(state.level);
- let attempts = 0;
- let pairKey;
- 
- do {
-  x = Math.floor(Math.random() * maxNum) + 1;
-  y = Math.floor(Math.random() * (maxNum - x + 1)) + 1;
-  pairKey = normalizePair(x, y);
-  attempts++;
- } while((x + y > 10 || askedPairs.has(pairKey)) && attempts < 30);
- 
- askedPairs.add(pairKey);
- if(askedPairs.size > 12) askedPairs.clear(); // إعادة تعيين بعد فترة
- 
- q("question").innerHTML = `<div class="math">${toArabicNum(x)} + ${toArabicNum(y)} = ؟</div>`;
- q("answer").value = "";
- q("msg").innerHTML = "";
- errorCount = 0;
- q("answer").focus();
+ let max = maxLevel(level);
+ x = Math.floor(Math.random()*max)+1;
+
+ // 🔥 الإصلاح الحقيقي
+ y = Math.floor(Math.random()*(10 - x)) + 1;
+
+ q("question").innerHTML = arabic(x)+" + "+arabic(y);
+
+ // تمثيل بصري
+ q("visual").innerHTML = "⭐".repeat(x)+" + "+"⭐".repeat(y);
+
+ q("answer").value="";
+ q("msg").innerHTML="";
+ q("helper").innerHTML="";
 }
 
+// التحقق
 function check(){
- unlockAudio();
- const ansStr = q("answer").value.trim();
- 
- if(!/^\d+$/.test(toEng(ansStr))){
-  q("msg").innerHTML = `${state.studentName}، اكتب رقم فقط`;
-  q("answer").focus();
-  return;
- }
- 
- const v = parseInt(toEng(ansStr));
- const correct = x + y;
+ let v = q("answer").value.trim();
 
- if(v > 10){
-  q("msg").innerHTML = `${state.studentName}، الجواب لا يتجاوز ١٠`;
-  q("answer").focus();
+ if(!/^[٠-٩]+$/.test(v)){
+  q("msg").innerHTML="اكتب بالأرقام العربية";
   return;
  }
 
- if(v === correct){
-  playSuccess();
-  state.score += 10;
-  state.streak++;
-  errorCount = 0;
-  
-  if(state.streak > state.maxStreak) state.maxStreak = state.streak;
-  
-  const praise = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
-  let extra = "";
-  
-  if(state.streak === 5 && state.level < MAX_LEVEL){
-   state.level++;
-   state.streak = 0;
-   extra = `<br>🎉 مبروك ${state.studentName}! انتقلت إلى المستوى ${toArabicNum(state.level)}`;
+ v = parseInt(toEng(v));
+ let c = x+y;
+
+ if(v===c){
+
+  document.getElementById("success").play();
+
+  score+=10;
+  streak++;
+  enemy-=5;
+
+  let msg="🌟 أحسنت";
+
+  // الوحش
+  if(enemy<=0){
+    msg+="<br>⚔️ هزمت الوحش!";
+    enemy=20;
   }
-  
-  q("msg").innerHTML = `${praise} \( {state.studentName} \){extra}`;
-  update();
-  saveProgress();
-  setTimeout(newQ, 1700);
- } else {
-  state.streak = 0;
-  errorCount++;
-  
-  let msg = `حاول مرة أخرى ${state.studentName}`;
-  
-  if(errorCount >= 2){
-   const bigger = Math.max(x, y);
-   const smaller = Math.min(x, y);
-   msg += `<br>تلميح: ابدأ من ${toArabicNum(bigger)} ثم أضف ${toArabicNum(smaller)} خطوة بخطوة`;
+
+  // رفع مستوى (مع حد أقصى)
+  if(streak==5 && level < MAX_LEVEL){
+    level++;
+    streak=0;
+    msg+="<br>🎉 مستوى جديد!";
   }
-  
-  q("msg").innerHTML = msg;
-  update();
-  saveProgress();
-  q("answer").focus();
+
+  // وسام
+  if(score % 50 === 0){
+    msg+="<br>🏅 وسام جديد!";
+  }
+
+  q("msg").innerHTML=msg;
+
+ }else{
+
+  document.getElementById("fail").play();
+
+  streak=0;
+
+  // ✅ مساعد بصري صحيح
+  q("helper").innerHTML =
+    "انظر:<br>" +
+    "⭐".repeat(x) + " + " + "⭐".repeat(y) +
+    "<br>= " + "⭐".repeat(c);
+
+  q("msg").innerHTML="حاول مرة أخرى";
  }
+
+ update();
+ setTimeout(newQ,1500);
 }
 
+// تلميح
 function help(){
- const sum = x + y;
- let hint = sum <= 5 ? "أقل من أو يساوي ٥" : sum <= 7 ? "بين ٦ و ٧" : "بين ٨ و ١٠";
- q("msg").innerHTML = `تلميح: ${hint}`;
+ let s=x+y;
+ let hint = s<=5 ? "الجواب صغير" : s<=7 ? "متوسط" : "كبير";
+ q("msg").innerHTML="تلميح: "+hint;
 }
 
-function report(){
- q("reportBox").style.display = "block";
- const progressText = state.level >= 4 ? "يتقدم بقوة" : state.level >= 2 ? "يتقدم جيداً" : "يحتاج بعض الدعم والتشجيع";
- 
- q("reportBox").innerHTML = `
- <strong>📊 تقرير التقدم</strong><br><br>
- ⭐ اسم الطالب: ${state.studentName}<br>
- 👨‍👩‍👦 ولي الأمر: ${state.parentName}<br>
- ⭐ نجوم الحكمة: ${toArabicNum(state.score)}<br>
- 🎚 المستوى الحالي: ${toArabicNum(state.level)}<br>
- 🔥 أفضل تسلسل: ${toArabicNum(state.maxStreak)}<br><br>
- 🌟 ملاحظة: ${progressText}<br>
- 💡 نصيحة: العب مع طفلك ١٠ دقائق يومياً وشجعه بكلمات طيبة
- `;
+// قراءة الصوت بالعربية
+function speak(){
+ let u = new SpeechSynthesisUtterance(x+" زائد "+y);
+ u.lang = "ar-SA"; // ✅ إصلاح اللغة
+ speechSynthesis.speak(u);
 }
 
+// تحديث
 function update(){
- q("stars").innerHTML = "⭐".repeat(Math.min(10, Math.floor(state.score / 20)));
- q("level").textContent = toArabicNum(state.level);
- q("gameStory").textContent = `🏰 قصر الحكمة – المستوى ${toArabicNum(state.level)}`;
- 
- const levelDesc = state.level === 1 ? "تجمع حتى ٥" : state.level === 2 ? "تجمع حتى ٧" : "تجمع حتى ١٠";
- q("mentorText").innerHTML = `${state.studentName}، أنت الآن ${levelDesc} • كل إجابة تبني ثقتك`;
+ q("score").innerHTML=arabic(score);
+ q("level").innerHTML=arabic(level);
+ q("enemy").innerHTML=arabic(enemy);
 }
 
-function saveProgress(){
- localStorage.setItem("hakeemNoorProgress", JSON.stringify(state));
-}
+newQ();
 
-function loadProgress(){
- const saved = localStorage.getItem("hakeemNoorProgress");
- if(saved) Object.assign(state, JSON.parse(saved));
-}
-
-function resetAll(){
- if(confirm("هل تريد إعادة الرحلة من البداية؟")){
-  localStorage.removeItem("hakeemNoorProgress");
-  location.reload();
- }
-}
-
-document.addEventListener('keydown', e => {
- if(e.key === "Enter" && q("game").style.display === "block") check();
-});
 </script>
 
 </body>
