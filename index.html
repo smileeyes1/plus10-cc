@@ -20,11 +20,11 @@ body{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  background:linear-gradient(#061628,#0a1f38);
 }
 
 .box{
   width:520px;
+  max-width:95%;
   margin:30px auto;
   padding:25px;
   border-radius:22px;
@@ -33,8 +33,8 @@ body{
 }
 
 button{
-  padding:12px 30px;
-  font-size:20px;
+  padding:12px 26px;
+  font-size:18px;
   border-radius:14px;
   background:#00eaff;
   border:none;
@@ -42,29 +42,17 @@ button{
   margin:6px;
 }
 
-input{
-  font-size:22px;
-  padding:10px;
-  width:200px;
-  border-radius:10px;
-  text-align:center;
-}
+.math{font-size:32px;margin:15px 0;color:#ffe066}
+.hearts span{font-size:28px}
 
-.math{font-size:30px;margin:15px 0;color:#ffe066}
-.hearts span{font-size:32px;animation:pulse 1s infinite}
-#mentor{color:#ffd166;font-size:20px;margin:10px}
-#story{color:#06d6a0;font-size:18px;margin:10px}
-#msg{min-height:120px;font-size:20px;white-space:pre-line}
+#mentor{color:#ffd166;font-size:20px;margin:12px;min-height:40px}
+#story{color:#06d6a0;font-size:18px;margin:8px}
+#msg{min-height:140px;font-size:18px;white-space:pre-line}
 
 .soft{background:#ffd166;color:#000}
-.star{background:#ffe066;color:#000}
 .next{background:#06d6a0;color:#000}
-
-@keyframes pulse{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.25)}
-  100%{transform:scale(1)}
-}
+.reset{background:#ef476f;color:#000}
+.reflect{background:#9bf6ff;color:#000}
 </style>
 </head>
 
@@ -72,106 +60,141 @@ input{
 
 <!-- المقدمة -->
 <div id="intro" class="fullscreen">
-  <h1>🌱 أهلاً أيها البطل</h1>
+  <h1>🧙‍♂️ أسطورة الحكيم نور</h1>
   <p style="font-size:22px;line-height:1.8">
-    🧮 الحساب رحلة<br>
+    🧮 الحساب فهم<br>
     🧠 التفكير قوة<br>
-    🧙‍♂️ والحكيم نور سيرافقك
+    ✨ الحكمة رحلة
   </p>
-  <button onclick="startGame()">🚀 ابدأ الرحلة</button>
+  <button onclick="startLesson()">🚀 ابدأ الرحلة</button>
+</div>
+
+<!-- التمهيد التعليمي -->
+<div id="lesson" class="box" style="display:none">
+
+<h2>📜 درس الحكمة</h2>
+<div id="mentor"></div>
+<div id="msg"></div>
+
+<button id="lessonBtn" onclick="nextLesson()">➡️ تابع</button>
+
 </div>
 
 <!-- اللعبة -->
 <div id="game" class="box" style="display:none">
 
-<h2>🧙‍♂️ أسطورة الحكيم نور</h2>
-
+<h2>🌟 رحلة الحكمة</h2>
 <div id="story"></div>
 <div id="mentor"></div>
 
-<div>⭐ النقاط: <span id="score">٠</span></div>
+<div>
+⭐ النقاط: <span id="score">٠</span>
+&nbsp; | &nbsp;
+🎚 المستوى: <span id="level">١</span>
+</div>
 
 <div id="question"></div>
-
 <input id="answer" type="number" placeholder="اكتب الجواب">
 <br>
-<button onclick="attack()">💡 أجيب</button>
-<br>
 
-<button id="rethinkBtn" class="soft" style="display:none" onclick="smartHint()">🤔 نفكّر</button>
-<button id="starBtn" class="star" style="display:none" onclick="giveStar()">⭐ حكمة</button>
-<button id="nextBtn" class="next" style="display:none" onclick="nextStep()">➡️ نكمل</button>
+<button onclick="attack()">💡 أجيب</button>
+<button class="reflect" onclick="reflect()">🧠 أفكر أولًا</button>
 
 <div id="msg"></div>
+
+<hr>
+<button class="reset" onclick="resetProgress()">🔄 تصفير التقدم</button>
 
 </div>
 
 <script>
+/* ===== الحالة ===== */
+let state={score:0,level:1,streak:0};
+
+/* ===== عناصر ===== */
 const intro=document.getElementById("intro");
+const lesson=document.getElementById("lesson");
 const game=document.getElementById("game");
+const mentorBox=document.getElementById("mentor");
+const msgBox=document.getElementById("msg");
+const scoreSpan=document.getElementById("score");
+const levelSpan=document.getElementById("level");
 const question=document.getElementById("question");
 const answer=document.getElementById("answer");
-const scoreSpan=document.getElementById("score");
-const mentorBox=document.getElementById("mentor");
 const storyBox=document.getElementById("story");
-const msgBox=document.getElementById("msg");
-const rethinkBtn=document.getElementById("rethinkBtn");
-const starBtn=document.getElementById("starBtn");
-const nextBtn=document.getElementById("nextBtn");
 
+/* ===== أدوات ===== */
+function arabic(n){return n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);}
+function hearts(n){return "❤️ ".repeat(n);}
+
+/* ===== الحكيم ===== */
+function mentor(text){
+  mentorBox.textContent="🧙‍♂️ نور: "+text;
+}
+
+/* ===== التمهيد الذكي ===== */
+let lessonStep=0;
+
+function startLesson(){
+  intro.style.display="none";
+  lesson.style.display="block";
+  nextLesson();
+}
+
+function nextLesson(){
+  lessonStep++;
+
+  if(lessonStep===1){
+    mentor("قبل أن تحسب، يجب أن تفهم.");
+    msgBox.textContent=
+`🌱 عندما نُضيف
+فنحن نجمع أشياء متفرقة
+في مكان واحد`;
+  }
+
+  else if(lessonStep===2){
+    mentor("انظر… هذه مجموعة أولى");
+    msgBox.innerHTML=`${hearts(3)}<br>هل عددها واضح؟`;
+  }
+
+  else if(lessonStep===3){
+    mentor("والآن نضيف إليها مجموعة ثانية");
+    msgBox.innerHTML=`${hearts(3)} + ${hearts(2)}`;
+  }
+
+  else if(lessonStep===4){
+    mentor("الذكاء لا يسرع… بل يعد بهدوء");
+    msgBox.textContent=
+`نعد جميع القلوب
+قلب قلب
+حتى نصل للحقيقة`;
+  }
+
+  else{
+    mentor("الآن … أنت مستعد للرحلة");
+    msgBox.textContent="✨ الفهم يسبق الإجابة";
+    document.getElementById("lessonBtn").textContent="🎮 ابدأ التحدي";
+    document.getElementById("lessonBtn").onclick=startGame;
+  }
+}
+
+/* ===== بدء اللعبة ===== */
 let x=1,y=1;
-let score=0;
-let level=1;
-let streak=0;
-let mistakeMemory={};
-
-const mentorWisdom=[
- "🧙‍♂️ نور: البطل الحقيقي يفكّر",
- "🧙‍♂️ نور: الخطأ باب فهم",
- "🧙‍♂️ نور: لا نسرع… نعدّ"
-];
-
-function arabic(n){
-  return n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
-}
-
-function hearts(n){
-  let h="";
-  for(let i=0;i<n;i++) h+="<span>❤️</span> ";
-  return h;
-}
-
-function storyProgress(){
-  if(score>=150) return "👑 أصبحت تلميذ الحكيم الأعلى";
-  if(score>=100) return "🐉 هزمت وحش الشك";
-  if(score>=50) return "🏰 دخلت قصر الحكمة";
-  return "🌱 بداية الرحلة";
-}
-
-function mentorSpeak(text){
-  mentorBox.textContent=text ||
-    mentorWisdom[Math.floor(Math.random()*mentorWisdom.length)];
-}
 
 function startGame(){
-  intro.style.display="none";
+  lesson.style.display="none";
   game.style.display="block";
   newQuestion();
 }
 
 function newQuestion(){
-  rethinkBtn.style.display="none";
-  starBtn.style.display="none";
-  nextBtn.style.display="none";
   answer.value="";
-  msgBox.textContent="";
-
-  mentorSpeak();
-  storyBox.textContent=storyProgress();
-
-  let max=Math.min(10,3+level*2);
+  let max=3+state.level*2;
   x=Math.floor(Math.random()*max)+1;
   y=Math.floor(Math.random()*(max-x+1));
+
+  mentor("خذ نفسًا… ثم فكّر");
+  storyBox.textContent="🌱 رحلة الفهم مستمرة";
 
   question.innerHTML=`
     <div class="math">${arabic(x)} + ${arabic(y)} = ؟</div>
@@ -179,67 +202,38 @@ function newQuestion(){
   `;
 }
 
-function smartHint(){
-  mentorSpeak("🧙‍♂️ نور: لنعدّ معًا بهدوء");
-  question.innerHTML=`
-    <p>عدد القلوب الأولى: ${arabic(x)}</p>
-    ${hearts(x)}
-    <p>ثم أضفنا: ${arabic(y)}</p>
-    ${hearts(y)}
-    <p>🧠 كم المجموع؟</p>
-  `;
+/* ===== التفكير ===== */
+function reflect(){
+  mentor("ما أول خطوة؟ العد أم التخمين؟");
+  msgBox.textContent="🧠 الحكيم يرى الطريق قبل أن يمشيه";
 }
 
-function giveStar(){
-  msgBox.textContent=
-`⭐ نجمة حكمة ⭐
-أنت لا تجيب فقط
-أنت تفكّر
-وهذا سر الأبطال`;
-}
-
+/* ===== التحقق ===== */
 function attack(){
   let ans=parseInt(answer.value);
-  if(isNaN(ans)) return;
-
-  let key=`${x}+${y}`;
-  mistakeMemory[key]=(mistakeMemory[key]||0);
-
   if(ans===x+y){
-    score+=10;
-    streak++;
-    mistakeMemory[key]=0;
-    scoreSpan.textContent=arabic(score);
-
-    mentorSpeak("🧙‍♂️ نور: أحسنت… فهمك يزداد");
-
-    if(streak>=3){
-      starBtn.style.display="inline-block";
-      msgBox.textContent="🏆 ثلاث إجابات بتفكير هادئ";
-      streak=0;
-    }else{
-      msgBox.textContent="✅ صحيح… والأهم أنك فكّرت 🧠";
-      setTimeout(newQuestion,1200);
+    state.score+=10;
+    state.streak++;
+    mentor("أحسنت… الفهم ينمو");
+    msgBox.textContent="✅ إجابة صحيحة";
+    if(state.streak>=3){
+      state.level++;
+      state.streak=0;
+      msgBox.textContent+="\n🌟 ترقيت بالمستوى";
     }
+    setTimeout(newQuestion,1000);
   }else{
-    streak=0;
-    mistakeMemory[key]++;
-    mentorSpeak("🧙‍♂️ نور: لا بأس… كل خطأ معلم");
-
-    rethinkBtn.style.display="inline-block";
-    nextBtn.style.display="inline-block";
-
-    msgBox.textContent=
-      mistakeMemory[key]>=2
-      ? "🧠 لاحظت أنك تحاول مرة أخرى… هذا رائع"
-      : "🌱 المحاولة شجاعة";
+    state.streak=0;
+    mentor("لا بأس… نعد بهدوء من جديد");
+    msgBox.textContent="🌱 الخطأ تدريب للعقل";
   }
+
+  scoreSpan.textContent=arabic(state.score);
+  levelSpan.textContent=arabic(state.level);
 }
 
-function nextStep(){
-  starBtn.style.display="inline-block";
-  newQuestion();
-}
+/* ===== إعادة ===== */
+function resetProgress(){location.reload();}
 </script>
 
 </body>
