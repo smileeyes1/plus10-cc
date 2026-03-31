@@ -16,11 +16,34 @@ body{
  height:100vh;
  overflow:hidden;
 }
-#welcome,#game{width:650px; max-width:95%; background:rgba(0,0,0,0.2); padding:25px; border-radius:25px; text-align:center; position:relative;}
-input{font-size:26px; width:200px; padding:8px; border-radius:10px; border:none; text-align:center; margin:5px;}
-button{padding:10px 20px; margin:5px; border:none; border-radius:12px; background:#ffd166; cursor:pointer; font-size:16px;}
+#welcome,#game{
+ width:650px; max-width:95%; 
+ background:rgba(0,0,0,0.25); 
+ padding:25px; 
+ border-radius:25px; 
+ text-align:center; 
+ position:relative;
+}
+input{
+ font-size:26px; 
+ width:200px; 
+ padding:8px; 
+ border-radius:10px; 
+ border:none; 
+ text-align:center; 
+ margin:5px;
+}
+button{
+ padding:10px 20px; 
+ margin:5px; 
+ border:none; 
+ border-radius:12px; 
+ background:#ffd166; 
+ cursor:pointer; 
+ font-size:16px;
+}
 .character{font-size:60px; transition:0.3s;}
-.jump{transform:translateY(-10px)}
+.jump{transform:translateY(-15px)}
 .shake{animation:shake .3s}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 .progress{width:100%; height:20px; background:#fff3; border-radius:10px; overflow:hidden; margin:10px 0;}
@@ -34,7 +57,6 @@ button{padding:10px 20px; margin:5px; border:none; border-radius:12px; backgroun
 </head>
 <body>
 
-<!-- شاشة الترحيب -->
 <div id="welcome">
 <h2>مرحباً بك في مغامرة لولو الذكية!</h2>
 <p>أدخل اسم الطالب واسم ولي الأمر لنبدأ اللعبة:</p>
@@ -43,7 +65,6 @@ button{padding:10px 20px; margin:5px; border:none; border-radius:12px; backgroun
 <button onclick="startGame()">ابدأ اللعب</button>
 </div>
 
-<!-- شاشة اللعبة -->
 <div id="game" style="display:none;">
 <div class="character" id="char">🐰</div>
 <h2>مغامرة لولو نحو النجوم 🌟</h2>
@@ -66,8 +87,20 @@ const toEng=s=>s.replace(/[٠-٩]/g,d=>"0123456789"["٠١٢٣٤٥٦٧٨٩".index
 
 let student="", parent="";
 let x,y,correct,score=0,level=1,progress=0,difficulty=1,wrong=0,hintCount=0;
-const items=["تفاحات","نجوم","حلوى","كرات"];
-const values=["وَإِن تَعُدُّوا نِعْمَتَ اللَّهِ لَا تُحْصُوهَا","يد الله مع الجماعة","من لا يشكر الناس لا يشكر الله","نعمتان مغبون فيهما كثير من الناس"];
+
+// عناصر وقصص اللعبة
+const items=[
+ {name:"تفاحات", story:"لولو وجد سلة مليئة بالتفاح الأحمر 🍎، وعدها بعناية!"},
+ {name:"نجوم", story:"في السماء ليلاً، لمعت النجوم ليلفت انتباه لولو ✨"},
+ {name:"حلوى", story:"وجد لولو حلوى لذيذة على الطريق 🍬"},
+ {name:"كرات", story:"كانت هناك كرات ملونة تتراقص في الهواء 🟢🔵🔴"}
+];
+const values=[
+ "وَإِن تَعُدُّوا نِعْمَتَ اللَّهِ لَا تُحْصُوهَا",
+ "يد الله مع الجماعة",
+ "من لا يشكر الناس لا يشكر الله",
+ "نعمتان مغبون فيهما كثير من الناس"
+];
 
 if(localStorage.save){
  let data=JSON.parse(localStorage.save);
@@ -87,9 +120,11 @@ function newQ(){
 y=Math.floor(Math.random()*(Math.min(10-x,difficulty*2)))+1; 
 correct=x+y;
 let item=items[Math.floor(Math.random()*items.length)];
-q("story").innerHTML=`🐰 ${student}، لولو يجمع ${item}<br>معه ${arabic(x)} ثم وجد ${arabic(y)}<br>كم أصبح معه؟`;
+q("story").innerHTML=`🐰 ${student}، ${item.story}<br>معه ${arabic(x)} ثم وجد ${arabic(y)}<br>كم أصبح معه؟`;
 q("visual").innerHTML="⭐".repeat(x)+" + "+"⭐".repeat(y);
 q("answer").value=""; q("msg").innerHTML=""; q("explain").innerHTML=""; hintCount=0;
+// اقرأ السؤال بصوت لطيف
+speakText(`مرحبا ${student}. ${item.story} مع ${arabic(x)} ثم وجد ${arabic(y)}. كم أصبح معه؟`);
 }
 
 function stars(){
@@ -104,8 +139,8 @@ q("game").appendChild(s); setTimeout(()=>s.remove(),1000);
 
 function check(){
 let v=q("answer").value.trim();
-if(!v){q("msg").innerHTML=`اكتب رقم يا ${student}، لا تتردد!`; return;}
-if(!/^[0-9٠-٩]+$/.test(v)){q("msg").innerHTML="اكتب رقماً صحيحاً"; return;}
+if(!v){q("msg").innerHTML=`اكتب رقم يا ${student}، لا تتردد!`; speakText(`اكتب رقم يا ${student} لا تتردد`); return;}
+if(!/^[0-9٠-٩]+$/.test(v)){q("msg").innerHTML="اكتب رقماً صحيحاً"; speakText("اكتب رقما صحيحا"); return;}
 v=parseInt(toEng(v));
 if(v===correct){
  score+=10; progress+=20; wrong=0;
@@ -114,13 +149,16 @@ stars();
 let value=values[Math.floor(Math.random()*values.length)];
 q("msg").innerHTML=`🌟 أحسنت يا ${student}! ${value}`;
 q("explain").innerHTML=`${arabic(x)} + ${arabic(y)} = ${arabic(correct)}`;
-if(progress>=100){level++; progress=0; difficulty++; q("msg").innerHTML+=`<br>🎉 لقد انتقلت لمستوى جديد، ${student}!`; }
+// صوت التشجيع عند الإجابة الصحيحة
+speakText(`أحسنت يا ${student}! ${value}`,1.0,1.2);
+if(progress>=100){level++; progress=0; difficulty++; q("msg").innerHTML+=`<br>🎉 لقد انتقلت لمستوى جديد، ${student}!`; speakText(`🎉 لقد انتقلت لمستوى جديد يا ${student}`); }
 save(); update();
 setTimeout(newQ,2500);
 }else{
  wrong++; q("game").classList.add("shake"); setTimeout(()=>q("game").classList.remove("shake"),300);
 if(wrong>=3 && difficulty>1) difficulty--;
 q("msg").innerHTML=`حاول مرة أخرى بهدوء يا ${student} 🌱`;
+speakText(`حاول مرة أخرى بهدوء يا ${student} 🌱`,1.0,0.8); // صوت هادئ عند الخطأ
 save(); update();
 setTimeout(newQ,2500);
 }
@@ -128,17 +166,20 @@ setTimeout(newQ,2500);
 
 function hint(){
  hintCount++;
- if(hintCount===1){q("msg").innerHTML=`ابدأ من ${arabic(x)} وعد ${arabic(y)} خطوات ⭐`; stars();}
- if(hintCount===2){q("msg").innerHTML=`الجمع يعني جمع الأشياء معاً لتعرف الكل، ${student}`;}
+ if(hintCount===1){q("msg").innerHTML=`ابدأ من ${arabic(x)} وعد ${arabic(y)} خطوات ⭐`; stars(); speakText(`ابدأ من ${arabic(x)} وعد ${arabic(y)} خطوات`);}
+ if(hintCount===2){q("msg").innerHTML=`الجمع يعني جمع الأشياء معاً لتعرف الكل، ${student}`; speakText(`الجمع يعني جمع الأشياء معاً لتعرف الكل يا ${student}`);}
 }
 
 function save(){localStorage.save=JSON.stringify({score,level});}
 function update(){q("score").innerHTML=arabic(score); q("level").innerHTML=arabic(level); q("bar").style.width=progress+"%";}
+function speakText(text,rate=0.9,pitch=1.0){
+ let u=new SpeechSynthesisUtterance(text);
+ u.lang="ar-SA"; u.rate=rate; u.pitch=pitch;
+ speechSynthesis.speak(u);
+}
 function speakAll(){
  let text=`${q("story").innerText}. ${q("msg").innerText}. ${q("explain").innerText}`;
- let u=new SpeechSynthesisUtterance(text);
- u.lang="ar-SA"; u.rate=0.8;
- speechSynthesis.speak(u);
+ speakText(text);
 }
 document.addEventListener("keydown",e=>{if(e.key==="Enter") check();});
 </script>
