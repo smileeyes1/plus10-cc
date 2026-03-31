@@ -3,16 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مغامرة لولو في الجمع</title>
+<title>رحلة الجمع مع لولو</title>
 
 <style>
-/* 🎨 تصميم كرتوني بسيط */
 body{
  margin:0;
  font-family:Tahoma;
- background:linear-gradient(#89f7fe,#66a6ff);
+ background:linear-gradient(#4facfe,#00f2fe);
  color:#fff;
- text-align:center;
  display:flex;
  justify-content:center;
  align-items:center;
@@ -20,137 +18,213 @@ body{
  overflow:hidden;
 }
 
-.game{
- width:600px;
+.container{
+ width:700px;
  max-width:95%;
- background:rgba(255,255,255,0.15);
+ background:rgba(0,0,0,0.2);
  padding:25px;
  border-radius:25px;
- box-shadow:0 0 25px rgba(0,0,0,0.3);
+ text-align:center;
  position:relative;
 }
 
-h2{color:#fff}
+h2{margin-bottom:10px;}
 
-/* ✏️ النصوص */
-.story{font-size:22px;margin:10px}
-.math{font-size:40px;color:#ffe066}
-.visual{font-size:28px;margin:10px}
-
-/* 🎯 الإدخال */
-input{
- font-size:26px;
+input, button{
+ font-size:22px;
  padding:10px;
- width:160px;
- text-align:center;
+ margin:5px;
  border-radius:10px;
  border:none;
 }
 
-/* 🔘 الأزرار */
-button{
- padding:10px 20px;
- margin:5px;
- border:none;
- border-radius:12px;
- cursor:pointer;
- background:#ffd166;
- font-size:16px;
+button{cursor:pointer;background:#ffd166;color:#000;font-weight:bold;}
+
+.progress{
+ width:100%;
+ height:20px;
+ background:#fff3;
+ border-radius:10px;
+ overflow:hidden;
+ margin:10px 0;
+}
+.bar{
+ height:100%;
+ width:0%;
+ background:#ffe066;
+ transition:0.4s;
 }
 
-/* ✨ تأثيرات */
-.flash{animation:flash .4s}
-@keyframes flash{0%{background:#fff}100%{background:transparent}}
+.story{font-size:22px;margin:10px}
+.visual{font-size:28px;margin:10px}
+.math{font-size:36px;color:#ffe066}
 
-.shake{animation:shake .4s}
+.character{
+ font-size:60px;
+ transition:0.3s;
+ display:inline-block;
+ margin-bottom:10px;
+}
+
+.jump{transform:translateY(-15px);}
+.shake{animation:shake .3s}
 @keyframes shake{
-0%,100%{transform:translateX(0)}
-25%{transform:translateX(-5px)}
-75%{transform:translateX(5px)}
+0%,100%{transform:translateX(0);}
+25%{transform:translateX(-5px);}
+75%{transform:translateX(5px);}
 }
 
-/* 💥 نجوم */
 .star{
  position:absolute;
  font-size:20px;
- animation:explode 1s forwards;
+ animation:boom 1s forwards;
 }
-@keyframes explode{
- to{transform:translate(var(--x),var(--y)) scale(0);opacity:0}
+@keyframes boom{
+ to{transform:translate(var(--x),var(--y)) scale(0);opacity:0;}
 }
+
+.message{font-size:20px;margin:5px;}
 </style>
 </head>
 
 <body>
+<div class="container" id="game">
 
-<div class="game" id="game">
-
-<h2>🐰 مغامرة لولو في الجمع</h2>
-
-⭐ النقاط: <span id="score">٠</span> |
-🎚 المستوى: <span id="level">١</span>
-
-<div class="story" id="story"></div>
-<div class="visual" id="visual"></div>
-
-<input id="answer" placeholder="٥"><br>
-
-<button id="btnCheck" onclick="check()">أجب</button>
-<button onclick="hint()">تلميح</button>
-<button onclick="speak()">🎤 اقرأ</button>
-
-<div id="msg"></div>
-<div id="explain"></div>
-
+<div id="welcome">
+ <h2>مرحبًا بك في رحلة الجمع مع لولو 🐰🌟</h2>
+ <p>اكتب اسمك واسم ولي أمرك لنبدأ الرحلة</p>
+ <input id="childName" placeholder="اسمك"><br>
+ <input id="parentName" placeholder="اسم ولي الأمر"><br>
+ <button onclick="startGame()">لنبدأ الرحلة 🌈</button>
 </div>
 
-<audio id="ok" src="https://assets.mixkit.co/sfx/preview/mixkit-fairy-arcade-sparkle-866.mp3"></audio>
-<audio id="no" src="https://assets.mixkit.co/sfx/preview/mixkit-player-losing-or-failing-2042.mp3"></audio>
+<div id="playArea" style="display:none;">
+ <div class="character" id="char">🐰</div>
+ <h2 id="title">مغامرة لولو 🌙</h2>
+ <div>⭐ النقاط: <span id="score">٠</span> | 🎚 المستوى: <span id="level">١</span></div>
+ <div class="progress"><div class="bar" id="bar"></div></div>
+ <div class="story" id="story"></div>
+ <div class="visual" id="visual"></div>
+ <input id="answer" placeholder="٥"><br>
+ <button onclick="check()">اجب</button>
+ <button onclick="hint()">تلميح</button>
+ <div class="message" id="msg"></div>
+ <div class="message" id="explain"></div>
+</div>
 
 <script>
-
-// 🔹 اختصار الوصول للعناصر
 const q=id=>document.getElementById(id);
-
-// 🔢 تحويل للأرقام العربية
 const arabic=n=>n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
 const toEng=s=>s.replace(/[٠-٩]/g,d=>"0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
 
-// 🎮 متغيرات اللعبة
 let x,y,correct;
-let score=0,level=1,streak=0;
-let locked=false;
+let score=0,level=1,progress=0,difficulty=1,wrong=0;
+let childName="",parentName="";
+const items=["تفاحات","نجوم","حلوى","كرات"];
+let hintsGiven=0;
 
-// 🍎 عناصر القصة
-const items=["تفاحات","جزر","نجوم","كرات","حلوى"];
+// استرجاع النقاط والمستوى
+if(localStorage.save){
+ let data=JSON.parse(localStorage.save);
+ score=data.score||0;
+ level=data.level||1;
+ difficulty=data.difficulty||1;
+}
 
-// 🧠 توليد سؤال (مجموع ≤ ١٠)
+function startGame(){
+ childName=q("childName").value.trim()||"طفلي";
+ parentName=q("parentName").value.trim()||"ولي الأمر";
+
+ q("welcome").style.display="none";
+ q("playArea").style.display="block";
+
+ q("msg").innerHTML=`مرحبا يا ${childName}! لنبدأ مغامرتنا مع لولو 🐰`;
+ explainConcept();
+}
+
+function explainConcept(){
+ q("story").innerHTML=`${childName}، لنتعلم الجمع مع لولو 🐰. 
+لولو يجمع العناصر مع أصدقائه لنرى المجموع. (وَإِن تَعُدُّوا نِعْمَتَ اللَّهِ لَا تُحْصُوهَا)`;
+ q("visual").innerHTML=`مثال بصري: 🍎 + 🍎 = 🍎🍎`;
+ setTimeout(newQ,2500);
+}
+
 function newQ(){
- x=Math.floor(Math.random()*9)+1;
- y=Math.floor(Math.random()*(10-x))+1;
- correct=x+y;
+ // جميع الأسئلة ضمن ١٠
+ x = Math.floor(Math.random() * 9) + 1; 
+ y = Math.floor(Math.random() * (10 - x)) + 1;
+ correct = x + y;
 
- let item=items[Math.floor(Math.random()*items.length)];
-
- // 📖 قصة السؤال
- q("story").innerHTML=
- "🐰 كان مع لولو "+arabic(x)+" "+item+
- "<br>جاء صديقه وأعطاه "+arabic(y)+
- "<br>كم أصبح معه؟";
-
- // ⭐ تمثيل بصري
+ let item = items[Math.floor(Math.random()*items.length)];
+ q("story").innerHTML=`🐰 لولو وجد ${arabic(x)} ${item}، ثم أتى صديقه وأضاف ${arabic(y)}. كم أصبح معه؟ (يد الله مع الجماعة)`;
  q("visual").innerHTML="⭐".repeat(x)+" + "+"⭐".repeat(y);
-
  q("answer").value="";
  q("msg").innerHTML="";
  q("explain").innerHTML="";
-
- speak();
+ hintsGiven=0;
 }
 
-// 💥 انفجار نجوم
-function explode(){
- for(let i=0;i<10;i++){
+function check(){
+ let v=q("answer").value.trim();
+ if(v===""){
+  q("msg").innerHTML="🌱 اكتب رقم قبل الضغط على اجِب!";
+  return;
+ }
+ if(!/^[0-9٠-٩]+$/.test(v)){
+  q("msg").innerHTML="اكتب رقم صحيح 🌱";
+  return;
+ }
+ v=parseInt(toEng(v));
+ if(v===correct){
+  score+=10;
+  progress+=20;
+  wrong=0;
+
+  q("char").classList.add("jump");
+  setTimeout(()=>q("char").classList.remove("jump"),300);
+
+  createStars();
+  q("msg").innerHTML=`🌟 أحسنت يا ${childName}! (من لا يشكر الناس لا يشكر الله)`;
+  q("explain").innerHTML=`${arabic(x)} + ${arabic(y)} = ${arabic(correct)}  ⭐`.repeat(correct);
+
+  if(progress>=100){
+   level++;
+   progress=0;
+   difficulty++;
+   q("msg").innerHTML+=`<br>🎉 ${childName} انتقلت إلى مستوى جديد! (نعمتان مغبون فيهما كثير من الناس)`;
+  }
+ } else {
+  wrong++;
+  q("game").classList.add("shake");
+  setTimeout(()=>q("game").classList.remove("shake"),300);
+  q("msg").innerHTML=`لا بأس، لنحاول مرة أخرى 🌱 (حب الخير والتعاون)`;
+ }
+
+ save();
+ update();
+ setTimeout(newQ,2500);
+}
+
+function hint(){
+ if(hintsGiven===0){
+  q("msg").innerHTML=`⭐ ابدأ من ${arabic(x)} وعد ${arabic(y)} خطوات`;
+  hintsGiven++;
+ } else if(hintsGiven===1){
+  q("msg").innerHTML="الجمع يعني وضع كل العناصر معًا لرؤية المجموع الكلي (وَإِن تَعُدُّوا نِعْمَتَ اللَّهِ لَا تُحْصُوهَا)";
+  hintsGiven++;
+ } else {
+  q("msg").innerHTML="خذ نفسًا عميقًا وركز، يمكنك المحاولة! (الإحسان)";
+ }
+}
+
+function update(){
+ q("score").innerHTML=arabic(score);
+ q("level").innerHTML=arabic(level);
+ q("bar").style.width=progress+"%";
+}
+
+function createStars(){
+ for(let i=0;i<8;i++){
   let s=document.createElement("div");
   s.className="star";
   s.innerHTML="⭐";
@@ -163,108 +237,13 @@ function explode(){
  }
 }
 
-// ✅ التحقق
-function check(){
- if(locked)return;
- locked=true;
- q("btnCheck").disabled=true;
-
- let v=q("answer").value.trim();
-
- if(!/^[0-9٠-٩]+$/.test(v)){
-  q("msg").innerHTML="اكتب رقما صحيحا";
-  unlock();
-  return;
- }
-
- v=parseInt(toEng(v));
-
- if(v===correct){
-
-  q("ok").play();
-
-  score+=10;
-  streak++;
-
-  // ✨ تأثير نجاح
-  q("game").classList.add("flash");
-  setTimeout(()=>q("game").classList.remove("flash"),300);
-
-  explode();
-
-  // 📚 شرح تعليمي مرتبط بالقصة
-  q("explain").innerHTML=
-  "لولو كان معه "+arabic(x)+"<br>"+
-  "ثم أضفنا "+arabic(y)+"<br>"+
-  "أي جمعناهم معًا (ضم)<br>"+
-  "فأصبح "+arabic(correct);
-
-  q("msg").innerHTML="🌟 أحسنت يا بطل!";
-
-  // 🎚 رفع مستوى كل ٥ إجابات
-  if(streak===5){
-   level++;
-   streak=0;
-   q("msg").innerHTML+="<br>🎉 انتقلت إلى مستوى جديد!";
-  }
-
-  setTimeout(()=>{
-   newQ();
-   unlock();
-  },2000);
-
- }else{
-
-  q("no").play();
-
-  streak=0;
-
-  // ❌ اهتزاز
-  q("game").classList.add("shake");
-  setTimeout(()=>q("game").classList.remove("shake"),400);
-
-  q("msg").innerHTML="🌱 حاول مرة أخرى";
-  unlock();
- }
-
- update();
+function save(){
+ localStorage.save=JSON.stringify({score,level,difficulty});
 }
 
-// 🔓 فتح الزر
-function unlock(){
- locked=false;
- q("btnCheck").disabled=false;
-}
-
-// 💡 تلميح خطوة
-function hint(){
- q("msg").innerHTML=
- "ابدأ من "+arabic(x)+" وعد "+arabic(y)+" خطوات";
-}
-
-// 🔊 قراءة السؤال
-function speak(){
- let u=new SpeechSynthesisUtterance(x+" زائد "+y);
- u.lang="ar-SA";
- u.rate=0.8;
- speechSynthesis.speak(u);
-}
-
-// 🔄 تحديث البيانات
-function update(){
- q("score").innerHTML=arabic(score);
- q("level").innerHTML=arabic(level);
-}
-
-// ⌨️ Enter
 document.addEventListener("keydown",e=>{
  if(e.key==="Enter") check();
 });
-
-// 🚀 بدء
-newQ();
-
 </script>
-
 </body>
 </html>
