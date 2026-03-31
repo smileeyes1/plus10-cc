@@ -21,58 +21,67 @@ body{
  flex-direction:column;
  justify-content:center;
  align-items:center;
- padding:20px;
+ padding:15px;
 }
 .box{
- width:640px;
+ width:580px;
  max-width:96%;
- margin:20px auto;
- padding:28px;
+ margin:15px auto;
+ padding:20px;
  border-radius:28px;
  background:rgba(255,255,255,0.1);
- box-shadow:0 0 35px rgba(0,230,255,0.35);
+ box-shadow:0 0 35px rgba(0,230,255,0.4);
  backdrop-filter:blur(8px);
 }
 button{
- padding:14px 32px;
- font-size:18px;
+ padding:16px 32px;
+ font-size:20px;
  border-radius:18px;
  border:none;
  cursor:pointer;
- margin:8px;
+ margin:6px;
  background:#00eaff;
  color:#000;
  font-weight:bold;
- transition:.3s;
+ transition:all 0.3s;
+ min-width:150px;
 }
-button:hover{transform:scale(1.08)}
-.help{background:#ffd166}
-.reset{background:#ef476f;color:#fff}
-.report{background:#9bf6ff}
-.math{font-size:50px;color:#ffe066;margin:20px 0}
-.hearts{font-size:40px;margin:10px}
+button:hover{transform:scale(1.08);box-shadow:0 0 20px #00eaff;}
+.help{background:#ffd166;color:#000;}
+.reset{background:#ef476f;}
+.report{background:#9bf6ff;color:#000;}
+.math{font-size:58px;color:#ffe066;letter-spacing:10px;}
+.mentor{color:#ffd166;font-size:20px;min-height:50px;}
+.story{color:#06d6a0;font-size:21px;line-height:1.6;}
+.msg{min-height:140px;line-height:1.8;font-size:21px; font-weight:bold;}
 input{
- padding:12px;
- font-size:30px;
- border-radius:14px;
- border:none;
- width:180px;
- text-align:center;
-}
-.story{color:#06d6a0;font-size:22px}
-.mentor{color:#ffd166;font-size:20px;min-height:60px}
-.msg{font-size:21px;min-height:120px;line-height:1.8}
-.assistant{color:#a0e7ff;font-size:19px}
-.reportBox{
- display:none;
- background:rgba(0,0,0,.75);
- margin-top:15px;
  padding:18px;
- border-radius:18px;
- line-height:1.8;
+ font-size:30px;
+ border-radius:16px;
+ border:3px solid #00eaff;
+ width:230px;
+ text-align:center;
+ background:#fff;
+ color:#000;
 }
-.soundBtn{background:#ffd166;font-size:15px;padding:6px 18px}
-@keyframes pop{from{transform:scale(.5)}to{transform:scale(1)}}
+.reportBox{
+ background:rgba(0,0,0,0.85);
+ padding:20px;
+ border-radius:20px;
+ margin:15px 0;
+ display:none;
+ font-size:18px;
+ line-height:1.8;
+ text-align:right;
+}
+.soundBtn{
+ background:#ffd166;
+ color:#000;
+ font-size:17px;
+ padding:10px 22px;
+ border-radius:14px;
+}
+.stars{font-size:28px;color:#ffe066;}
 </style>
 </head>
 
@@ -80,102 +89,54 @@ input{
 
 <audio id="successSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-fairy-arcade-sparkle-866.mp3"></audio>
 
-<!-- التسجيل -->
 <div id="register" class="fullscreen">
- <h1>📖 سجل رحلتك</h1>
- اسم الطالب<br>
- <input id="studentName" placeholder="اسم الطالب أو الطالبة"><br><br>
- اسم ولي الأمر<br>
+ <h1>📖 سجل رحلتك مع الحكيم نور</h1>
+ 👦 اسم الطالب<br>
+ <input id="studentName" placeholder="اكتب اسمك هنا"><br><br>
+ 👨‍👩‍👦 اسم ولي الأمر<br>
  <input id="parentName" placeholder="اسم الأب أو الأم"><br><br>
- <button onclick="saveNames()">✅ ابدأ الرحلة</button>
- <div id="regMsg" style="color:#ffd166"></div>
+ <button onclick="saveNames()">✅ ابدأ الرحلة باسم الله</button>
+ <div id="regMsg" style="color:#ffd166;margin-top:15px;"></div>
 </div>
 
-<!-- شاشة شرح المفهوم -->
-<div id="conceptIntro" class="fullscreen" style="display:none">
- <div class="box" style="max-width:720px">
-  <h1>🧿 مرحبا بك في أسطورة الحكيم نور</h1>
-  
-  <div class="story" style="font-size:24px;margin:25px 0;line-height:1.8">
-   السلام عليكم يا بطل، يا من يريد أن يصبح أقوى وأذكى  
-   اليوم سنتعلم الجمع حتى ١٠ بالأرقام العربية الجميلة
-  </div>
-
-  <!-- الحديث النبوي -->
-  <div class="mentor" style="background:rgba(255,215,0,0.15);padding:18px;border-radius:18px;margin:20px 0">
-   قال رسول الله ﷺ:  
-   «من سلك طريقا يلتمس فيه علما سهل الله له به طريقا إلى الجنة»
-  </div>
-
-  <!-- الثلاث طرق الذكية -->
-  <div style="text-align:right;margin:30px 0">
-   <h2 style="color:#ffd166">ثلاث طرق ممتعة لتتعلم الجمع بسهولة:</h2>
-   
-   <div class="story" style="margin:18px 0">
-    ١. طريقة الأصابع الصديقة:  
-    ارفع أصابع يدك اليمنى للعدد الأول، ثم أكمل باليسرى للعدد الثاني.  
-    انظر كم أصبعا ارتفع معا. هذه الطريقة تجعل الجمع كاللعب مع أصابعك.
-   </div>
-   
-   <div class="story" style="margin:18px 0">
-    ٢. طريقة السلم المضيء:  
-    تخيل سلما في الجنة، كل درجة رقم.  
-    إذا كان لديك ٣ + ٤، اصعد ٣ درجات ثم ٤ درجات أخرى، وانظر عند أي رقم توقفت.  
-    كل خطوة تأخذك إلى نور جديد.
-   </div>
-   
-   <div class="story" style="margin:18px 0">
-    ٣. طريقة الإضافة البطيئة الحنونة:  
-    ابدأ بالعدد الأكبر، ثم أضف الثاني واحدا واحدا بصوتك:  
-    خمسة... ثم ستة... ثم سبعة... حتى تصل إلى النهاية.  
-    هذه الطريقة تبني الثقة وتجعلك تشعر بالراحة.
-   </div>
-  </div>
-
-  <!-- نصيحة تشجيعية -->
-  <div class="mentor" style="background:rgba(0,230,255,0.15);padding:20px;border-radius:18px;font-size:22px">
-   يا بطل، يا بنيتي الغالية،  
-   كلما أخطأت فتذكر أن الخطأ جزء من التعلم، والرسول ﷺ كان يقول:  
-   «إن الله يحب المتقين ويحب الصابرين».  
-   أنت قادر، أنت ذكي، وأنا فخور بك جدا.  
-   كل إجابة صحيحة ستزيد نورا في قلبك وثقة في نفسك.  
-   توكل على الله وابدأ بسم الله.
-  </div>
-
-  <button onclick="startLesson()" style="margin-top:30px;font-size:22px;padding:16px 40px">
-   🚀 الآن جاهز؟ ابدأ التحدي بسم الله
-  </button>
-  
-  <p style="margin-top:20px;color:#a0e7ff;font-size:18px">
-   خذ وقتك في قراءة كل شيء بهدوء، ثم اضغط الزر عندما تشعر أنك مستعد.
-  </p>
- </div>
+<div id="intro" class="fullscreen" style="display:none">
+ <h1>🧿 أسطورة الحكيم نور</h1>
+ <p style="font-size:23px;max-width:520px;">
+ يا بطل، سنتعلم الجمع حتى ١٠<br>
+ بطريقة هادئة وممتعة ومليئة بالحكمة<br><br>
+ إشراف: محمد وجيه – معلم إعدادي
+ </p>
+ <button onclick="unlockAudio(); startLesson()">🚀 ابدأ الرحلة بسم الله</button>
 </div>
 
-<!-- اللعبة الرئيسية -->
+<div id="lesson" class="box" style="display:none">
+ <h2>📜 درس الحكمة اليوم</h2>
+ <div class="mentor">قال رسول الله ﷺ: من سلك طريقا يلتمس فيه علما سهل الله له به طريقا إلى الجنة</div>
+ <button onclick="unlockAudio(); startGame()">🎮 هيا نبدأ التحدي</button>
+</div>
+
 <div id="game" class="box" style="display:none">
 
- <button class="soundBtn" onclick="toggleSound()">🔊 الصوت</button>
+ <button class="soundBtn" id="soundBtn" onclick="toggleSound()">🔊 الصوت يعمل</button>
 
  <h2>🌟 الجمع حتى ١٠</h2>
- <div class="story" id="story"></div>
- <div class="mentor" id="mentor"></div>
+ <div class="story" id="gameStory">🏰 مرحبا بك في قصر الحكمة</div>
+ <div class="mentor" id="mentorText"></div>
 
- ⭐ النقاط <span id="score">٠</span> |
- 🎚 المستوى <span id="level">١</span>
+ <div style="margin:15px 0; font-size:22px;">
+  ⭐ نجوم الحكمة <span id="stars" class="stars"></span> |
+  🎚 المستوى <span id="level">١</span>
+ </div>
 
- <div class="math" id="question"></div>
- <div class="hearts" id="hearts"></div>
-
- <input id="answer" placeholder="مثال: ٥">
+ <div id="question" class="math"></div>
+ <input id="answer" inputmode="numeric" maxlength="2" placeholder="اكتب الجواب">
  <br><br>
 
  <button onclick="check()">💡 أجيب</button>
  <button class="help" onclick="help()">🧠 تلميح</button>
- <button class="report" onclick="report()">📘 تقرير</button>
+ <button class="report" onclick="report()">📘 تقرير لوالدي</button>
 
  <div class="msg" id="msg"></div>
- <div class="assistant" id="assistant"></div>
  <div class="reportBox" id="reportBox"></div>
 
  <button class="reset" onclick="resetAll()">🔄 إعادة الرحلة</button>
@@ -183,179 +144,238 @@ input{
 
 <script>
 const q = id => document.getElementById(id);
-const arabic = n => n.toString().replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+const toArabicNum = n => n.toString().replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
 const toEng = s => s.replace(/[٠-٩]/g, d => "0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
 
 const sound = q("successSound");
 let audioUnlocked = false;
 let muted = false;
+let errorCount = 0;
 
 let x = 0, y = 0;
-const MAX_LEVEL = 5;
+let askedPairs = new Set(); // لمنع تكرار ٢+٣ و ٣+٢
+
 let state = {
   score: 0,
   level: 1,
   streak: 0,
   maxStreak: 0,
-  student: "",
-  parent: ""
+  studentName: "",
+  parentName: ""
 };
 
-function save(){
-  localStorage.setItem("noorSave", JSON.stringify(state));
-}
+const MAX_LEVEL = 5;
 
-function load(){
-  const s = localStorage.getItem("noorSave");
-  if(s) Object.assign(state, JSON.parse(s));
-}
-
-function saveNames(){
-  const s = q("studentName").value.trim();
-  const p = q("parentName").value.trim();
-  if(!s || !p){
-    q("regMsg").textContent = "يرجى إدخال الاسمين";
-    return;
-  }
-  state.student = s;
-  state.parent = p;
-  save();
-  
-  q("register").style.display = "none";
-  q("conceptIntro").style.display = "flex";
-}
-
-function startLesson(){
-  q("conceptIntro").style.display = "none";
-  q("game").style.display = "block";
-  load();
-  if(!state.student) state.student = "يا بطل";
-  newQuestion();
-  update();
-}
-
-function maxForLevel(l){
-  if(l === 1) return 4;
-  if(l === 2) return 6;
-  if(l === 3) return 8;
-  if(l === 4) return 9;
-  return 10;
-}
-
-function newQuestion(){
-  const max = maxForLevel(state.level);
-  x = Math.floor(Math.random() * max) + 1;
-  y = Math.floor(Math.random() * (11 - x)) + 1;
-  q("question").innerHTML = `${arabic(x)} + ${arabic(y)} = ؟`;
-  q("answer").value = "";
-  q("msg").textContent = "";
-  q("assistant").textContent = "";
-  q("hearts").textContent = "";
-  q("answer").focus();
-}
-
-function check(){
-  unlockAudio();
-  const input = q("answer").value.trim();
-  if(!/^[٠-٩]+$/.test(input)){
-    q("msg").textContent = "❗ اكتب بالأرقام العربية فقط";
-    return;
-  }
-  const v = parseInt(toEng(input));
-  const correct = x + y;
-
-  if(v === correct){
-    if(!muted && audioUnlocked){
-      sound.currentTime = 0;
-      sound.play().catch(()=>{});
-    }
-    state.score += 10;
-    state.streak++;
-    if(state.streak > state.maxStreak) state.maxStreak = state.streak;
-
-    q("hearts").innerHTML = "❤️".repeat(correct);
-
-    let msg = `🌟 أحسنت ${state.student}! سبحان الله`;
-    if(state.streak === 5 && state.level < MAX_LEVEL){
-      state.level++;
-      state.streak = 0;
-      msg += `<br><span style="animation:pop .6s">🎉 صعدت إلى المستوى ${arabic(state.level)}</span>`;
-    }
-    q("msg").innerHTML = msg;
-
-    save();
-    setTimeout(() => {
-      q("hearts").textContent = "";
-      newQuestion();
-      update();
-    }, 1800);
-  } else {
-    q("msg").textContent = `يا ${state.student}، خطأ صغير لا يهم، توكل على الله وجرب مرة أخرى بسم الله`;
-    if(q("assistant").textContent === ""){
-      q("assistant").innerHTML = `🕊️ المساعد الخفي: أضف واحد واحد<br>${arabic(x)} ثم ${arabic(x+1)} ... حتى ${arabic(correct)}`;
-    }
-  }
-}
-
-function help(){
-  const s = x + y;
-  let hint = s <= 5 ? "الجواب أقل من أو يساوي ٥" : s <= 7 ? "الجواب بين ٦ و ٧" : "الجواب بين ٨ و ١٠";
-  q("msg").textContent = `🧠 تلميح: ${hint}، قل بسم الله وجرب`;
-}
-
-function report(){
-  q("reportBox").style.display = "block";
-  q("reportBox").innerHTML = `
-    👦 الطالب: ${state.student}<br>
-    👨‍👩‍👦 ولي الأمر: ${state.parent}<br>
-    ⭐ النقاط: ${arabic(state.score)}<br>
-    🎚 المستوى: ${arabic(state.level)}<br>
-    🔥 أفضل سلسلة: ${arabic(state.maxStreak)}
-  `;
-}
-
-function update(){
-  q("score").textContent = arabic(state.score);
-  q("level").textContent = arabic(state.level);
-  q("story").textContent = `🏰 قصر الحكمة – المستوى ${arabic(state.level)}`;
-  const m = [
-    "كل إجابة تبني ثقتك",
-    "العلم نور والصبر مفتاح",
-    "أنت تتقدم بخطى ثابتة",
-    "الله يحب المتعلمين"
-  ];
-  q("mentor").textContent = m[Math.floor(Math.random()*m.length)];
-}
+const encouragementMessages = [
+  "أحسنت",
+  "ممتاز جداً",
+  "أنت تتطور بسرعة",
+  "بارك الله فيك",
+  "صبرك جميل",
+  "كل خطوة تقربك من الهدف",
+  "أنت قادر بإذن الله",
+  "عمل رائع",
+  "استمر هكذا",
+  "الله يبارك في جهدك",
+  "أنت حكيم صغير",
+  "فخور بك جداً"
+];
 
 function unlockAudio(){
-  if(audioUnlocked) return;
-  sound.play().then(() => {
-    sound.pause();
-    sound.currentTime = 0;
-    audioUnlocked = true;
-  }).catch(() => {});
+ if(audioUnlocked) return;
+ sound.volume = 0.75;
+ sound.play().then(() => {sound.pause(); sound.currentTime = 0; audioUnlocked = true;}).catch(() => {});
+}
+
+function playSuccess(){
+ if(muted || !audioUnlocked) return;
+ sound.currentTime = 0;
+ sound.play().catch(() => {});
 }
 
 function toggleSound(){
-  muted = !muted;
-  q("msg").textContent = muted ? "🔇 الصوت مكتوم" : "🔊 الصوت يعمل";
-  setTimeout(() => {q("msg").textContent = "";}, 1500);
+ muted = !muted;
+ const btn = q("soundBtn");
+ if(muted){
+  btn.textContent = "🔇 الصوت مكتوم";
+  q("msg").innerHTML = "تم كتم الصوت";
+ } else {
+  btn.textContent = "🔊 الصوت يعمل";
+  q("msg").innerHTML = "الصوت يعمل الآن";
+ }
+ setTimeout(() => q("msg").innerHTML = "", 1500);
+}
+
+function saveNames(){
+ const student = q("studentName").value.trim();
+ const parent = q("parentName").value.trim();
+ if(!student || !parent){
+  q("regMsg").textContent = "يرجى كتابة الاسمين";
+  return;
+ }
+ state.studentName = student;
+ state.parentName = parent;
+ q("register").style.display = "none";
+ q("intro").style.display = "flex";
+}
+
+function startLesson(){
+ q("intro").style.display = "none";
+ q("lesson").style.display = "block";
+}
+
+function startGame(){
+ q("lesson").style.display = "none";
+ q("game").style.display = "block";
+ loadProgress();
+ if(!state.studentName) state.studentName = "يا بطل";
+ if(!state.parentName) state.parentName = "ولي الأمر";
+ askedPairs.clear();
+ newQ();
+ update();
+}
+
+function getMaxForLevel(lvl){
+ if(lvl === 1) return 5;
+ if(lvl === 2) return 7;
+ return 10;
+}
+
+function normalizePair(a, b){
+ return a < b ? a + "+" + b : b + "+" + a;
+}
+
+function newQ(){
+ let maxNum = getMaxForLevel(state.level);
+ let attempts = 0;
+ let pairKey;
+ 
+ do {
+  x = Math.floor(Math.random() * maxNum) + 1;
+  y = Math.floor(Math.random() * (maxNum - x + 1)) + 1;
+  pairKey = normalizePair(x, y);
+  attempts++;
+ } while((x + y > 10 || askedPairs.has(pairKey)) && attempts < 30);
+ 
+ askedPairs.add(pairKey);
+ if(askedPairs.size > 12) askedPairs.clear(); // إعادة تعيين بعد فترة
+ 
+ q("question").innerHTML = `<div class="math">${toArabicNum(x)} + ${toArabicNum(y)} = ؟</div>`;
+ q("answer").value = "";
+ q("msg").innerHTML = "";
+ errorCount = 0;
+ q("answer").focus();
+}
+
+function check(){
+ unlockAudio();
+ const ansStr = q("answer").value.trim();
+ 
+ if(!/^\d+$/.test(toEng(ansStr))){
+  q("msg").innerHTML = `${state.studentName}، اكتب رقم فقط`;
+  q("answer").focus();
+  return;
+ }
+ 
+ const v = parseInt(toEng(ansStr));
+ const correct = x + y;
+
+ if(v > 10){
+  q("msg").innerHTML = `${state.studentName}، الجواب لا يتجاوز ١٠`;
+  q("answer").focus();
+  return;
+ }
+
+ if(v === correct){
+  playSuccess();
+  state.score += 10;
+  state.streak++;
+  errorCount = 0;
+  
+  if(state.streak > state.maxStreak) state.maxStreak = state.streak;
+  
+  const praise = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
+  let extra = "";
+  
+  if(state.streak === 5 && state.level < MAX_LEVEL){
+   state.level++;
+   state.streak = 0;
+   extra = `<br>🎉 مبروك ${state.studentName}! انتقلت إلى المستوى ${toArabicNum(state.level)}`;
+  }
+  
+  q("msg").innerHTML = `${praise} \( {state.studentName} \){extra}`;
+  update();
+  saveProgress();
+  setTimeout(newQ, 1700);
+ } else {
+  state.streak = 0;
+  errorCount++;
+  
+  let msg = `حاول مرة أخرى ${state.studentName}`;
+  
+  if(errorCount >= 2){
+   const bigger = Math.max(x, y);
+   const smaller = Math.min(x, y);
+   msg += `<br>تلميح: ابدأ من ${toArabicNum(bigger)} ثم أضف ${toArabicNum(smaller)} خطوة بخطوة`;
+  }
+  
+  q("msg").innerHTML = msg;
+  update();
+  saveProgress();
+  q("answer").focus();
+ }
+}
+
+function help(){
+ const sum = x + y;
+ let hint = sum <= 5 ? "أقل من أو يساوي ٥" : sum <= 7 ? "بين ٦ و ٧" : "بين ٨ و ١٠";
+ q("msg").innerHTML = `تلميح: ${hint}`;
+}
+
+function report(){
+ q("reportBox").style.display = "block";
+ const progressText = state.level >= 4 ? "يتقدم بقوة" : state.level >= 2 ? "يتقدم جيداً" : "يحتاج بعض الدعم والتشجيع";
+ 
+ q("reportBox").innerHTML = `
+ <strong>📊 تقرير التقدم</strong><br><br>
+ ⭐ اسم الطالب: ${state.studentName}<br>
+ 👨‍👩‍👦 ولي الأمر: ${state.parentName}<br>
+ ⭐ نجوم الحكمة: ${toArabicNum(state.score)}<br>
+ 🎚 المستوى الحالي: ${toArabicNum(state.level)}<br>
+ 🔥 أفضل تسلسل: ${toArabicNum(state.maxStreak)}<br><br>
+ 🌟 ملاحظة: ${progressText}<br>
+ 💡 نصيحة: العب مع طفلك ١٠ دقائق يومياً وشجعه بكلمات طيبة
+ `;
+}
+
+function update(){
+ q("stars").innerHTML = "⭐".repeat(Math.min(10, Math.floor(state.score / 20)));
+ q("level").textContent = toArabicNum(state.level);
+ q("gameStory").textContent = `🏰 قصر الحكمة – المستوى ${toArabicNum(state.level)}`;
+ 
+ const levelDesc = state.level === 1 ? "تجمع حتى ٥" : state.level === 2 ? "تجمع حتى ٧" : "تجمع حتى ١٠";
+ q("mentorText").innerHTML = `${state.studentName}، أنت الآن ${levelDesc} • كل إجابة تبني ثقتك`;
+}
+
+function saveProgress(){
+ localStorage.setItem("hakeemNoorProgress", JSON.stringify(state));
+}
+
+function loadProgress(){
+ const saved = localStorage.getItem("hakeemNoorProgress");
+ if(saved) Object.assign(state, JSON.parse(saved));
 }
 
 function resetAll(){
-  if(confirm("هل تريد إعادة الرحلة من البداية؟")){
-    localStorage.removeItem("noorSave");
-    location.reload();
-  }
+ if(confirm("هل تريد إعادة الرحلة من البداية؟")){
+  localStorage.removeItem("hakeemNoorProgress");
+  location.reload();
+ }
 }
 
-load();
-if(state.student){
-  q("register").style.display = "none";
-  q("conceptIntro").style.display = "flex";
-} else {
-  q("register").style.display = "flex";
-}
+document.addEventListener('keydown', e => {
+ if(e.key === "Enter" && q("game").style.display === "block") check();
+});
 </script>
 
 </body>
