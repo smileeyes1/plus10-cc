@@ -78,7 +78,7 @@ input{
 
 <body>
 
-https://assets.mixkit.co/sfx/preview/mixkit-fairy-arcade-sparkle-866.mp3</audio>
+<audio id="successSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-fairy-arcade-sparkle-866.mp3"></audio>
 
 <!-- التسجيل -->
 <div id="register" class="fullscreen">
@@ -105,7 +105,7 @@ https://assets.mixkit.co/sfx/preview/mixkit-fairy-arcade-sparkle-866.mp3</audio>
 <div id="lesson" class="box" style="display:none">
  <h2>📜 درس اليوم</h2>
  <div class="mentor">
- قال رسول الله ﷺ: من سلك طريقًا يلتمس فيه علمًا سهل الله له به طريقًا إلى الجنة
+ قال رسول الله ﷺ: من سلك طريقا يلتمس فيه علما سهل الله له به طريقا إلى الجنة
  </div>
  <button onclick="startGame()">🎮 ابدأ التحدي</button>
 </div>
@@ -140,162 +140,184 @@ https://assets.mixkit.co/sfx/preview/mixkit-fairy-arcade-sparkle-866.mp3</audio>
 </div>
 
 <script>
-/* أدوات */
-const q=id=>document.getElementById(id);
-const arabic=n=>n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
-const toEng=s=>s.replace(/[٠-٩]/g,d=>"0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
+const q = id => document.getElementById(id);
+const arabic = n => n.toString().replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+const toEng = s => s.replace(/[٠-٩]/g, d => "0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
 
-/* الصوت */
-const sound=q("successSound");
-let audioUnlocked=false, muted=false;
+const sound = q("successSound");
+let audioUnlocked = false;
+let muted = false;
 
-/* الحالة */
-let x=0,y=0,wrong=0;
-const MAX_LEVEL=5;
-let state={
- score:0,level:1,streak:0,maxStreak:0,
- student:"",parent:""
+let x = 0, y = 0, wrong = 0;
+const MAX_LEVEL = 5;
+let state = {
+  score: 0,
+  level: 1,
+  streak: 0,
+  maxStreak: 0,
+  student: "",
+  parent: ""
 };
 
-/* حفظ */
-function save(){localStorage.setItem("noorSave",JSON.stringify(state))}
+function save(){
+  localStorage.setItem("noorSave", JSON.stringify(state));
+}
+
 function load(){
- const s=localStorage.getItem("noorSave");
- if(s) Object.assign(state,JSON.parse(s));
+  const s = localStorage.getItem("noorSave");
+  if(s) Object.assign(state, JSON.parse(s));
 }
 
-/* تسجيل */
 function saveNames(){
- const s=q("studentName").value.trim();
- const p=q("parentName").value.trim();
- if(!s||!p){q("regMsg").textContent="يرجى إدخال الاسمين";return;}
- state.student=s;state.parent=p;
- save();
- q("register").style.display="none";
- q("intro").style.display="flex";
-}
-
-/* تشغيل */
-function startLesson(){
- q("intro").style.display="none";
- q("lesson").style.display="block";
-}
-function startGame(){
- q("lesson").style.display="none";
- q("game").style.display="block";
- load();
- newQuestion(); update();
-}
-
-/* مستويات */
-function maxForLevel(l){
- if(l===1) return 4;
- if(l===2) return 6;
- if(l===3) return 8;
- if(l===4) return 9;
- return 10;
-}
-
-/* سؤال */
-function newQuestion(){
- const max=maxForLevel(state.level);
- x=Math.floor(Math.random()*max)+1;
- y=Math.floor(Math.random()*(10-x))+1;
- q("question").innerHTML=`${arabic(x)} + ${arabic(y)} = ؟`;
- q("answer").value="";
- q("msg").textContent="";
- q("assistant").textContent="";
- wrong=0;
-}
-
-/* تحقق */
-function check(){
- const input=q("answer").value.trim();
- if(!/^[٠-٩]+$/.test(input)){
-  q("msg").textContent="❗ اكتب بالأرقام العربية فقط";
-  return;
- }
- const v=parseInt(toEng(input));
- const correct=x+y;
-
- if(v===correct){
-  if(!muted&&audioUnlocked){sound.currentTime=0;sound.play()}
-  state.score+=10;
-  state.streak++;
-  if(state.streak>state.maxStreak)state.maxStreak=state.streak;
-  q("hearts").textContent="❤️".repeat(correct);
-  let msg=`🌟 أحسنت ${state.student}`;
-  if(state.streak===5&&state.level<MAX_LEVEL){
-   state.level++;state.streak=0;
-   msg+=`<div style="animation:pop .6s">🎉 صعدت للمستوى ${arabic(state.level)}</div>`;
+  const s = q("studentName").value.trim();
+  const p = q("parentName").value.trim();
+  if(!s || !p){
+    q("regMsg").textContent = "يرجى إدخال الاسمين";
+    return;
   }
-  q("msg").innerHTML=msg;
+  state.student = s;
+  state.parent = p;
   save();
-  setTimeout(()=>{q("hearts").textContent="";newQuestion();update()},1800);
- }else{
-  wrong++; state.streak=0;
-  q("msg").textContent="🌱 حاول مرة أخرى";
-  if(wrong>=2){
-   q("assistant").innerHTML=
-   `🕊️ أضف واحدًا واحدًا: ${arabic(x)} ثم ${arabic(x+1)} … حتى ${arabic(correct)}`;
+  q("register").style.display = "none";
+  q("intro").style.display = "flex";
+}
+
+function startLesson(){
+  q("intro").style.display = "none";
+  q("lesson").style.display = "block";
+}
+
+function startGame(){
+  q("lesson").style.display = "none";
+  q("game").style.display = "block";
+  load();
+  if(!state.student) state.student = "يا بطل";
+  newQuestion();
+  update();
+}
+
+function maxForLevel(l){
+  if(l === 1) return 4;
+  if(l === 2) return 6;
+  if(l === 3) return 8;
+  if(l === 4) return 9;
+  return 10;
+}
+
+function newQuestion(){
+  const max = maxForLevel(state.level);
+  x = Math.floor(Math.random() * max) + 1;
+  y = Math.floor(Math.random() * (11 - x)) + 1;  // مضمون أن x+y <= 10
+  q("question").innerHTML = `${arabic(x)} + ${arabic(y)} = ؟`;
+  q("answer").value = "";
+  q("msg").textContent = "";
+  q("assistant").textContent = "";
+  q("hearts").textContent = "";
+  wrong = 0;
+  q("answer").focus();
+}
+
+function check(){
+  unlockAudio();
+  const input = q("answer").value.trim();
+  if(!/^[٠-٩]+$/.test(input)){
+    q("msg").textContent = "❗ اكتب بالأرقام العربية فقط";
+    return;
   }
- }
+  const v = parseInt(toEng(input));
+  const correct = x + y;
+
+  if(v === correct){
+    if(!muted && audioUnlocked){
+      sound.currentTime = 0;
+      sound.play().catch(()=>{});
+    }
+    state.score += 10;
+    state.streak++;
+    if(state.streak > state.maxStreak) state.maxStreak = state.streak;
+
+    q("hearts").innerHTML = "❤️".repeat(correct);
+
+    let msg = `🌟 أحسنت ${state.student}! سبحان الله`;
+    if(state.streak === 5 && state.level < MAX_LEVEL){
+      state.level++;
+      state.streak = 0;
+      msg += `<br><span style="animation:pop .6s">🎉 صعدت إلى المستوى ${arabic(state.level)}</span>`;
+    }
+    q("msg").innerHTML = msg;
+
+    save();
+    setTimeout(() => {
+      q("hearts").textContent = "";
+      newQuestion();
+      update();
+    }, 1800);
+  } else {
+    wrong++;
+    state.streak = 0;
+    q("msg").textContent = "🌱 خطأ بسيط، حاول مرة أخرى وتوكل على الله";
+    if(wrong >= 2){
+      q("assistant").innerHTML = `🕊️ المساعد الخفي: أضف واحد واحد<br>${arabic(x)} ثم ${arabic(x+1)} ... حتى ${arabic(correct)}`;
+    }
+  }
 }
 
-/* تلميح */
 function help(){
- const s=x+y;
- q("msg").textContent=
-  s<=5?"الجواب ≤ ٥":s<=7?"الجواب بين ٦ و٧":"الجواب بين ٨ و١٠";
+  const s = x + y;
+  let hint = s <= 5 ? "الجواب أقل من أو يساوي ٥" : s <= 7 ? "الجواب بين ٦ و ٧" : "الجواب بين ٨ و ١٠";
+  q("msg").textContent = `🧠 تلميح: ${hint}، قل بسم الله وجرب`;
 }
 
-/* تقرير */
 function report(){
- q("reportBox").style.display="block";
- q("reportBox").innerHTML=`
- 👦 الطالب: ${state.student}<br>
- 👨‍👩‍👦 ولي الأمر: ${state.parent}<br>
- ⭐ النقاط: ${arabic(state.score)}<br>
- 🎚 المستوى: ${arabic(state.level)}<br>
- 🔥 أفضل سلسلة: ${arabic(state.maxStreak)}
- `;
+  q("reportBox").style.display = "block";
+  q("reportBox").innerHTML = `
+    👦 الطالب: ${state.student}<br>
+    👨‍👩‍👦 ولي الأمر: ${state.parent}<br>
+    ⭐ النقاط: ${arabic(state.score)}<br>
+    🎚 المستوى: ${arabic(state.level)}<br>
+    🔥 أفضل سلسلة: ${arabic(state.maxStreak)}
+  `;
 }
 
-/* تحديث */
 function update(){
- q("score").textContent=arabic(state.score);
- q("level").textContent=arabic(state.level);
- q("story").textContent=`🏰 قصر الحكمة – المستوى ${arabic(state.level)}`;
- const m=[
-  "كل محاولة تقربك من النجاح",
-  "العلم عبادة",
-  "أنت تتقدم بثبات",
-  "الصبر مفتاح الحكمة"
- ];
- q("mentor").textContent=m[Math.floor(Math.random()*m.length)];
+  q("score").textContent = arabic(state.score);
+  q("level").textContent = arabic(state.level);
+  q("story").textContent = `🏰 قصر الحكمة – المستوى ${arabic(state.level)}`;
+  const m = [
+    "كل إجابة تبني ثقتك",
+    "العلم نور والصبر مفتاح",
+    "أنت تتقدم بخطى ثابتة",
+    "الله يحب المتعلمين"
+  ];
+  q("mentor").textContent = m[Math.floor(Math.random()*m.length)];
 }
 
-/* أدوات */
 function unlockAudio(){
- if(audioUnlocked)return;
- sound.play().then(()=>{sound.pause();sound.currentTime=0;audioUnlocked=true})
-}
-function toggleSound(){
- muted=!muted;
- q("msg").textContent=muted?"🔇 الصوت مكتوم":"🔊 الصوت يعمل";
-}
-function resetAll(){
- if(confirm("إعادة الرحلة من البداية؟")){
-  localStorage.removeItem("noorSave");
-  location.reload();
- }
+  if(audioUnlocked) return;
+  sound.play().then(() => {
+    sound.pause();
+    sound.currentTime = 0;
+    audioUnlocked = true;
+  }).catch(() => {});
 }
 
-/* بدء */
+function toggleSound(){
+  muted = !muted;
+  q("msg").textContent = muted ? "🔇 الصوت مكتوم" : "🔊 الصوت يعمل";
+  setTimeout(() => {q("msg").textContent = "";}, 1500);
+}
+
+function resetAll(){
+  if(confirm("هل تريد إعادة الرحلة من البداية؟")){
+    localStorage.removeItem("noorSave");
+    location.reload();
+  }
+}
+
 load();
 if(state.student){
- q("register").style.display="none";
- q("intro").style.display="flex";
+  q("register").style.display = "none";
+  q("intro").style.display = "flex";
 }
 </script>
 
