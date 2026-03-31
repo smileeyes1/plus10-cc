@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>🧙‍♂️ أسطورة الحكيم نور</title>
+<title>🧙‍♂️ أسطورة الحكيم نور – جمع حتى ١٠</title>
 
 <style>
 body{
@@ -24,7 +24,7 @@ body{
   width:540px;
   max-width:95%;
   margin:30px auto;
-  padding:25px;
+  padding:22px;
   border-radius:22px;
   background:rgba(255,255,255,0.08);
   box-shadow:0 0 30px #00eaff;
@@ -39,34 +39,53 @@ button{
   margin:6px;
 }
 button:hover{transform:scale(1.05)}
-.math{font-size:34px;color:#ffe066}
-.hearts span{font-size:28px}
+.reset{background:#ef476f}
+.help{background:#ffd166;color:#000}
+.report{background:#9bf6ff;color:#000}
+.math{font-size:34px;color:#ffe066;margin:10px 0}
+.hearts span{font-size:26px}
 .mentor{color:#ffd166;font-size:20px;min-height:40px}
 .story{color:#06d6a0;font-size:18px;margin-bottom:10px}
 .msg{min-height:120px;font-size:18px;white-space:pre-line}
-.reset{background:#ef476f}
-.reflect{background:#9bf6ff;color:#000}
 input{
   padding:10px;
   font-size:18px;
   border-radius:12px;
   border:none;
-  width:160px;
+  width:140px;
   text-align:center;
+}
+.reportBox{
+  background:rgba(0,0,0,0.4);
+  padding:15px;
+  border-radius:16px;
+  margin-top:15px;
+  display:none;
 }
 </style>
 </head>
 
 <body>
 
-<!-- البداية -->
-<div id="intro" class="fullscreen">
+<!-- التسجيل -->
+<div id="register" class="fullscreen">
+  <h1>📖 سجلّ الرحلة</h1>
+  <p>👦 اسم الطالب</p>
+  <input id="studentName">
+  <p>👨‍👩‍👦 اسم ولي الأمر</p>
+  <input id="parentName">
+  <br><br>
+  <button onclick="saveNames()">✅ دخول الأسطورة</button>
+  <div id="regMsg" style="color:#ffd166"></div>
+</div>
+
+<!-- المقدمة -->
+<div id="intro" class="fullscreen" style="display:none">
   <h1>🧙‍♂️ أسطورة الحكيم نور</h1>
   <p style="font-size:22px">
-    الحساب فهم 🧮<br>
-    التفكير قوة 🧠<br>
-    الحكمة رحلة ✨<br><br>
-    برفقة المعلم 👨‍🏫 <b>محمد وجيه</b>
+    الجمع حتى ١٠ 🧮<br>
+    التفكير بهدوء 🧠<br>
+    الحكمة رحلة ✨
   </p>
   <button onclick="startLesson()">🚀 ابدأ الرحلة</button>
 </div>
@@ -81,171 +100,189 @@ input{
 
 <!-- اللعبة -->
 <div id="game" class="box" style="display:none">
-  <h2>🌟 رحلة الحكمة</h2>
-  <div id="gameStory" class="story"></div>
-  <div id="gameMentor" class="mentor"></div>
+  <h2>🌟 جمع الأعداد حتى ١٠</h2>
+
+  <div class="story" id="gameStory">🌱 بداية الحكمة</div>
+  <div class="mentor" id="gameMentor"></div>
 
   ⭐ النقاط: <span id="score">٠</span> |
   🎚 المستوى: <span id="level">١</span>
 
   <div id="question"></div>
 
-  <input id="answer" placeholder="الجواب"
-         inputmode="numeric"
-         pattern="[٠-٩0-9]*">
-
+  <input id="answer" inputmode="numeric">
   <br><br>
-  <button onclick="attack()">💡 أجيب</button>
-  <button class="reflect" onclick="reflect()">🧠 أفكر</button>
+
+  <button onclick="checkAnswer()">💡 أجيب</button>
+  <button class="help" onclick="help()">🧠 أحتاج مساعدة</button>
+  <button class="report" onclick="showReport()">📘 التقرير</button>
 
   <div id="gameMsg" class="msg"></div>
 
-  <button class="reset" onclick="resetProgress()">🔄 تصفير</button>
+  <div class="reportBox" id="reportBox"></div>
+
+  <button class="reset" onclick="resetAll()">🔄 إعادة البداية</button>
 </div>
 
 <script>
-/* ===== أدوات ===== */
-function arabic(n){
-  return n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
-}
-function toEng(s){
-  return s.replace(/[٠-٩]/g,d=>"0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
-}
-function hearts(n){
-  return "<span>❤️</span>".repeat(n);
-}
+/* أدوات */
+const arabic=n=>n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
+const toEng=s=>s.replace(/[٠-٩]/g,d=>"0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
+const hearts=n=>"<div class='hearts'>"+"<span>❤️</span>".repeat(n)+"</div>";
 
-/* ===== الحالة ===== */
-let state={score:0,level:1,streak:0,fails:0};
-let x=1,y=1;
-
-/* ===== الحكم ===== */
-const wisdom=[
- "التأني طريق الإتقان",
- "كل مسألة خطوة للأمام",
- "العقل يكبر بالمحاولة",
- "الهدوء يصنع الحل",
- "أنت تتعلم الآن"
-];
-
-/* ===== حفظ التقدم ===== */
-function save(){
-  localStorage.setItem("wisdomState",JSON.stringify(state));
-}
-function load(){
-  const s=localStorage.getItem("wisdomState");
-  if(s) state=JSON.parse(s);
-}
-
-/* ===== عناصر DOM ===== */
+/* عناصر */
+const register=document.getElementById("register");
 const intro=document.getElementById("intro");
 const lesson=document.getElementById("lesson");
 const game=document.getElementById("game");
-const gameMentor=document.getElementById("gameMentor");
-const gameMsg=document.getElementById("gameMsg");
+
+const studentInput=document.getElementById("studentName");
+const parentInput=document.getElementById("parentName");
+const regMsg=document.getElementById("regMsg");
+
+const lessonMentor=document.getElementById("lessonMentor");
+const lessonMsg=document.getElementById("lessonMsg");
+
 const question=document.getElementById("question");
 const answer=document.getElementById("answer");
-const scoreSpan=document.getElementById("score");
-const levelSpan=document.getElementById("level");
-const storyBox=document.getElementById("gameStory");
+const gameMsg=document.getElementById("gameMsg");
+const gameMentor=document.getElementById("gameMentor");
 
-/* ===== بدء الدرس ===== */
+const scoreEl=document.getElementById("score");
+const levelEl=document.getElementById("level");
+const reportBox=document.getElementById("reportBox");
+
+/* بيانات */
+let student="", parent="";
+let state={score:0,level:1,streak:0,fails:0};
+let x=0,y=0;
+
+/* تحميل */
+window.onload=()=>{
+  const saved=localStorage.getItem("wisdom10");
+  if(saved)state=JSON.parse(saved);
+  student=localStorage.getItem("student")||"";
+  parent=localStorage.getItem("parent")||"";
+  if(student&&parent){
+    register.style.display="none";
+    intro.style.display="flex";
+  }
+}
+
+/* حفظ */
+function save(){
+  localStorage.setItem("wisdom10",JSON.stringify(state));
+}
+
+/* تسجيل */
+function saveNames(){
+  student=studentInput.value.trim();
+  parent=parentInput.value.trim();
+  if(!student||!parent){
+    regMsg.textContent="✋ الرجاء كتابة الاسمين";
+    return;
+  }
+  localStorage.setItem("student",student);
+  localStorage.setItem("parent",parent);
+  register.style.display="none";
+  intro.style.display="flex";
+}
+
+/* درس */
 function startLesson(){
   intro.style.display="none";
   lesson.style.display="block";
-  document.getElementById("lessonMentor").textContent="👨‍🏫 سنفكر معًا بهدوء";
-  document.getElementById("lessonMsg").innerHTML=
+  lessonMentor.textContent=`🧙‍♂️ مرحبًا ${student}`;
+  lessonMsg.innerHTML=`${parent}، نعدّ القلوب بهدوء ❤️<br><br>`+
     hearts(3)+" + "+hearts(2);
 }
 
-/* ===== دخول اللعبة ===== */
+/* لعبة */
 function startGame(){
-  load();
   lesson.style.display="none";
   game.style.display="block";
   updateUI();
   newQuestion();
 }
 
-/* ===== القصة ===== */
-function updateStory(){
-  storyBox.textContent=
-    state.level<3 ? "🌱 بداية طريق الحكمة" :
-    state.level<6 ? "🏞️ رحلة الحكيم" :
-    state.level<9 ? "🌄 تحدي العقول" :
-    "🏰 وصلت قصر الحكمة";
-}
-
-/* ===== سؤال جديد ===== */
+/* سؤال جمع حتى ١٠ */
 function newQuestion(){
   answer.value="";
   gameMsg.textContent="";
-  x=Math.floor(Math.random()*(3+state.level*2))+1;
-  y=Math.floor(Math.random()*(3+state.level*2))+1;
-
-  updateStory();
-  gameMentor.textContent="🧙‍♂️ "+
-    wisdom[Math.floor(Math.random()*wisdom.length)];
-
+  reportBox.style.display="none";
+  x=Math.floor(Math.random()*10);
+  y=Math.floor(Math.random()*(10-x));
+  gameMentor.textContent="🧙‍♂️ فكّر بهدوء وعدّ القلوب";
   question.innerHTML=
-    `<div class="math">${arabic(x)} + ${arabic(y)} = ؟</div>
-     <div class="hearts">${hearts(x)} + ${hearts(y)}</div>`;
+   `<div class="math">${arabic(x)} + ${arabic(y)} = ؟</div>
+    ${hearts(x)} + ${hearts(y)}`;
 }
 
-/* ===== التفكير ===== */
-function reflect(){
-  gameMsg.innerHTML=
-    hearts(x)+"<br>ثم أضف<br>"+hearts(y);
-}
-
-/* ===== الإجابة ===== */
-function attack(){
-  if(answer.value.trim()===""){
+/* تحقق */
+function checkAnswer(){
+  if(!answer.value.trim()){
     gameMsg.textContent="✋ اكتب الإجابة أولًا";
     return;
   }
   const val=parseInt(toEng(answer.value));
-  if(isNaN(val)) return;
-
   if(val===x+y){
     state.score+=10;
     state.streak++;
     state.fails=0;
-
-    gameMsg.textContent="✨ إجابة صحيحة! أحسنت ✨";
-
+    gameMsg.textContent="✨ ممتاز! أحسنت التفكير";
     if(state.streak>=3){
       state.level++;
       state.streak=0;
-      gameMsg.textContent="🏆 ممتاز! مستوى جديد!";
     }
-
     save();
     updateUI();
-    setTimeout(newQuestion,900);
+    setTimeout(newQuestion,1200);
   }else{
     state.fails++;
     state.streak=0;
-    gameMentor.textContent="👨‍🏫 لا بأس، حاول بهدوء";
-
-    if(state.fails>=3){
-      gameMentor.textContent="👨‍🏫 تعال نفكر معًا";
-      reflect();
+    gameMsg.textContent="💛 لا بأس، نحاول مرة أخرى";
+    if(state.fails>=2){
+      help();
     }
+    if(state.fails>=4){
+      gameMsg.innerHTML=`✅ الحل الصحيح:<br>${arabic(x)} + ${arabic(y)} = ${arabic(x+y)}`;
+    }
+    save();
   }
 }
 
-/* ===== تحديث الواجهة ===== */
-function updateUI(){
-  scoreSpan.textContent=arabic(state.score);
-  levelSpan.textContent=arabic(state.level);
+/* مساعدة */
+function help(){
+  gameMsg.innerHTML=
+    "🧠 عدّ القلوب:<br>"+hearts(x+y);
 }
 
-/* ===== إعادة ===== */
-function resetProgress(){
-  localStorage.removeItem("wisdomState");
+/* تقرير */
+function showReport(){
+  reportBox.style.display="block";
+  reportBox.innerHTML=
+`📘 تقرير الحكيم نور<br><br>
+👦 الطالب: ${student}<br>
+⭐ النقاط: ${arabic(state.score)}<br>
+🎚 المستوى: ${arabic(state.level)}`;
+}
+
+/* تحديث */
+function updateUI(){
+  scoreEl.textContent=arabic(state.score);
+  levelEl.textContent=arabic(state.level);
+}
+
+/* إعادة */
+function resetAll(){
+  localStorage.clear();
   location.reload();
 }
+
+/* أرقام فقط */
+answer.addEventListener("input",()=>{
+  answer.value=answer.value.replace(/[^٠-٩0-9]/g,"");
+});
 </script>
 
 </body>
