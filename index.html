@@ -3,16 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مرحلة تعليمية للجمع - الحكيم نور 🧙‍♂️</title>
+<title>مغامرة الحكيم نور 🧙‍♂️</title>
 <style>
 body{margin:0;font-family:Tahoma;background:linear-gradient(#a0e7ff,#b4f8c8);display:flex;justify-content:center;align-items:center;height:100vh;overflow:hidden;}
-#welcome,#lesson,#game{width:700px;max-width:95%;background:rgba(255,255,255,0.9);padding:25px;border-radius:20px;text-align:center;position:relative;}
-input{font-size:22px;width:200px;padding:8px;border-radius:10px;border:1px solid #ccc;text-align:center;margin:5px;}
+#welcome,#lesson,#game{width:700px;max-width:95%;background:rgba(255,255,255,0.95);padding:25px;border-radius:20px;text-align:center;position:relative;}
+input{font-size:22px;width:220px;padding:8px;border-radius:10px;border:1px solid #ccc;text-align:center;margin:5px;}
 button{padding:10px 20px;margin:5px;border:none;border-radius:12px;background:#ffd166;cursor:pointer;font-size:16px;}
 .character{font-size:70px;transition:0.3s;}
-.jump{transform:translateY(-20px) rotate(-15deg);}
-.star{position:absolute;font-size:20px;animation:boom 1s forwards;}
-@keyframes boom{to{transform:translate(var(--x),var(--y)) scale(0);opacity:0}}
 .item{font-size:50px;margin:5px;}
 .number{font-size:36px;font-weight:bold;color:#ff6b6b;margin:5px;}
 .progress{width:100%;background:#eee;border-radius:10px;margin:10px 0;}
@@ -24,8 +21,9 @@ button{padding:10px 20px;margin:5px;border:none;border-radius:12px;background:#f
 <!-- شاشة الترحيب -->
 <div id="welcome">
 <h2>مرحباً بك في مغامرة الحكيم نور 🧙‍♂️!</h2>
-<p>أدخل اسمك لنبدأ التعلم:</p>
-<input id="studentName" placeholder="اسم الطفل"><br>
+<p>أدخل اسم الطالب واسم ولي أمره:</p>
+<input id="studentName" placeholder="اسم الطالب"><br>
+<input id="parentName" placeholder="اسم ولي الأمر"><br>
 <button onclick="startLesson()">لنبدأ التعلم 🎓</button>
 </div>
 
@@ -48,7 +46,8 @@ button{padding:10px 20px;margin:5px;border:none;border-radius:12px;background:#f
 <div class="visual" id="gameVisual"></div>
 <input id="answer" placeholder="اكتب الرقم هنا"><br>
 <button onclick="check()">أجب</button>
-<button onclick="hint()">تلميح</button>
+<button onclick="hint()">تلميح من ولي الأمر 👪</button>
+<button onclick="teacherBoost()" style="display:none;">تشجيع المعلم 👨‍🏫</button>
 <div id="msg"></div>
 <div id="explain"></div>
 </div>
@@ -56,7 +55,7 @@ button{padding:10px 20px;margin:5px;border:none;border-radius:12px;background:#f
 <script>
 // عناصر
 const q=id=>document.getElementById(id);
-let student="",step=0,steps=[],x=0,y=0,correct=0;
+let student="",parent="",step=0,steps=[],x=0,y=0,correct=0;
 
 // بيانات المرحلة التعليمية
 steps=[
@@ -84,6 +83,7 @@ function speakText(text,rate=1,pitch=1){
 // ابدأ المرحلة التعليمية
 function startLesson(){
   student=q("studentName").value.trim() || "طفلي";
+  parent=q("parentName").value.trim() || "ولي الأمر";
   q("welcome").style.display="none";
   q("lesson").style.display="block";
   step=0;
@@ -112,7 +112,7 @@ function nextStep(){
 }
 
 // ---------- اللعبة ----------
-let score=0,level=1,progress=0,difficulty=1,wrong=0,hintCount=0;
+let score=0,level=1,progress=0,difficulty=1,wrong=0,hintCount=0,consecCorrect=0,consecWrong=0;
 const items=["🍎","⭐","🍬","🍌"];
 
 function startGame(){
@@ -136,33 +136,54 @@ function newQ(){
   q("msg").innerHTML="";
   q("explain").innerHTML="";
   hintCount=0;
+  checkTeacherButton();
 }
 
+// التحقق من الإجابة
 function check(){
   let v=q("answer").value.trim();
   if(!v){q("msg").innerHTML=`اكتب الرقم يا ${student}!`; speakText("اكتب الرقم من فضلك"); return;}
   if(!/^[0-9٠-٩]+$/.test(v)){q("msg").innerHTML="اكتب رقماً صحيحاً"; speakText("الرجاء كتابة رقم صحيح"); return;}
   v=parseArabicNumber(v);
   if(v===correct){
-    score+=10; progress+=20; wrong=0;
+    score+=10; progress+=20; wrong=0; consecCorrect++; consecWrong=0;
     q("msg").innerHTML=`🌟 أحسنت يا ${student}!`;
     q("explain").innerHTML=`${arabic(x)} + ${arabic(y)} = ${arabic(correct)}`;
     speakText(`رائع! أحسنت يا ${student}`);
     if(progress>=100){level++;progress=0;difficulty++;q("msg").innerHTML+=`<br>🎉 لقد انتقلت لمستوى جديد!`;}
     update();
+    checkTeacherButton();
     setTimeout(newQ,2000);
   } else {
-    wrong++;
-    q("msg").innerHTML=`حاول مرة أخرى يا ${student} 🌱`;
-    speakText("لا بأس، جرب مرة أخرى!");
+    wrong++; consecWrong++; consecCorrect=0;
+    if(wrong===1) q("msg").innerHTML=`حاول مرة أخرى 🌱، ${parent} يقول: ركز على العد خطوة خطوة`;
+    else if(wrong===2) q("msg").innerHTML=`لا بأس، ${parent} ينصحك: استخدم أصابعك أو الأشياء أمامك للعد`;
+    else q("msg").innerHTML=`${parent} يشجعك: الحكيم نور هنا ليساعدك على التفكير`;
+    speakText(q("msg").innerHTML);
+    checkTeacherButton();
   }
 }
 
+// تلميحات عند الضغط على زر ولي الأمر
 function hint(){
   hintCount++;
-  if(hintCount===1){q("msg").innerHTML=`ابدأ بالعد من ${arabic(x)}`; speakText("ابدأ بالعد من "+arabic(x));}
+  if(hintCount===1){q("msg").innerHTML=`ابدأ بالعد من ${arabic(x)}، ${parent} يذكرك بالصبر`; speakText("ابدأ بالعد من "+arabic(x));}
   else if(hintCount===2){q("msg").innerHTML="الجمع يعني جمع الأشياء معاً لتعرف الكل"; speakText("الجمع يعني جمع الأشياء معاً");}
   else {q("msg").innerHTML="هذا كل ما لدي من تلميحات"; speakText("هذا كل ما لدي من تلميحات");}
+}
+
+// زر المعلم للتشجيع يظهر عند ٥ نجاحات أو أخطاء متتالية
+function checkTeacherButton(){
+  const btn = document.querySelector("button[onclick='teacherBoost()']");
+  if(consecCorrect>=5 || consecWrong>=5){btn.style.display="inline-block";}
+  else {btn.style.display="none";}
+}
+
+function teacherBoost(){
+  q("msg").innerHTML=`👨‍🏫 ${student}، أحسنت! ضع نجمة على دفترك ⭐ لتعزز نجاحك!`;
+  speakText(`${student}، أحسنت! ضع نجمة على دفترك لتعزز نجاحك!`);
+  consecCorrect=0; consecWrong=0;
+  checkTeacherButton();
 }
 
 function update(){
