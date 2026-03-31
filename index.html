@@ -3,190 +3,265 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>أسطورة الحكيم نور – نسخة مصححة</title>
+<title>مغامرة لولو في الجمع</title>
 
 <style>
+/* 🎨 تصميم كرتوني بسيط */
 body{
  margin:0;
  font-family:Tahoma;
- background:radial-gradient(circle at top,#0f2b4a,#05121f);
+ background:linear-gradient(#89f7fe,#66a6ff);
  color:#fff;
  text-align:center;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ height:100vh;
+ overflow:hidden;
 }
-.box{
- width:640px;
+
+.game{
+ width:600px;
  max-width:95%;
- margin:20px auto;
+ background:rgba(255,255,255,0.15);
  padding:25px;
  border-radius:25px;
- background:rgba(255,255,255,0.1);
- box-shadow:0 0 30px rgba(0,230,255,0.3);
+ box-shadow:0 0 25px rgba(0,0,0,0.3);
+ position:relative;
 }
-button{
- padding:12px 25px;
+
+h2{color:#fff}
+
+/* ✏️ النصوص */
+.story{font-size:22px;margin:10px}
+.math{font-size:40px;color:#ffe066}
+.visual{font-size:28px;margin:10px}
+
+/* 🎯 الإدخال */
+input{
+ font-size:26px;
+ padding:10px;
+ width:160px;
+ text-align:center;
+ border-radius:10px;
  border:none;
- border-radius:15px;
- margin:6px;
- font-size:18px;
- cursor:pointer;
- background:#00eaff;
 }
-.math{font-size:45px;color:#ffe066}
-.enemy{font-size:22px;color:#ff6b6b}
-.assistant{color:#a0e7ff}
+
+/* 🔘 الأزرار */
+button{
+ padding:10px 20px;
+ margin:5px;
+ border:none;
+ border-radius:12px;
+ cursor:pointer;
+ background:#ffd166;
+ font-size:16px;
+}
+
+/* ✨ تأثيرات */
+.flash{animation:flash .4s}
+@keyframes flash{0%{background:#fff}100%{background:transparent}}
+
+.shake{animation:shake .4s}
+@keyframes shake{
+0%,100%{transform:translateX(0)}
+25%{transform:translateX(-5px)}
+75%{transform:translateX(5px)}
+}
+
+/* 💥 نجوم */
+.star{
+ position:absolute;
+ font-size:20px;
+ animation:explode 1s forwards;
+}
+@keyframes explode{
+ to{transform:translate(var(--x),var(--y)) scale(0);opacity:0}
+}
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="game" id="game">
 
-<h2>🌟 الجمع حتى ١٠</h2>
+<h2>🐰 مغامرة لولو في الجمع</h2>
 
-⭐ النقاط: <span id="score">٠</span>  
+⭐ النقاط: <span id="score">٠</span> |
 🎚 المستوى: <span id="level">١</span>
 
-<div class="enemy">👾 صحة الوحش: <span id="enemy">٢٠</span></div>
+<div class="story" id="story"></div>
+<div class="visual" id="visual"></div>
 
-<div class="math" id="question"></div>
-<div class="assistant" id="visual"></div>
+<input id="answer" placeholder="٥"><br>
 
-<input id="answer" placeholder="٥">
-<br><br>
-
-<button onclick="check()">أجيب</button>
-<button onclick="help()">تلميح</button>
+<button id="btnCheck" onclick="check()">أجب</button>
+<button onclick="hint()">تلميح</button>
 <button onclick="speak()">🎤 اقرأ</button>
 
 <div id="msg"></div>
-<div id="helper" class="assistant"></div>
+<div id="explain"></div>
 
 </div>
 
-<audio id="success" src="https://assets.mixkit.co/sfx/preview/mixkit-fairy-arcade-sparkle-866.mp3"></audio>
-<audio id="fail" src="https://assets.mixkit.co/sfx/preview/mixkit-player-losing-or-failing-2042.mp3"></audio>
+<audio id="ok" src="https://assets.mixkit.co/sfx/preview/mixkit-fairy-arcade-sparkle-866.mp3"></audio>
+<audio id="no" src="https://assets.mixkit.co/sfx/preview/mixkit-player-losing-or-failing-2042.mp3"></audio>
 
 <script>
 
-const q = id => document.getElementById(id);
+// 🔹 اختصار الوصول للعناصر
+const q=id=>document.getElementById(id);
 
-const arabic = n => n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
-const toEng = s => s.replace(/[٠-٩]/g,d=>"0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
+// 🔢 تحويل للأرقام العربية
+const arabic=n=>n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
+const toEng=s=>s.replace(/[٠-٩]/g,d=>"0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
 
-let x,y;
-let score=0, level=1, streak=0;
-let enemy=20;
+// 🎮 متغيرات اللعبة
+let x,y,correct;
+let score=0,level=1,streak=0;
+let locked=false;
 
-const MAX_LEVEL = 4;
+// 🍎 عناصر القصة
+const items=["تفاحات","جزر","نجوم","كرات","حلوى"];
 
-// تحديد المستوى
-function maxLevel(l){
- if(l==1)return 4;
- if(l==2)return 6;
- if(l==3)return 8;
- return 9;
-}
-
-// توليد سؤال (مضمون <= ١٠)
+// 🧠 توليد سؤال (مجموع ≤ ١٠)
 function newQ(){
- let max = maxLevel(level);
- x = Math.floor(Math.random()*max)+1;
+ x=Math.floor(Math.random()*9)+1;
+ y=Math.floor(Math.random()*(10-x))+1;
+ correct=x+y;
 
- // 🔥 الإصلاح الحقيقي
- y = Math.floor(Math.random()*(10 - x)) + 1;
+ let item=items[Math.floor(Math.random()*items.length)];
 
- q("question").innerHTML = arabic(x)+" + "+arabic(y);
+ // 📖 قصة السؤال
+ q("story").innerHTML=
+ "🐰 كان مع لولو "+arabic(x)+" "+item+
+ "<br>جاء صديقه وأعطاه "+arabic(y)+
+ "<br>كم أصبح معه؟";
 
- // تمثيل بصري
- q("visual").innerHTML = "⭐".repeat(x)+" + "+"⭐".repeat(y);
+ // ⭐ تمثيل بصري
+ q("visual").innerHTML="⭐".repeat(x)+" + "+"⭐".repeat(y);
 
  q("answer").value="";
  q("msg").innerHTML="";
- q("helper").innerHTML="";
+ q("explain").innerHTML="";
+
+ speak();
 }
 
-// التحقق
-function check(){
- let v = q("answer").value.trim();
+// 💥 انفجار نجوم
+function explode(){
+ for(let i=0;i<10;i++){
+  let s=document.createElement("div");
+  s.className="star";
+  s.innerHTML="⭐";
+  s.style.left="50%";
+  s.style.top="50%";
+  s.style.setProperty("--x",(Math.random()*200-100)+"px");
+  s.style.setProperty("--y",(Math.random()*200-100)+"px");
+  q("game").appendChild(s);
+  setTimeout(()=>s.remove(),1000);
+ }
+}
 
- if(!/^[٠-٩]+$/.test(v)){
-  q("msg").innerHTML="اكتب بالأرقام العربية";
+// ✅ التحقق
+function check(){
+ if(locked)return;
+ locked=true;
+ q("btnCheck").disabled=true;
+
+ let v=q("answer").value.trim();
+
+ if(!/^[0-9٠-٩]+$/.test(v)){
+  q("msg").innerHTML="اكتب رقما صحيحا";
+  unlock();
   return;
  }
 
- v = parseInt(toEng(v));
- let c = x+y;
+ v=parseInt(toEng(v));
 
- if(v===c){
+ if(v===correct){
 
-  document.getElementById("success").play();
+  q("ok").play();
 
   score+=10;
   streak++;
-  enemy-=5;
 
-  let msg="🌟 أحسنت";
+  // ✨ تأثير نجاح
+  q("game").classList.add("flash");
+  setTimeout(()=>q("game").classList.remove("flash"),300);
 
-  // الوحش
-  if(enemy<=0){
-    msg+="<br>⚔️ هزمت الوحش!";
-    enemy=20;
+  explode();
+
+  // 📚 شرح تعليمي مرتبط بالقصة
+  q("explain").innerHTML=
+  "لولو كان معه "+arabic(x)+"<br>"+
+  "ثم أضفنا "+arabic(y)+"<br>"+
+  "أي جمعناهم معًا (ضم)<br>"+
+  "فأصبح "+arabic(correct);
+
+  q("msg").innerHTML="🌟 أحسنت يا بطل!";
+
+  // 🎚 رفع مستوى كل ٥ إجابات
+  if(streak===5){
+   level++;
+   streak=0;
+   q("msg").innerHTML+="<br>🎉 انتقلت إلى مستوى جديد!";
   }
 
-  // رفع مستوى (مع حد أقصى)
-  if(streak==5 && level < MAX_LEVEL){
-    level++;
-    streak=0;
-    msg+="<br>🎉 مستوى جديد!";
-  }
-
-  // وسام
-  if(score % 50 === 0){
-    msg+="<br>🏅 وسام جديد!";
-  }
-
-  q("msg").innerHTML=msg;
+  setTimeout(()=>{
+   newQ();
+   unlock();
+  },2000);
 
  }else{
 
-  document.getElementById("fail").play();
+  q("no").play();
 
   streak=0;
 
-  // ✅ مساعد بصري صحيح
-  q("helper").innerHTML =
-    "انظر:<br>" +
-    "⭐".repeat(x) + " + " + "⭐".repeat(y) +
-    "<br>= " + "⭐".repeat(c);
+  // ❌ اهتزاز
+  q("game").classList.add("shake");
+  setTimeout(()=>q("game").classList.remove("shake"),400);
 
-  q("msg").innerHTML="حاول مرة أخرى";
+  q("msg").innerHTML="🌱 حاول مرة أخرى";
+  unlock();
  }
 
  update();
- setTimeout(newQ,1500);
 }
 
-// تلميح
-function help(){
- let s=x+y;
- let hint = s<=5 ? "الجواب صغير" : s<=7 ? "متوسط" : "كبير";
- q("msg").innerHTML="تلميح: "+hint;
+// 🔓 فتح الزر
+function unlock(){
+ locked=false;
+ q("btnCheck").disabled=false;
 }
 
-// قراءة الصوت بالعربية
+// 💡 تلميح خطوة
+function hint(){
+ q("msg").innerHTML=
+ "ابدأ من "+arabic(x)+" وعد "+arabic(y)+" خطوات";
+}
+
+// 🔊 قراءة السؤال
 function speak(){
- let u = new SpeechSynthesisUtterance(x+" زائد "+y);
- u.lang = "ar-SA"; // ✅ إصلاح اللغة
+ let u=new SpeechSynthesisUtterance(x+" زائد "+y);
+ u.lang="ar-SA";
+ u.rate=0.8;
  speechSynthesis.speak(u);
 }
 
-// تحديث
+// 🔄 تحديث البيانات
 function update(){
  q("score").innerHTML=arabic(score);
  q("level").innerHTML=arabic(level);
- q("enemy").innerHTML=arabic(enemy);
 }
 
+// ⌨️ Enter
+document.addEventListener("keydown",e=>{
+ if(e.key==="Enter") check();
+});
+
+// 🚀 بدء
 newQ();
 
 </script>
