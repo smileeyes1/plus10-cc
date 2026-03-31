@@ -3,339 +3,329 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>🧙‍♂️ أسطورة الحكيم نور – الجمع حتى ١٠</title>
+<title>🧿 أسطورة الحكيم نور – الجمع حتى ١٠</title>
 
 <style>
 body{
-  margin:0;
-  font-family:Tahoma,Arial;
-  background:radial-gradient(circle at top,#1b4965,#081a30);
-  color:#fff;
-  text-align:center;
-  min-height:100vh;
-  overflow-x:hidden
+ margin:0;
+ font-family:Tahoma,Arial,sans-serif;
+ background:radial-gradient(circle at top,#0f2b4a,#05121f);
+ color:#fff;
+ text-align:center;
+ min-height:100vh;
 }
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:url("https://i.imgur.com/7bKQ7mP.png");
-  opacity:.12;
-  animation:float 90s linear infinite;
-  z-index:-1
-}
-
-@keyframes float{
-  to{background-position:-2000px 2000px}
-}
-
 .fullscreen{
-  position:fixed;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center
+ position:fixed;
+ inset:0;
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
+ align-items:center;
+ padding:20px;
 }
-
 .box{
-  width:560px;
-  max-width:95%;
-  margin:20px auto;
-  padding:22px;
-  border-radius:26px;
-  background:rgba(255,255,255,.1);
-  box-shadow:0 0 35px #00eaff
+ width:580px;
+ max-width:96%;
+ margin:20px auto;
+ padding:28px;
+ border-radius:28px;
+ background:rgba(255,255,255,0.1);
+ box-shadow:0 0 35px rgba(0,230,255,0.4);
+ backdrop-filter:blur(8px);
 }
-
 button{
-  padding:12px 26px;
-  font-size:18px;
-  border-radius:16px;
-  border:none;
-  cursor:pointer;
-  margin:6px;
-  background:#00eaff;
-  transition:.25s
+ padding:14px 32px;
+ font-size:19px;
+ border-radius:18px;
+ border:none;
+ cursor:pointer;
+ margin:8px;
+ background:#00eaff;
+ color:#000;
+ font-weight:bold;
+ transition:all 0.3s;
 }
-
-button:hover{transform:scale(1.08)}
-.help{background:#ffd166;color:#000}
-.reset{background:#ef476f}
-.report{background:#9bf6ff;color:#000}
-
-.math{font-size:36px;color:#ffe066}
-
-.mentor{
-  color:#ffd166;
-  font-size:20px;
-  min-height:42px
-}
-
-.story{color:#06d6a0;font-size:20px}
-
-.msg{
-  min-height:120px;
-  white-space:pre-line;
-  line-height:1.8
-}
-
+button:hover{transform:scale(1.1);box-shadow:0 0 20px #00eaff;}
+.help{background:#ffd166;color:#000;}
+.reset{background:#ef476f;}
+.report{background:#9bf6ff;color:#000;}
+.math{font-size:48px;color:#ffe066;letter-spacing:6px;}
+.mentor{color:#ffd166;font-size:21px;min-height:60px;}
+.story{color:#06d6a0;font-size:22px;line-height:1.7;}
+.msg{min-height:130px;line-height:1.9;font-size:20px;}
 input{
-  padding:10px;
-  font-size:18px;
-  border-radius:14px;
-  border:none;
-  width:180px;
-  text-align:center
+ padding:14px;
+ font-size:24px;
+ border-radius:16px;
+ border:none;
+ width:240px;
+ text-align:center;
+ background:#fff;
+ color:#000;
 }
-
-/* 💖 القلوب الذكية */
-.hearts{
-  display:inline-block;
-  margin:10px 4px
-}
-
-.hearts span{
-  font-size:28px;
-  display:inline-block;
-  animation:
-    beat 1.8s ease-in-out infinite,
-    sway 4s ease-in-out infinite;
-}
-
-@keyframes beat{
-  0%,100%{transform:scale(1)}
-  50%{transform:scale(1.3)}
-}
-
-@keyframes sway{
-  0%,100%{margin-top:0}
-  50%{margin-top:-6px}
-}
-
 .reportBox{
-  background:rgba(0,0,0,.55);
-  padding:15px;
-  border-radius:18px;
-  margin-top:15px;
-  display:none
+ background:rgba(0,0,0,0.75);
+ padding:20px;
+ border-radius:20px;
+ margin:20px 0;
+ display:none;
+ font-size:19px;
+ line-height:1.8;
+}
+.soundBtn{
+ background:#ffd166;
+ color:#000;
+ font-size:16px;
+ padding:8px 20px;
+ border-radius:14px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🔊 صوت النجاح -->
-<audio id="successSound" preload="auto">
-  https://assets.mixkit.co/sfx/preview/mixkit-fairy-arcade-sparkle-866.mp3
-</audio>
+<audio id="successSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-fairy-arcade-sparkle-866.mp3"></audio>
 
-<!-- التسجيل -->
 <div id="register" class="fullscreen">
-  <h1>📖 سجل الرحلة</h1>
-  👦 اسم الطالب<br>
-  <input id="studentName"><br><br>
-  👨‍👩‍👦 اسم ولي الأمر<br>
-  <input id="parentName"><br><br>
-  <button onclick="saveNames()">✅ دخول الرحلة</button>
-  <div id="regMsg" style="color:#ffd166"></div>
+ <h1>📖 سجل رحلتك مع الحكيم نور</h1>
+ 👦 اسم الطالب<br>
+ <input id="studentName" placeholder="اكتب اسمك هنا"><br><br>
+ 👨‍👩‍👦 اسم ولي الأمر<br>
+ <input id="parentName" placeholder="اسم الأب أو الأم"><br><br>
+ <button onclick="saveNames()">✅ ابدأ الرحلة باسم الله</button>
+ <div id="regMsg" style="color:#ffd166;margin-top:15px;"></div>
 </div>
 
-<!-- المقدمة -->
 <div id="intro" class="fullscreen" style="display:none">
-  <h1>🧙‍♂️ أسطورة الحكيم نور</h1>
-  <p style="font-size:22px">
-    نتعلم الجمع حتى ١٠ 🧮<br>
-    بالقيم… وبقلبٍ مطمئن ❤️
-  </p>
-  <button onclick="startLesson()">🚀 ابدأ الرحلة</button>
+ <h1>🧿 أسطورة الحكيم نور</h1>
+ <p style="font-size:24px;max-width:520px;">
+ يا بطل، سنتعلم الجمع حتى ١٠<br>
+ بطريقة هادئة وممتعة ومليئة بالحكمة<br><br>
+ إشراف: محمد وجيه – معلم إعدادي
+ </p>
+ <button onclick="unlockAudio(); startLesson()">🚀 ابدأ الرحلة بسم الله</button>
 </div>
 
-<!-- الدرس -->
 <div id="lesson" class="box" style="display:none">
-  <h2>📜 درس الحكمة</h2>
-  <div class="mentor" id="lessonMentor"></div>
-  <div class="msg">
-    🕌 طلب العلم عبادة<br>
-    💛 الله يحب المحسنين<br>
-    ❤️ نعد بهدوء ونفهم برفق
-  </div>
-  <button onclick="startGame()">🎮 ابدأ التحدي</button>
+ <h2>📜 درس الحكمة اليوم</h2>
+ <div class="mentor">قال رسول الله ﷺ: من سلك طريقا يلتمس فيه علما سهل الله له به طريقا إلى الجنة</div>
+ <button onclick="unlockAudio(); startGame()">🎮 هيا نبدأ التحدي</button>
 </div>
 
-<!-- اللعبة -->
 <div id="game" class="box" style="display:none">
-  <h2>🌟 الجمع حتى ١٠</h2>
-  <div class="story" id="gameStory"></div>
-  <div class="mentor" id="gameMentor"></div>
 
-  ⭐ النقاط <span id="score">٠</span> |
-  🎚 المستوى <span id="level">١</span>
+ <button class="soundBtn" onclick="toggleSound()">🔊 الصوت</button>
 
-  <div id="question"></div>
-  <input id="answer" inputmode="numeric" maxlength="2"><br><br>
+ <h2>🌟 الجمع حتى ١٠</h2>
+ <div class="story" id="gameStory">🏰 مرحبا بك في قصر الحكمة</div>
+ <div class="mentor" id="mentorText">🧙‍♂️ تعلم بهدوء وستصبح حكيما</div>
 
-  <button onclick="check()">💡 أجيب</button>
-  <button class="help" onclick="help()">🧠 مساعدة</button>
-  <button class="help" onclick="dailyValue()">🌸 قيمة اليوم</button>
-  <button class="report" onclick="report()">📘 التقرير</button>
+ ⭐ النقاط <span id="score">٠</span> |
+ 🎚 المستوى <span id="level">١</span>
 
-  <div class="msg" id="msg"></div>
-  <div class="reportBox" id="reportBox"></div>
+ <div id="question" class="math"></div>
+ <input id="answer" inputmode="numeric" maxlength="2" placeholder="اكتب الجواب">
+ <br><br>
 
-  <button class="reset" onclick="resetAll()">🔄 إعادة</button>
+ <button onclick="check()">💡 أجيب</button>
+ <button class="help" onclick="help()">🧠 تلميح</button>
+ <button class="report" onclick="report()">📘 أرسل تقرير لوالدي</button>
+
+ <div class="msg" id="msg"></div>
+ <div class="reportBox" id="reportBox"></div>
+
+ <button class="reset" onclick="resetAll()">🔄 إعادة الرحلة</button>
 </div>
 
 <script>
-const arabic=n=>n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
-const toEng=s=>s.replace(/[٠-٩]/g,d=>"0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
+const q = id => document.getElementById(id);
+const arabic = n => n.toString().replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+const toEng = s => s.replace(/[٠-٩]/g, d => "0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
 
-const hearts=n=>{
- let h="";
- for(let i=0;i<n;i++){
-  h+=`<span style="
-    animation-delay:${Math.random()*1.5}s;
-    transform:translateY(${Math.random()*6}px)
-  ">❤️</span>`;
+const sound = q("successSound");
+let audioUnlocked = false;
+let muted = false;
+
+let x = 0, y = 0;
+let state = {
+  score: 0,
+  level: 1,
+  streak: 0,
+  maxStreak: 0,
+  studentName: ""
+};
+
+const MAX_LEVEL = 5; // منع تجاوز المستوى
+
+function unlockAudio(){
+ if(audioUnlocked) return;
+ sound.volume = 0.75;
+ sound.play().then(() => {sound.pause(); sound.currentTime = 0; audioUnlocked = true;}).catch(() => {});
+}
+
+function playSuccess(){
+ if(muted || !audioUnlocked) return;
+ sound.currentTime = 0;
+ sound.play().catch(() => {});
+}
+
+function toggleSound(){
+ muted = !muted;
+ q("msg").textContent = muted ? "🔇 الصوت مكتوم" : "🔊 الصوت يعمل";
+ setTimeout(() => {q("msg").textContent = "";}, 2000);
+}
+
+function saveProgress(){
+ localStorage.setItem("hakeemNoorProgress", JSON.stringify(state));
+}
+
+function loadProgress(){
+ const saved = localStorage.getItem("hakeemNoorProgress");
+ if(saved){
+  Object.assign(state, JSON.parse(saved));
  }
- return `<div class="hearts">${h}</div>`;
-};
-
-const pick=a=>a[Math.floor(Math.random()*a.length)];
-
-const values={
- success:[
-  "🌟 الله يحب المجتهدين",
-  "💛 نية طيبة وعمل حسن",
-  "🕌 العلم يقربنا من الله"
- ],
- try:[
-  "🌱 الخطأ طريق الفهم",
-  "⌛ الصبر مفتاح الخير",
-  "💛 المحاولة أجر"
- ],
- daily:[
-  "🕌 قل: الحمد لله",
-  "🤝 التعاون سر القوة",
-  "👨‍👩‍👦 بر الوالدين نور",
-  "🌸 الصدق طمأنينة"
- ]
-};
-
-const levels={
-1:"🌱 وادي البدايات",
-2:"🌿 طريق الصبر",
-3:"🌉 جسر التعاون",
-4:"🏔️ جبل الاجتهاد",
-5:"🏰 قصر الحكيم نور"
-};
-
-let student="",parent="",x=0,y=0;
-let state={score:0,level:1,streak:0,attempts:0,correct:0};
-
-window.onload=()=>{
- if(localStorage.state) state=JSON.parse(localStorage.state);
- student=localStorage.student||"";
- parent=localStorage.parent||"";
- if(student&&parent){
-  register.style.display="none";
-  intro.style.display="flex";
- }
-};
+}
 
 function saveNames(){
- student=studentName.value.trim();
- parent=parentName.value.trim();
- if(!student||!parent){
-  regMsg.textContent="✋ اكتب الاسمين";
+ const student = q("studentName").value.trim();
+ const parent = q("parentName").value.trim();
+ if(!student || !parent){
+  q("regMsg").textContent = "يرجى كتابة اسمك واسم ولي أمرك";
   return;
  }
- localStorage.student=student;
- localStorage.parent=parent;
- register.style.display="none";
- intro.style.display="flex";
+ state.studentName = student;
+ q("register").style.display = "none";
+ q("intro").style.display = "flex";
 }
 
 function startLesson(){
- intro.style.display="none";
- lesson.style.display="block";
- lessonMentor.textContent="🧙‍♂️ مرحبًا بك يا "+student;
+ q("intro").style.display = "none";
+ q("lesson").style.display = "block";
 }
 
 function startGame(){
- lesson.style.display="none";
- game.style.display="block";
- update();
+ q("lesson").style.display = "none";
+ q("game").style.display = "block";
+ loadProgress();
+ if(!state.studentName) state.studentName = "يا بطل";
  newQ();
+ update();
+}
+
+function getMaxForLevel(lvl){
+ if(lvl === 1) return 5;
+ if(lvl === 2) return 7;
+ return 10;
 }
 
 function newQ(){
- answer.value="";
- msg.textContent="";
- x=Math.floor(Math.random()*10);
- y=Math.floor(Math.random()*(10-x));
- question.innerHTML=
- `<div class="math">${arabic(x)} + ${arabic(y)} = ؟</div>`+
- hearts(x)+" + "+hearts(y);
+ const maxNum = getMaxForLevel(state.level);
+ x = Math.floor(Math.random() * maxNum) + 1;
+ y = Math.floor(Math.random() * (maxNum - x + 1)) + 1;
+ 
+ // ضمان أن المجموع لا يتجاوز ١٠
+ while(x + y > 10){
+  y = Math.floor(Math.random() * (maxNum - x + 1)) + 1;
+ }
+ 
+ q("question").innerHTML = `<div class="math">${arabic(x)} + ${arabic(y)} = ؟</div>`;
+ q("answer").value = "";
+ q("msg").innerHTML = "";
+ q("answer").focus();
 }
 
 function check(){
- if(!answer.value)return;
- state.attempts++;
- if(parseInt(toEng(answer.value))===x+y){
-  successSound.currentTime=0;
-  successSound.play();
-  state.correct++;
-  state.score+=10;
-  state.streak++;
-  msg.textContent="✨ أحسنت\n"+pick(values.success);
-  if(state.streak>=3 && state.level<5){
-   state.level++;
-   state.streak=0;
-   msg.textContent+="\n🌟 ترقيت بحكمتك";
-  }
-  update();
-  setTimeout(newQ,1400);
- }else{
-  state.streak=0;
-  msg.textContent=pick(values.try);
-  setTimeout(newQ,1600);
+ unlockAudio();
+ const ansStr = q("answer").value.trim();
+ if(!ansStr) return;
+ 
+ const v = parseInt(toEng(ansStr));
+ if(isNaN(v)){
+  q("msg").innerHTML = "🌱 اكتب الرقم بالأرقام العربية أو الإنجليزية";
+  return;
  }
+
+ const correct = x + y;
+ if(v === correct){
+  playSuccess();
+  state.score += 10;
+  state.streak++;
+  
+  if(state.streak > state.maxStreak) state.maxStreak = state.streak;
+  
+  let praise = `🌟 أحسنت ${state.studentName}!`;
+  
+  if(state.streak === 5){
+   if(state.level < MAX_LEVEL){
+    state.level++;
+    state.streak = 0;
+    praise += `<br>🎉 ارتقيت إلى المستوى ${arabic(state.level)}! اللهم بارك`;
+   } else {
+    praise += `<br>🏆 مبروك! لقد أكملت جميع المستويات`;
+   }
+  }
+  
+  q("msg").innerHTML = praise;
+ }else{
+  state.streak = 0;
+  q("msg").innerHTML = "🌱 خطأ بسيط يا صديقي، حاول مرة أخرى";
+ }
+ 
+ update();
+ saveProgress();
+ setTimeout(newQ, 1800);
 }
 
 function help(){
- msg.innerHTML="🧠 عد القلوب بهدوء<br>"+hearts(x)+" + "+hearts(y);
-}
-
-function dailyValue(){
- msg.textContent=pick(values.daily);
+ const sum = x + y;
+ let hint = "";
+ if(sum <= 5){
+  hint = "الجواب أقل من أو يساوي ٥";
+ } else if(sum <= 7){
+  hint = "الجواب بين ٦ و ٧";
+ } else {
+  hint = "الجواب بين ٨ و ١٠";
+ }
+ q("msg").innerHTML = `تلميح: ${hint}<br>جرب مرة أخرى يا ${state.studentName}`;
 }
 
 function report(){
- reportBox.style.display="block";
- reportBox.innerHTML=
- `👦 ${student}<br>
-  ⭐ النقاط: ${arabic(state.score)}<br>
-  ✅ صحيحة: ${arabic(state.correct)} / ${arabic(state.attempts)}<br>
-  🎚 المستوى: ${arabic(state.level)}`;
+ q("reportBox").style.display = "block";
+ q("reportBox").innerHTML = `
+ ⭐ اسم الطالب: ${state.studentName}<br>
+ ⭐ النقاط: ${arabic(state.score)}<br>
+ 🎚 المستوى الحالي: ${arabic(state.level)}<br>
+ 🔥 أطول تسلسل نجاح: ${arabic(state.maxStreak)}<br><br>
+ 🌟 بارك الله فيك يا ${state.studentName}، أنت تتقدم بخطى ثابتة نحو العلم والثقة
+ `;
 }
 
 function update(){
- score.textContent=arabic(state.score);
- level.textContent=arabic(state.level);
- gameStory.textContent=levels[state.level];
- gameMentor.textContent="🧙‍♂️ تعلم بتؤدة وستبلغ الحكمة";
- localStorage.state=JSON.stringify(state);
+ q("score").textContent = arabic(state.score);
+ q("level").textContent = arabic(state.level);
+ q("gameStory").textContent = `🏰 قصر الحكمة – المستوى ${arabic(state.level)}`;
+ 
+ const mentorMessages = [
+  "🧙‍♂️ كل إجابة صحيحة تبني ثقتك",
+  "تعلم بهدوء وستصبح قويا",
+  "الله يحب من يتعلم ويصبر",
+  "أنت تتقدم خطوة بخطوة يا بطل"
+ ];
+ q("mentorText").textContent = mentorMessages[Math.floor(Math.random()*mentorMessages.length)];
 }
 
 function resetAll(){
- if(confirm("هل تريد البدء من جديد؟")){
-  localStorage.clear();
+ if(confirm("هل تريد إعادة الرحلة من البداية؟")){
+  localStorage.removeItem("hakeemNoorProgress");
   location.reload();
  }
 }
+
+document.addEventListener('keydown', function(e){
+ if(e.key === "Enter" && q("game").style.display === "block"){
+  check();
+ }
+});
 </script>
 
 </body>
