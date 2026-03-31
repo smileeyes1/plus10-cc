@@ -15,6 +15,8 @@ button{padding:10px 20px;margin:5px;border:none;border-radius:12px;background:#f
 @keyframes boom{to{transform:translate(var(--x),var(--y)) scale(0);opacity:0}}
 .item{font-size:50px;margin:5px;}
 .number{font-size:36px;font-weight:bold;color:#ff6b6b;margin:5px;}
+.progress{width:100%;background:#eee;border-radius:10px;margin:10px 0;}
+.bar{height:20px;background:#ffd166;width:0%;border-radius:10px;}
 </style>
 </head>
 <body>
@@ -41,7 +43,7 @@ button{padding:10px 20px;margin:5px;border:none;border-radius:12px;background:#f
 <div id="game" style="display:none;">
 <h2>الآن نلعب ونحسب! 🎮</h2>
 <p>⭐ النقاط: <span id="score">٠</span> | 🎚 المستوى: <span id="level">١</span></p>
-<div class="progress"><div class="bar" id="bar" style="height:20px;background:#ffd166;width:0%;border-radius:10px;"></div></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
 <div class="story" id="gameStory"></div>
 <div class="visual" id="gameVisual"></div>
 <input id="answer" placeholder="اكتب الرقم هنا"><br>
@@ -52,10 +54,9 @@ button{padding:10px 20px;margin:5px;border:none;border-radius:12px;background:#f
 </div>
 
 <script>
-// العناصر
+// عناصر
 const q=id=>document.getElementById(id);
-let student="";
-let step=0,steps=[],x=0,y=0,correct=0;
+let student="",step=0,steps=[],x=0,y=0,correct=0;
 
 // بيانات المرحلة التعليمية
 steps=[
@@ -66,13 +67,28 @@ steps=[
   {text:"رائع! أنت فهمت الجمع، الآن هيا لنلعب!",items:[]}
 ];
 
+// تحويل الأرقام العربية
+function arabic(n){return n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);}
+function parseArabicNumber(str){return parseInt(str.replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)));}
+
+// الصوت
+function speakText(text,rate=1,pitch=1){
+  speechSynthesis.cancel();
+  let u=new SpeechSynthesisUtterance(text);
+  u.lang="ar-SA";
+  u.rate=rate;
+  u.pitch=pitch;
+  speechSynthesis.speak(u);
+}
+
 // ابدأ المرحلة التعليمية
 function startLesson(){
-  student=q("studentName").value.trim()||"طفلي";
+  student=q("studentName").value.trim() || "طفلي";
   q("welcome").style.display="none";
   q("lesson").style.display="block";
   step=0;
   showStep();
+  setTimeout(()=>{q("nextBtn").style.display="inline-block";},2000);
 }
 
 // عرض خطوة
@@ -95,32 +111,23 @@ function nextStep(){
   showStep();
 }
 
-// تحويل الأرقام العربية للعرض
-const arabic=n=>n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
-
-// الصوت
-function speakText(text,rate=1,pitch=1){
-  let u=new SpeechSynthesisUtterance(text);
-  u.lang="ar-SA";
-  u.rate=rate;
-  u.pitch=pitch;
-  speechSynthesis.speak(u);
-}
-
-// ---------- اللعبة بعد الشرح ----------
+// ---------- اللعبة ----------
 let score=0,level=1,progress=0,difficulty=1,wrong=0,hintCount=0;
 const items=["🍎","⭐","🍬","🍌"];
 
 function startGame(){
   q("lesson").style.display="none";
   q("game").style.display="block";
+  score=0; level=1; progress=0; difficulty=1;
   newQ();
   update();
 }
 
 function newQ(){
+  let maxY = Math.min(10-x, difficulty*2);
+  if(maxY<1) maxY=1;
   x=Math.floor(Math.random()*5)+1;
-  y=Math.floor(Math.random()*(Math.min(10-x,difficulty*2)))+1;
+  y=Math.floor(Math.random()*maxY)+1;
   correct=x+y;
   let item=items[Math.floor(Math.random()*items.length)];
   q("gameStory").innerHTML=`${student}، لديك ${arabic(x)} ${item} ثم أضفت ${arabic(y)} أخرى. كم مجموعها؟`;
@@ -135,7 +142,7 @@ function check(){
   let v=q("answer").value.trim();
   if(!v){q("msg").innerHTML=`اكتب الرقم يا ${student}!`; speakText("اكتب الرقم من فضلك"); return;}
   if(!/^[0-9٠-٩]+$/.test(v)){q("msg").innerHTML="اكتب رقماً صحيحاً"; speakText("الرجاء كتابة رقم صحيح"); return;}
-  v=parseInt(v.replace(/[٠-٩]/g,d=>"0123456789"[ "٠١٢٣٤٥٦٧٨٩".indexOf(d)] ));
+  v=parseArabicNumber(v);
   if(v===correct){
     score+=10; progress+=20; wrong=0;
     q("msg").innerHTML=`🌟 أحسنت يا ${student}!`;
@@ -154,7 +161,8 @@ function check(){
 function hint(){
   hintCount++;
   if(hintCount===1){q("msg").innerHTML=`ابدأ بالعد من ${arabic(x)}`; speakText("ابدأ بالعد من "+arabic(x));}
-  if(hintCount===2){q("msg").innerHTML="الجمع يعني جمع الأشياء معاً لتعرف الكل"; speakText("الجمع يعني جمع الأشياء معاً");}
+  else if(hintCount===2){q("msg").innerHTML="الجمع يعني جمع الأشياء معاً لتعرف الكل"; speakText("الجمع يعني جمع الأشياء معاً");}
+  else {q("msg").innerHTML="هذا كل ما لدي من تلميحات"; speakText("هذا كل ما لدي من تلميحات");}
 }
 
 function update(){
