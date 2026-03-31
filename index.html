@@ -1,304 +1,89 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>🧠 أسطورة أبطال الأعداد – النسخة الحكيمة الذكية</title>
+  <meta charset="UTF-8">
+  <title>قصة تعليمية للأطفال</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background-color: #f0f8ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
 
-<style>
-body{
-  margin:0;
-  font-family:Tahoma,Arial,sans-serif;
-  background:linear-gradient(#061826,#0a1a2f);
-  color:#fff;
-  text-align:center;
-}
+    .container {
+      width: 80%;
+      max-width: 600px;
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
 
-.box{
-  width:520px;
-  margin:25px auto;
-  padding:25px;
-  border-radius:22px;
-  background:rgba(255,255,255,0.08);
-  box-shadow:0 0 30px #00eaff;
-}
+    .story-text {
+      font-size: 22px;
+      line-height: 1.8;
+      color: #333;
+      margin-bottom: 30px;
+      min-height: 120px;
+    }
 
-.fullscreen{
-  position:fixed;
-  inset:0;
-  background:linear-gradient(#041422,#061826);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-}
+    button {
+      font-size: 20px;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 10px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
 
-button{
-  padding:12px 30px;
-  font-size:20px;
-  border-radius:14px;
-  background:#00eaff;
-  border:none;
-  cursor:pointer;
-  margin:6px;
-}
-
-input{
-  font-size:22px;
-  padding:10px;
-  width:220px;
-  border-radius:12px;
-  text-align:center;
-}
-
-.math{font-size:28px;margin:10px 0;color:#ffe066}
-#msg{min-height:120px;white-space:pre-line;font-size:20px;margin-top:8px}
-
-.soft{background:#ffd166;color:#000}
-.star{background:#ffe066;color:#000}
-.next{background:#06d6a0;color:#000}
-
-.hearts{
-  font-size:36px;
-  margin:6px 0;
-}
-
-.hearts span{
-  display:inline-block;
-  animation:pulse 1s infinite;
-}
-
-#mentor{
-  font-size:20px;
-  color:#ffd166;
-  margin-bottom:10px;
-}
-
-#story{
-  margin:10px 0;
-  font-size:18px;
-  color:#06d6a0;
-}
-
-@keyframes pulse{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.25)}
-  100%{transform:scale(1)}
-}
-</style>
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
-
 <body>
 
-<!-- المقدمة -->
-<div id="intro" class="fullscreen">
-  <h1>🌱 مرحبًا أيها البطل الصغير</h1>
-  <p style="font-size:22px;line-height:1.8">
-    🔢 الأعداد أصدقاء<br>
-    ➕ الجمع يعني نضم الأشياء<br>
-    🧠 التفكير بهدوء هو القوة الحقيقية
-  </p>
-  <button onclick="startGame()">✅ ابدأ الرحلة</button>
-</div>
-
-<!-- اللعبة -->
-<div id="game" class="box" style="display:none">
-
-  <h2>🦸‍♂️ أسطورة أبطال الأعداد</h2>
-
-  <div id="mentor"></div>
-  <div id="story"></div>
-
-  <div>⭐ النقاط: <span id="score">٠</span></div>
-
-  <div id="question"></div>
-
-  <input id="answer" type="number" placeholder="اكتب الجواب">
-  <br>
-
-  <button onclick="attack()">⚡ أجيب</button>
-  <br>
-
-  <button id="rethinkBtn" class="soft" style="display:none" onclick="smartHint()">🔄 نفكّر بهدوء</button>
-  <button id="starBtn" class="star" style="display:none" onclick="giveStar()">⭐ نجمة حكمة</button>
-  <br>
-
-  <button id="nextBtn" class="next" style="display:none" onclick="nextAfterMistake()">✅ نكمل الرحلة</button>
-
-  <div id="msg"></div>
+<div class="container">
+  <div id="story" class="story-text"></div>
+  <button id="nextBtn">أنا جاهز 🌟</button>
 </div>
 
 <script>
-const intro = document.getElementById("intro");
-const game = document.getElementById("game");
-const question = document.getElementById("question");
-const answer = document.getElementById("answer");
-const scoreSpan = document.getElementById("score");
-const rethinkBtn = document.getElementById("rethinkBtn");
-const starBtn = document.getElementById("starBtn");
-const nextBtn = document.getElementById("nextBtn");
-const mentorBox = document.getElementById("mentor");
-const storyBox = document.getElementById("story");
+  const storyParts = [
+    "كان يا ما كان، عصفورٌ صغير يعيش فوق شجرة عالية، وكان يحب الطيران واللعب.",
 
-const names = {
-  0:"صفر",1:"واحد",2:"اثنان",3:"ثلاثة",4:"أربعة",
-  5:"خمسة",6:"ستة",7:"سبعة",8:"ثمانية",9:"تسعة",10:"عشرة"
-};
+    "في يومٍ من الأيام، رأى فراشةً تطير بعيدًا، فشعر بالحماس وقال: أريد أن ألحق بها الآن!",
 
-const mentorWisdom=[
-  "🧙‍♂️ الحكيم نور: فكّر بهدوء",
-  "🧙‍♂️ الحكيم نور: الخطأ بداية الحكمة",
-  "🧙‍♂️ الحكيم نور: العدّ صديقك",
-  "🧙‍♂️ الحكيم نور: الشجاعة في المحاولة"
-];
+    "لكن العصفور تذكّر كلام أمّه: فكّر قبل أن تقرّر، واسأل إذا لم تكن متأكدًا.",
 
-const wiseMsgs=[
- "🌱 أنت تتعلّم، وهذا رائع",
- "🧠 التفكير أهم من السرعة",
- "💚 الخطأ معلّم لطيف",
- "✨ كل محاولة تزيد قوتك"
-];
+    "توقّف العصفور، وفكّر قليلًا، ثم قال: سأطير قليلًا فقط حتى أبقى آمنًا.",
 
-let x=1,y=1;
-let score=0;
-let streak=0;
-let level=1;
-let hadMistake=false;
-let mistakeMemory={};
+    "طار العصفور وعاد سعيدًا، وقال: التفكير يجعلني ذكيًا، وليس التسرّع.",
 
-/* أدوات */
-function arabic(n){
-  return n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
-}
+    "✨ الحكمة: الطفل الذكي يفكّر، ويسأل، ويختار ما يحميه ويرضي الله."
+  ];
 
-function hearts(n){
-  let h="";
-  for(let i=0;i<n;i++) h+="<span>❤️</span> ";
-  return h;
-}
+  let index = 0;
+  const storyDiv = document.getElementById("story");
+  const button = document.getElementById("nextBtn");
 
-function msg(t){
-  document.getElementById("msg").textContent=t;
-}
+  storyDiv.textContent = storyParts[index];
 
-function mentorSpeak(){
-  mentorBox.textContent =
-    mentorWisdom[Math.floor(Math.random()*mentorWisdom.length)];
-}
-
-/* قصة التقدم */
-function storyProgress(){
-  if(score>=150) return "👑 أصبحت بطل الحكمة الرقمية";
-  if(score>=100) return "🐉 هزمت وحش الأعداد";
-  if(score>=50)  return "🏰 وصلت بوابة الحكمة";
-  return "🌱 تبدأ رحلتك الأولى";
-}
-
-/* تحكم المستوى */
-function adjustLevel(){
-  if(streak>=3) level++;
-  if(hadMistake && level>1) level--;
-}
-
-/* بدء اللعبة */
-function startGame(){
-  intro.style.display="none";
-  game.style.display="block";
-  newQuestion();
-}
-
-/* سؤال جديد */
-function newQuestion(){
-  rethinkBtn.style.display="none";
-  starBtn.style.display="none";
-  nextBtn.style.display="none";
-  msg("");
-  answer.value="";
-  mentorSpeak();
-  adjustLevel();
-
-  storyBox.textContent = storyProgress();
-
-  let max=Math.min(10,3+level*2);
-  x=Math.floor(Math.random()*max)+1;
-  y=Math.floor(Math.random()*(max-x+1));
-
-  question.innerHTML=`
-    <b>${names[x]}</b> (${arabic(x)})
-    <div class="hearts">${hearts(x)}</div>
-    +
-    <b>${names[y]}</b> (${arabic(y)})
-    <div class="hearts">${hearts(y)}</div>
-    <div class="math">${arabic(x)} + ${arabic(y)} = ؟</div>
-    <div>كم أصبح المجموع؟</div>
-  `;
-}
-
-/* تفكير هادئ */
-function smartHint(){
-  question.innerHTML=`
-    🤔 لنفكّر معًا
-    <p>كان لدينا ${arabic(x)} قلوب</p>
-    <div class="hearts">${hearts(x)}</div>
-    <p>ثم أضفنا ${arabic(y)} قلوب</p>
-    <div class="hearts">${hearts(y)}</div>
-    <p>🧠 الآن نعدّ الجميع</p>
-  `;
-}
-
-/* نجمة حكمة */
-function giveStar(){
-  msg("⭐ نجمة حكمة ⭐\nأخذت وقتك وفكّرت… هذا تصرّف بطل حقيقي 🦸‍♂️");
-}
-
-/* حكمة ذكية حسب الخطأ */
-function wiseHint(ans){
-  let key=`${x}+${y}`;
-  mistakeMemory[key]=(mistakeMemory[key]||0)+1;
-
-  if(mistakeMemory[key]>=2)
-    return "🧠 لاحظت أنك تفكّر هنا كثيرًا… التفكير قوة ❤️";
-
-  if(ans > x+y)
-    return "🔍 يبدو أنك عددت أكثر من اللازم… لنعد ببطء";
-
-  return wiseMsgs[Math.floor(Math.random()*wiseMsgs.length)];
-}
-
-/* فحص الإجابة */
-function attack(){
-  const ans=parseInt(answer.value);
-  if(isNaN(ans)) return;
-
-  if(ans===x+y){
-    score+=10;
-    streak++;
-    hadMistake=false;
-    scoreSpan.textContent=arabic(score);
-
-    if(streak>=3){
-      starBtn.style.display="inline-block";
-      msg("🏆 تركيز رائع!\nالتفكير الهادئ هو سر النجاح");
-      streak=0;
-    }else{
-      msg("✅ صحيح!\nالأجمل أنك فكّرت قبل أن تجيب 🧠✨");
-      setTimeout(newQuestion,1200);
+  button.addEventListener("click", () => {
+    index++;
+    if (index < storyParts.length) {
+      storyDiv.textContent = storyParts[index];
+    } else {
+      storyDiv.textContent = "أحسنت 👏 لقد أنهيت القصة. خذ وقتك للتفكير.";
+      button.style.display = "none";
     }
-  }else{
-    hadMistake=true;
-    streak=0;
-    smartHint();
-    rethinkBtn.style.display="inline-block";
-    nextBtn.style.display="inline-block";
-    msg(wiseHint(ans));
-    answer.value="";
-  }
-}
-
-/* متابعة بعد الخطأ */
-function nextAfterMistake(){
-  starBtn.style.display="inline-block";
-  newQuestion();
-}
+  });
 </script>
 
 </body>
