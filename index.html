@@ -23,7 +23,7 @@ body{
 }
 
 .box{
-  width:520px;
+  width:540px;
   max-width:95%;
   margin:30px auto;
   padding:25px;
@@ -42,17 +42,24 @@ button{
   margin:6px;
 }
 
-.math{font-size:32px;margin:15px 0;color:#ffe066}
-.hearts span{font-size:28px}
+.math{font-size:34px;margin:15px 0;color:#ffe066}
+.hearts span{font-size:30px}
 
-#mentor{color:#ffd166;font-size:20px;margin:12px;min-height:40px}
+#mentor{color:#ffd166;font-size:20px;margin:14px;min-height:45px}
 #story{color:#06d6a0;font-size:18px;margin:8px}
-#msg{min-height:140px;font-size:18px;white-space:pre-line}
+#msg{min-height:150px;font-size:18px;white-space:pre-line}
 
 .soft{background:#ffd166;color:#000}
 .next{background:#06d6a0;color:#000}
 .reset{background:#ef476f;color:#000}
 .reflect{background:#9bf6ff;color:#000}
+.success{animation:glow 0.6s ease-in-out 2}
+
+@keyframes glow{
+  0%{box-shadow:0 0 10px #00eaff}
+  50%{box-shadow:0 0 40px #ffd166}
+  100%{box-shadow:0 0 10px #00eaff}
+}
 </style>
 </head>
 
@@ -69,50 +76,54 @@ button{
   <button onclick="startLesson()">🚀 ابدأ الرحلة</button>
 </div>
 
-<!-- التمهيد التعليمي -->
+<!-- التمهيد -->
 <div id="lesson" class="box" style="display:none">
-
-<h2>📜 درس الحكمة</h2>
-<div id="mentor"></div>
-<div id="msg"></div>
-
-<button id="lessonBtn" onclick="nextLesson()">➡️ تابع</button>
-
+  <h2>📜 درس الحكمة</h2>
+  <div id="mentor"></div>
+  <div id="msg"></div>
+  <button id="lessonBtn" onclick="nextLesson()">➡️ تابع</button>
 </div>
 
 <!-- اللعبة -->
 <div id="game" class="box" style="display:none">
+  <h2>🌟 رحلة الحكمة</h2>
+  <div id="story"></div>
+  <div id="mentor"></div>
 
-<h2>🌟 رحلة الحكمة</h2>
-<div id="story"></div>
-<div id="mentor"></div>
+  <div>
+    ⭐ النقاط: <span id="score">٠</span>
+    &nbsp; | &nbsp;
+    🎚 المستوى: <span id="level">١</span>
+  </div>
 
-<div>
-⭐ النقاط: <span id="score">٠</span>
-&nbsp; | &nbsp;
-🎚 المستوى: <span id="level">١</span>
-</div>
+  <div id="question"></div>
+  <input id="answer" type="number" placeholder="اكتب الجواب">
+  <br>
 
-<div id="question"></div>
-<input id="answer" type="number" placeholder="اكتب الجواب">
-<br>
+  <button onclick="attack()">💡 أجيب</button>
+  <button class="reflect" onclick="reflect()">🧠 أفكر أولًا</button>
 
-<button onclick="attack()">💡 أجيب</button>
-<button class="reflect" onclick="reflect()">🧠 أفكر أولًا</button>
+  <div id="msg"></div>
 
-<div id="msg"></div>
-
-<hr>
-<button class="reset" onclick="resetProgress()">🔄 تصفير التقدم</button>
-
+  <hr>
+  <button class="reset" onclick="resetProgress()">🔄 تصفير التقدم</button>
 </div>
 
 <script>
 /* ===== الحالة ===== */
 let state={score:0,level:1,streak:0};
 
+/* ===== تحميل / حفظ ===== */
+function load(){
+  let s=localStorage.getItem("noorState");
+  if(s) state=JSON.parse(s);
+}
+function save(){
+  localStorage.setItem("noorState",JSON.stringify(state));
+}
+
 /* ===== عناصر ===== */
-const intro=document.getElementById("intro");
+const intro=intro=document.getElementById("intro");
 const lesson=document.getElementById("lesson");
 const game=document.getElementById("game");
 const mentorBox=document.getElementById("mentor");
@@ -125,65 +136,47 @@ const storyBox=document.getElementById("story");
 
 /* ===== أدوات ===== */
 function arabic(n){return n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);}
-function hearts(n){return "❤️ ".repeat(n);}
+function hearts(n){return "<span>❤️</span>".repeat(n);}
 
 /* ===== الحكيم ===== */
 function mentor(text){
   mentorBox.textContent="🧙‍♂️ نور: "+text;
 }
 
-/* ===== التمهيد الذكي ===== */
+/* ===== التمهيد ===== */
 let lessonStep=0;
-
 function startLesson(){
   intro.style.display="none";
   lesson.style.display="block";
   nextLesson();
 }
-
 function nextLesson(){
   lessonStep++;
-
   if(lessonStep===1){
-    mentor("قبل أن تحسب، يجب أن تفهم.");
-    msgBox.textContent=
-`🌱 عندما نُضيف
-فنحن نجمع أشياء متفرقة
-في مكان واحد`;
-  }
-
-  else if(lessonStep===2){
-    mentor("انظر… هذه مجموعة أولى");
-    msgBox.innerHTML=`${hearts(3)}<br>هل عددها واضح؟`;
-  }
-
-  else if(lessonStep===3){
-    mentor("والآن نضيف إليها مجموعة ثانية");
-    msgBox.innerHTML=`${hearts(3)} + ${hearts(2)}`;
-  }
-
-  else if(lessonStep===4){
-    mentor("الذكاء لا يسرع… بل يعد بهدوء");
-    msgBox.textContent=
-`نعد جميع القلوب
-قلب قلب
-حتى نصل للحقيقة`;
-  }
-
-  else{
-    mentor("الآن … أنت مستعد للرحلة");
-    msgBox.textContent="✨ الفهم يسبق الإجابة";
-    document.getElementById("lessonBtn").textContent="🎮 ابدأ التحدي";
-    document.getElementById("lessonBtn").onclick=startGame;
+    mentor("الفهم أهم من السرعة");
+    msgBox.textContent="🌱 نحن لا نخمن… نحن نعد";
+  }else if(lessonStep===2){
+    mentor("انظر إلى القلوب");
+    msgBox.innerHTML=hearts(3);
+  }else if(lessonStep===3){
+    mentor("نضيف بهدوء");
+    msgBox.innerHTML=hearts(3)+" + "+hearts(2);
+  }else{
+    mentor("أنت مستعد");
+    msgBox.textContent="✨ الرحلة تبدأ الآن";
+    lessonBtn.textContent="🎮 ابدأ التحدي";
+    lessonBtn.onclick=startGame;
   }
 }
 
-/* ===== بدء اللعبة ===== */
+/* ===== اللعبة ===== */
 let x=1,y=1;
 
 function startGame(){
   lesson.style.display="none";
   game.style.display="block";
+  load();
+  updateUI();
   newQuestion();
 }
 
@@ -191,10 +184,10 @@ function newQuestion(){
   answer.value="";
   let max=3+state.level*2;
   x=Math.floor(Math.random()*max)+1;
-  y=Math.floor(Math.random()*(max-x+1));
+  y=Math.floor(Math.random()*(max-x))+1; // لا صفر
 
-  mentor("خذ نفسًا… ثم فكّر");
-  storyBox.textContent="🌱 رحلة الفهم مستمرة";
+  mentor("فكر قبل أن تجيب");
+  storyBox.textContent="🌱 المعرفة تنمو بالتأمل";
 
   question.innerHTML=`
     <div class="math">${arabic(x)} + ${arabic(y)} = ؟</div>
@@ -204,8 +197,9 @@ function newQuestion(){
 
 /* ===== التفكير ===== */
 function reflect(){
-  mentor("ما أول خطوة؟ العد أم التخمين؟");
-  msgBox.textContent="🧠 الحكيم يرى الطريق قبل أن يمشيه";
+  mentor("قسّم المسألة");
+  msgBox.innerHTML=
+    hearts(x)+"<br>ثم أضف إليها<br>"+hearts(y);
 }
 
 /* ===== التحقق ===== */
@@ -214,26 +208,41 @@ function attack(){
   if(ans===x+y){
     state.score+=10;
     state.streak++;
-    mentor("أحسنت… الفهم ينمو");
+    mentor("أحسنت");
     msgBox.textContent="✅ إجابة صحيحة";
+    game.classList.add("success");
+
     if(state.streak>=3){
       state.level++;
       state.streak=0;
-      msgBox.textContent+="\n🌟 ترقيت بالمستوى";
+      msgBox.textContent+="\n🎉 الحكيم فخور بك!";
     }
-    setTimeout(newQuestion,1000);
+
+    save();
+    setTimeout(()=>{
+      game.classList.remove("success");
+      newQuestion();
+    },900);
+
   }else{
     state.streak=0;
-    mentor("لا بأس… نعد بهدوء من جديد");
-    msgBox.textContent="🌱 الخطأ تدريب للعقل";
+    mentor("لا بأس");
+    msgBox.textContent="🌱 نعد مرة أخرى بهدوء";
   }
 
+  updateUI();
+}
+
+function updateUI(){
   scoreSpan.textContent=arabic(state.score);
   levelSpan.textContent=arabic(state.level);
 }
 
 /* ===== إعادة ===== */
-function resetProgress(){location.reload();}
+function resetProgress(){
+  localStorage.removeItem("noorState");
+  location.reload();
+}
 </script>
 
 </body>
