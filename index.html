@@ -42,21 +42,68 @@ button{
   margin:6px;
 }
 
-.math{font-size:34px;margin:15px 0;color:#ffe066}
-.hearts span{font-size:30px}
+button:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+}
 
-.mentor{color:#ffd166;font-size:20px;margin:14px;min-height:45px}
-.story{color:#06d6a0;font-size:18px;margin:8px}
-.msg{min-height:150px;font-size:18px;white-space:pre-line}
+.math{
+  font-size:34px;
+  margin:15px 0;
+  color:#ffe066
+}
 
-.reset{background:#ef476f;color:#000}
-.reflect{background:#9bf6ff;color:#000}
-.success{animation:glow 0.6s ease-in-out 2}
+.hearts span{
+  font-size:30px;
+  display:inline-block;
+}
+
+.mentor{
+  color:#ffd166;
+  font-size:20px;
+  margin:14px;
+  min-height:45px
+}
+
+.story{
+  color:#06d6a0;
+  font-size:18px;
+  margin:8px
+}
+
+.msg{
+  min-height:140px;
+  font-size:18px;
+  white-space:pre-line
+}
+
+.reset{
+  background:#ef476f;
+  color:#000
+}
+
+.reflect{
+  background:#9bf6ff;
+  color:#000
+}
+
+.success{
+  animation:glow 0.6s ease-in-out 2
+}
 
 @keyframes glow{
   0%{box-shadow:0 0 10px #00eaff}
   50%{box-shadow:0 0 40px #ffd166}
   100%{box-shadow:0 0 10px #00eaff}
+}
+
+input{
+  padding:10px;
+  font-size:18px;
+  border-radius:12px;
+  border:none;
+  width:160px;
+  text-align:center;
 }
 </style>
 </head>
@@ -74,7 +121,7 @@ button{
   <button onclick="startLesson()">🚀 ابدأ الرحلة</button>
 </div>
 
-<!-- التمهيد -->
+<!-- الدرس -->
 <div id="lesson" class="box" style="display:none">
   <h2>📜 درس الحكمة</h2>
   <div id="lessonMentor" class="mentor"></div>
@@ -95,10 +142,12 @@ button{
   </div>
 
   <div id="question"></div>
-  <input id="answer" type="text" placeholder="اكتب الجواب">
-  <br>
 
-  <button onclick="attack()">💡 أجيب</button>
+  <input id="answer" type="text" placeholder="اكتب الجواب">
+
+  <br><br>
+
+  <button id="answerBtn" onclick="attack()">💡 أجيب</button>
   <button class="reflect" onclick="reflect()">🧠 أفكر أولًا</button>
 
   <div id="gameMsg" class="msg"></div>
@@ -109,9 +158,9 @@ button{
 
 <script>
 /* ===== الحالة ===== */
-let state={score:0,level:1,streak:0};
+let state = { score:0, level:1, streak:0 };
 
-/* ===== أدوات أرقام ===== */
+/* ===== أدوات ===== */
 function arabic(n){
   return n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
 }
@@ -122,127 +171,165 @@ function hearts(n){
   return "<span>❤️</span>".repeat(n);
 }
 
-/* ===== تحميل / حفظ ===== */
+/* ===== التخزين ===== */
 function load(){
-  let s=localStorage.getItem("noorState");
-  if(s) state=JSON.parse(s);
+  const s = localStorage.getItem("noorState");
+  if(s) state = JSON.parse(s);
 }
 function save(){
-  localStorage.setItem("noorState",JSON.stringify(state));
+  localStorage.setItem("noorState", JSON.stringify(state));
 }
 
 /* ===== عناصر ===== */
-const intro=document.getElementById("intro");
-const lesson=document.getElementById("lesson");
-const game=document.getElementById("game");
+const intro = document.getElementById("intro");
+const lesson = document.getElementById("lesson");
+const game = document.getElementById("game");
 
-const lessonMentor=document.getElementById("lessonMentor");
-const lessonMsg=document.getElementById("lessonMsg");
-const gameMentor=document.getElementById("gameMentor");
-const gameMsg=document.getElementById("gameMsg");
+const lessonMentor = document.getElementById("lessonMentor");
+const lessonMsg = document.getElementById("lessonMsg");
 
-const scoreSpan=document.getElementById("score");
-const levelSpan=document.getElementById("level");
-const question=document.getElementById("question");
-const answer=document.getElementById("answer");
-const storyBox=document.getElementById("gameStory");
+const gameMentor = document.getElementById("gameMentor");
+const gameMsg = document.getElementById("gameMsg");
+
+const scoreSpan = document.getElementById("score");
+const levelSpan = document.getElementById("level");
+const question = document.getElementById("question");
+const answer = document.getElementById("answer");
+const answerBtn = document.getElementById("answerBtn");
+const storyBox = document.getElementById("gameStory");
 
 /* ===== الحكيم ===== */
-function mentor(box,text){
-  box.textContent="🧙‍♂️ نور: "+text;
+function mentor(box, text){
+  box.textContent = "🧙‍♂️ نور: " + text;
 }
 
-/* ===== التمهيد ===== */
-let lessonStep=0;
+/* ===== الدرس ===== */
+let lessonStep = 0;
+
 function startLesson(){
-  intro.style.display="none";
-  lesson.style.display="block";
+  intro.style.display = "none";
+  lesson.style.display = "block";
   nextLesson();
 }
+
 function nextLesson(){
   lessonStep++;
-  if(lessonStep===1){
+  if(lessonStep === 1){
     mentor(lessonMentor,"الفهم أهم من السرعة");
-    lessonMsg.textContent="🌱 نحن لا نخمن… نحن نعد";
-  }else if(lessonStep===2){
+    lessonMsg.textContent = "🌱 نحن لا نخمن، نحن نعد";
+  }else if(lessonStep === 2){
     mentor(lessonMentor,"انظر إلى القلوب");
-    lessonMsg.innerHTML=hearts(3);
-  }else if(lessonStep===3){
+    lessonMsg.innerHTML = hearts(3);
+  }else if(lessonStep === 3){
     mentor(lessonMentor,"نضيف بهدوء");
-    lessonMsg.innerHTML=hearts(3)+" + "+hearts(2);
+    lessonMsg.innerHTML = hearts(3)+" + "+hearts(2);
   }else{
     mentor(lessonMentor,"أنت مستعد");
-    lessonMsg.textContent="✨ الرحلة تبدأ الآن";
-    document.getElementById("lessonBtn").textContent="🎮 ابدأ التحدي";
-    document.getElementById("lessonBtn").onclick=startGame;
+    lessonMsg.textContent = "✨ الرحلة تبدأ الآن";
+    const btn = document.getElementById("lessonBtn");
+    btn.textContent = "🎮 ابدأ التحدي";
+    btn.onclick = startGame;
   }
 }
 
 /* ===== اللعبة ===== */
-let x=1,y=1;
+let x = 1, y = 1;
+
 function startGame(){
-  lesson.style.display="none";
-  game.style.display="block";
+  lesson.style.display = "none";
+  game.style.display = "block";
   load();
   updateUI();
   newQuestion();
 }
 
 function newQuestion(){
-  answer.value="";
-  let max=3+state.level*2;
-  x=Math.floor(Math.random()*max)+1;
-  y=Math.floor(Math.random()*(max-x))+1;
+  answer.value = "";
+  answer.focus();
+  gameMsg.textContent = "";
+  answerBtn.disabled = false;
 
-  mentor(gameMentor,"فكر قبل أن تجيب");
-  storyBox.textContent="🌱 المعرفة تنمو بالتأمل";
+  const max = 3 + state.level * 2;
+  x = Math.floor(Math.random() * max) + 1;
+  y = Math.floor(Math.random() * max) + 1;
 
-  question.innerHTML=`
+  mentor(gameMentor,"فكّر بهدوء");
+  storyBox.textContent = "🌱 المعرفة تنمو مع التأمل";
+
+  question.innerHTML = `
     <div class="math">${arabic(x)} + ${arabic(y)} = ؟</div>
-    <div>${hearts(x)} + ${hearts(y)}</div>
+    <div class="hearts">${hearts(x)} + ${hearts(y)}</div>
   `;
 }
 
 /* ===== التفكير ===== */
 function reflect(){
   mentor(gameMentor,"قسّم المسألة");
-  gameMsg.innerHTML=
+  gameMsg.innerHTML =
     hearts(x)+"<br>ثم أضف إليها<br>"+hearts(y);
 }
 
 /* ===== التحقق ===== */
 function attack(){
-  let ans=parseInt(toEnglishDigits(answer.value));
-  if(ans===x+y){
-    state.score+=10;
+  let val = toEnglishDigits(answer.value.trim());
+  let ans = parseInt(val);
+
+  if(val === "" || isNaN(ans)){
+    mentor(gameMentor,"اكتب رقمًا أولًا");
+    answer.focus();
+    return;
+  }
+
+  if(ans < 0 || ans > 50){
+    mentor(gameMentor,"هل هذا منطقي؟");
+    answer.focus();
+    return;
+  }
+
+  answerBtn.disabled = true;
+
+  if(ans === x + y){
+    state.score += 10;
     state.streak++;
-    mentor(gameMentor,"أحسنت");
-    gameMsg.textContent="✅ إجابة صحيحة";
+    mentor(gameMentor,"أحسنت 🌟");
+    gameMsg.textContent = "✅ إجابة صحيحة";
     game.classList.add("success");
 
-    if(state.streak>=3){
+    if(state.streak >= 3){
       state.level++;
-      state.streak=0;
-      gameMsg.textContent+="\n🎉 الحكيم فخور بك!";
+      state.streak = 0;
+      gameMsg.textContent += "\n🎉 مستوى أعلى!";
     }
 
     save();
+    updateUI();
+
     setTimeout(()=>{
       game.classList.remove("success");
       newQuestion();
-    },900);
+    }, 900);
+
   }else{
-    state.streak=0;
+    state.streak = 0;
     mentor(gameMentor,"لا بأس");
-    gameMsg.innerHTML=hearts(x)+" "+hearts(y)+"<br>عدّهم بهدوء";
+    gameMsg.innerHTML =
+      hearts(x)+" "+hearts(y)+"<br>عدّهم بهدوء ثم أعد المحاولة";
+    answer.value = "";
+    answer.focus();
+    answerBtn.disabled = false;
   }
-  updateUI();
 }
 
+/* ===== واجهة ===== */
 function updateUI(){
-  scoreSpan.textContent=arabic(state.score);
-  levelSpan.textContent=arabic(state.level);
+  scoreSpan.textContent = arabic(state.score);
+  levelSpan.textContent = arabic(state.level);
 }
+
+/* ===== Enter ===== */
+answer.addEventListener("keydown", e=>{
+  if(e.key === "Enter") attack();
+});
 
 /* ===== إعادة ===== */
 function resetProgress(){
