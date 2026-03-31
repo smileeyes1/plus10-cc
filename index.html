@@ -3,185 +3,167 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مغامرة لولو الذكية</title>
+<title>مرحلة تعليمية للجمع - الحكيم نور 🧙‍♂️</title>
 <style>
-body{
- margin:0;
- font-family:Tahoma;
- background:linear-gradient(#4facfe,#00f2fe);
- color:#fff;
- display:flex;
- justify-content:center;
- align-items:center;
- height:100vh;
- overflow:hidden;
-}
-#welcome,#game{
- width:650px; max-width:95%; 
- background:rgba(0,0,0,0.25); 
- padding:25px; 
- border-radius:25px; 
- text-align:center; 
- position:relative;
-}
-input{
- font-size:26px; 
- width:200px; 
- padding:8px; 
- border-radius:10px; 
- border:none; 
- text-align:center; 
- margin:5px;
-}
-button{
- padding:10px 20px; 
- margin:5px; 
- border:none; 
- border-radius:12px; 
- background:#ffd166; 
- cursor:pointer; 
- font-size:16px;
-}
-.character{font-size:60px; transition:0.3s;}
-.jump{transform:translateY(-15px)}
-.shake{animation:shake .3s}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
-.progress{width:100%; height:20px; background:#fff3; border-radius:10px; overflow:hidden; margin:10px 0;}
-.bar{height:100%; width:0%; background:#ffe066; transition:0.4s;}
-.story{font-size:22px;margin:10px}
-.visual{font-size:28px}
-.math{font-size:40px;color:#ffe066}
-.star{position:absolute; font-size:20px; animation:boom 1s forwards;}
+body{margin:0;font-family:Tahoma;background:linear-gradient(#a0e7ff,#b4f8c8);display:flex;justify-content:center;align-items:center;height:100vh;overflow:hidden;}
+#welcome,#lesson,#game{width:700px;max-width:95%;background:rgba(255,255,255,0.9);padding:25px;border-radius:20px;text-align:center;position:relative;}
+input{font-size:22px;width:200px;padding:8px;border-radius:10px;border:1px solid #ccc;text-align:center;margin:5px;}
+button{padding:10px 20px;margin:5px;border:none;border-radius:12px;background:#ffd166;cursor:pointer;font-size:16px;}
+.character{font-size:70px;transition:0.3s;}
+.jump{transform:translateY(-20px) rotate(-15deg);}
+.star{position:absolute;font-size:20px;animation:boom 1s forwards;}
 @keyframes boom{to{transform:translate(var(--x),var(--y)) scale(0);opacity:0}}
+.item{font-size:50px;margin:5px;}
+.number{font-size:36px;font-weight:bold;color:#ff6b6b;margin:5px;}
 </style>
 </head>
 <body>
 
+<!-- شاشة الترحيب -->
 <div id="welcome">
-<h2>مرحباً بك في مغامرة لولو الذكية!</h2>
-<p>أدخل اسم الطالب واسم ولي الأمر لنبدأ اللعبة:</p>
-<input id="studentName" placeholder="اسم الطالب"><br>
-<input id="parentName" placeholder="اسم ولي الأمر"><br>
-<button onclick="startGame()">ابدأ اللعب</button>
+<h2>مرحباً بك في مغامرة الحكيم نور 🧙‍♂️!</h2>
+<p>أدخل اسمك لنبدأ التعلم:</p>
+<input id="studentName" placeholder="اسم الطفل"><br>
+<button onclick="startLesson()">لنبدأ التعلم 🎓</button>
 </div>
 
+<!-- المرحلة التعليمية -->
+<div id="lesson" style="display:none;">
+<div class="character" id="char">🧙‍♂️</div>
+<h2>تعلم الجمع مع الحكيم نور 🧙‍♂️</h2>
+<div id="story" class="item"></div>
+<div id="visual"></div>
+<div id="numbers" class="number"></div>
+<button id="nextBtn" onclick="nextStep()" style="display:none;">التالي ➡️</button>
+</div>
+
+<!-- اللعبة الرئيسية -->
 <div id="game" style="display:none;">
-<div class="character" id="char">🐰</div>
-<h2>مغامرة لولو نحو النجوم 🌟</h2>
+<h2>الآن نلعب ونحسب! 🎮</h2>
 <p>⭐ النقاط: <span id="score">٠</span> | 🎚 المستوى: <span id="level">١</span></p>
-<div class="progress"><div class="bar" id="bar"></div></div>
-<div class="story" id="story"></div>
-<div class="visual" id="visual"></div>
-<input id="answer" placeholder=""><br>
+<div class="progress"><div class="bar" id="bar" style="height:20px;background:#ffd166;width:0%;border-radius:10px;"></div></div>
+<div class="story" id="gameStory"></div>
+<div class="visual" id="gameVisual"></div>
+<input id="answer" placeholder="اكتب الرقم هنا"><br>
 <button onclick="check()">أجب</button>
 <button onclick="hint()">تلميح</button>
-<button onclick="speakAll()">🔊 اقرأ لي</button>
 <div id="msg"></div>
 <div id="explain"></div>
 </div>
 
 <script>
+// العناصر
 const q=id=>document.getElementById(id);
-const arabic=n=>n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
-const toEng=s=>s.replace(/[٠-٩]/g,d=>"0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
+let student="";
+let step=0,steps=[],x=0,y=0,correct=0;
 
-let student="", parent="";
-let x,y,correct,score=0,level=1,progress=0,difficulty=1,wrong=0,hintCount=0;
-
-// عناصر وقصص اللعبة
-const items=[
- {name:"تفاحات", story:"لولو وجد سلة مليئة بالتفاح الأحمر 🍎، وعدها بعناية!"},
- {name:"نجوم", story:"في السماء ليلاً، لمعت النجوم ليلفت انتباه لولو ✨"},
- {name:"حلوى", story:"وجد لولو حلوى لذيذة على الطريق 🍬"},
- {name:"كرات", story:"كانت هناك كرات ملونة تتراقص في الهواء 🟢🔵🔴"}
-];
-const values=[
- "وَإِن تَعُدُّوا نِعْمَتَ اللَّهِ لَا تُحْصُوهَا",
- "يد الله مع الجماعة",
- "من لا يشكر الناس لا يشكر الله",
- "نعمتان مغبون فيهما كثير من الناس"
+// بيانات المرحلة التعليمية
+steps=[
+  {text:"مرحباً يا {name}! أنا الحكيم نور 🧙‍♂️ وسأعلمك الجمع اليوم!",items:[]},
+  {text:"انظر! لدي تفاحة واحدة 🍎",items:["🍎"]},
+  {text:"الآن أضفت تفاحة أخرى 🍎، كم أصبح معي؟",items:["🍎","🍎"]},
+  {text:"دعنا نعدها معاً: واحد… اثنان!",items:["🍎","🍎"],numbers:["١","٢"]},
+  {text:"رائع! أنت فهمت الجمع، الآن هيا لنلعب!",items:[]}
 ];
 
-if(localStorage.save){
- let data=JSON.parse(localStorage.save);
- score=data.score; level=data.level;
+// ابدأ المرحلة التعليمية
+function startLesson(){
+  student=q("studentName").value.trim()||"طفلي";
+  q("welcome").style.display="none";
+  q("lesson").style.display="block";
+  step=0;
+  showStep();
 }
 
+// عرض خطوة
+function showStep(){
+  let s=steps[step];
+  q("story").innerHTML=s.text.replace("{name}",student);
+  q("visual").innerHTML=s.items.map(i=>`<span class="item">${i}</span>`).join("");
+  q("numbers").innerHTML=s.numbers ? s.numbers.join(" ") : "";
+  if(step>0) q("nextBtn").style.display="inline-block"; else q("nextBtn").style.display="none";
+  speakText(s.text.replace("{name}",student),1,1);
+}
+
+// التالي في الشرح
+function nextStep(){
+  step++;
+  if(step>=steps.length){
+    startGame();
+    return;
+  }
+  showStep();
+}
+
+// تحويل الأرقام العربية للعرض
+const arabic=n=>n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
+
+// الصوت
+function speakText(text,rate=1,pitch=1){
+  let u=new SpeechSynthesisUtterance(text);
+  u.lang="ar-SA";
+  u.rate=rate;
+  u.pitch=pitch;
+  speechSynthesis.speak(u);
+}
+
+// ---------- اللعبة بعد الشرح ----------
+let score=0,level=1,progress=0,difficulty=1,wrong=0,hintCount=0;
+const items=["🍎","⭐","🍬","🍌"];
+
 function startGame(){
- student=q("studentName").value.trim()||"طفلي";
- parent=q("parentName").value.trim()||"ولي الأمر";
-q("welcome").style.display="none";
-q("game").style.display="block";
-update(); newQ();
+  q("lesson").style.display="none";
+  q("game").style.display="block";
+  newQ();
+  update();
 }
 
 function newQ(){
- x=Math.floor(Math.random()*9)+1; 
-y=Math.floor(Math.random()*(Math.min(10-x,difficulty*2)))+1; 
-correct=x+y;
-let item=items[Math.floor(Math.random()*items.length)];
-q("story").innerHTML=`🐰 ${student}، ${item.story}<br>معه ${arabic(x)} ثم وجد ${arabic(y)}<br>كم أصبح معه؟`;
-q("visual").innerHTML="⭐".repeat(x)+" + "+"⭐".repeat(y);
-q("answer").value=""; q("msg").innerHTML=""; q("explain").innerHTML=""; hintCount=0;
-// اقرأ السؤال بصوت لطيف
-speakText(`مرحبا ${student}. ${item.story} مع ${arabic(x)} ثم وجد ${arabic(y)}. كم أصبح معه؟`);
-}
-
-function stars(){
-for(let i=0;i<10;i++){
- let s=document.createElement("div"); s.className="star"; s.innerHTML="⭐";
- s.style.left="50%"; s.style.top="50%";
- s.style.setProperty("--x",(Math.random()*200-100)+"px");
- s.style.setProperty("--y",(Math.random()*200-100)+"px");
-q("game").appendChild(s); setTimeout(()=>s.remove(),1000);
-}
+  x=Math.floor(Math.random()*5)+1;
+  y=Math.floor(Math.random()*(Math.min(10-x,difficulty*2)))+1;
+  correct=x+y;
+  let item=items[Math.floor(Math.random()*items.length)];
+  q("gameStory").innerHTML=`${student}، لديك ${arabic(x)} ${item} ثم أضفت ${arabic(y)} أخرى. كم مجموعها؟`;
+  q("gameVisual").innerHTML=item.repeat(x)+" + "+item.repeat(y);
+  q("answer").value="";
+  q("msg").innerHTML="";
+  q("explain").innerHTML="";
+  hintCount=0;
 }
 
 function check(){
-let v=q("answer").value.trim();
-if(!v){q("msg").innerHTML=`اكتب رقم يا ${student}، لا تتردد!`; speakText(`اكتب رقم يا ${student} لا تتردد`); return;}
-if(!/^[0-9٠-٩]+$/.test(v)){q("msg").innerHTML="اكتب رقماً صحيحاً"; speakText("اكتب رقما صحيحا"); return;}
-v=parseInt(toEng(v));
-if(v===correct){
- score+=10; progress+=20; wrong=0;
-q("char").classList.add("jump"); setTimeout(()=>q("char").classList.remove("jump"),300);
-stars();
-let value=values[Math.floor(Math.random()*values.length)];
-q("msg").innerHTML=`🌟 أحسنت يا ${student}! ${value}`;
-q("explain").innerHTML=`${arabic(x)} + ${arabic(y)} = ${arabic(correct)}`;
-// صوت التشجيع عند الإجابة الصحيحة
-speakText(`أحسنت يا ${student}! ${value}`,1.0,1.2);
-if(progress>=100){level++; progress=0; difficulty++; q("msg").innerHTML+=`<br>🎉 لقد انتقلت لمستوى جديد، ${student}!`; speakText(`🎉 لقد انتقلت لمستوى جديد يا ${student}`); }
-save(); update();
-setTimeout(newQ,2500);
-}else{
- wrong++; q("game").classList.add("shake"); setTimeout(()=>q("game").classList.remove("shake"),300);
-if(wrong>=3 && difficulty>1) difficulty--;
-q("msg").innerHTML=`حاول مرة أخرى بهدوء يا ${student} 🌱`;
-speakText(`حاول مرة أخرى بهدوء يا ${student} 🌱`,1.0,0.8); // صوت هادئ عند الخطأ
-save(); update();
-setTimeout(newQ,2500);
-}
+  let v=q("answer").value.trim();
+  if(!v){q("msg").innerHTML=`اكتب الرقم يا ${student}!`; speakText("اكتب الرقم من فضلك"); return;}
+  if(!/^[0-9٠-٩]+$/.test(v)){q("msg").innerHTML="اكتب رقماً صحيحاً"; speakText("الرجاء كتابة رقم صحيح"); return;}
+  v=parseInt(v.replace(/[٠-٩]/g,d=>"0123456789"[ "٠١٢٣٤٥٦٧٨٩".indexOf(d)] ));
+  if(v===correct){
+    score+=10; progress+=20; wrong=0;
+    q("msg").innerHTML=`🌟 أحسنت يا ${student}!`;
+    q("explain").innerHTML=`${arabic(x)} + ${arabic(y)} = ${arabic(correct)}`;
+    speakText(`رائع! أحسنت يا ${student}`);
+    if(progress>=100){level++;progress=0;difficulty++;q("msg").innerHTML+=`<br>🎉 لقد انتقلت لمستوى جديد!`;}
+    update();
+    setTimeout(newQ,2000);
+  } else {
+    wrong++;
+    q("msg").innerHTML=`حاول مرة أخرى يا ${student} 🌱`;
+    speakText("لا بأس، جرب مرة أخرى!");
+  }
 }
 
 function hint(){
- hintCount++;
- if(hintCount===1){q("msg").innerHTML=`ابدأ من ${arabic(x)} وعد ${arabic(y)} خطوات ⭐`; stars(); speakText(`ابدأ من ${arabic(x)} وعد ${arabic(y)} خطوات`);}
- if(hintCount===2){q("msg").innerHTML=`الجمع يعني جمع الأشياء معاً لتعرف الكل، ${student}`; speakText(`الجمع يعني جمع الأشياء معاً لتعرف الكل يا ${student}`);}
+  hintCount++;
+  if(hintCount===1){q("msg").innerHTML=`ابدأ بالعد من ${arabic(x)}`; speakText("ابدأ بالعد من "+arabic(x));}
+  if(hintCount===2){q("msg").innerHTML="الجمع يعني جمع الأشياء معاً لتعرف الكل"; speakText("الجمع يعني جمع الأشياء معاً");}
 }
 
-function save(){localStorage.save=JSON.stringify({score,level});}
-function update(){q("score").innerHTML=arabic(score); q("level").innerHTML=arabic(level); q("bar").style.width=progress+"%";}
-function speakText(text,rate=0.9,pitch=1.0){
- let u=new SpeechSynthesisUtterance(text);
- u.lang="ar-SA"; u.rate=rate; u.pitch=pitch;
- speechSynthesis.speak(u);
+function update(){
+  q("score").innerHTML=arabic(score);
+  q("level").innerHTML=arabic(level);
+  q("bar").style.width=progress+"%";
 }
-function speakAll(){
- let text=`${q("story").innerText}. ${q("msg").innerText}. ${q("explain").innerText}`;
- speakText(text);
-}
-document.addEventListener("keydown",e=>{if(e.key==="Enter") check();});
+
+document.addEventListener("keydown",e=>{if(e.key==="Enter")check();});
 </script>
 
 </body>
