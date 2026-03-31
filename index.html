@@ -30,12 +30,12 @@ body{
  padding:28px;
  border-radius:28px;
  background:rgba(255,255,255,0.1);
- box-shadow:0 0 35px rgba(0,230,255,0.4);
+ box-shadow:0 0 35px rgba(0,230,255,0.35);
  backdrop-filter:blur(8px);
 }
 button{
  padding:14px 32px;
- font-size:19px;
+ font-size:18px;
  border-radius:18px;
  border:none;
  cursor:pointer;
@@ -43,335 +43,261 @@ button{
  background:#00eaff;
  color:#000;
  font-weight:bold;
- transition:all 0.3s;
+ transition:.3s;
 }
-button:hover{transform:scale(1.1);box-shadow:0 0 20px #00eaff;}
-.help{background:#ffd166;color:#000;}
-.reset{background:#ef476f;}
-.report{background:#9bf6ff;color:#000;}
-.math{font-size:52px;color:#ffe066;letter-spacing:8px;line-height:1.6;}
-.hearts{font-size:42px;letter-spacing:10px;margin:15px 0;}
-.mentor{color:#ffd166;font-size:22px;min-height:80px;}
-.story{color:#06d6a0;font-size:23px;line-height:1.7;}
-.msg{min-height:170px;line-height:1.9;font-size:21px;}
+button:hover{transform:scale(1.08)}
+.help{background:#ffd166}
+.reset{background:#ef476f;color:#fff}
+.report{background:#9bf6ff}
+.math{font-size:50px;color:#ffe066;margin:20px 0}
+.hearts{font-size:40px;margin:10px}
 input{
- padding:14px;
- font-size:32px;
- border-radius:16px;
+ padding:12px;
+ font-size:30px;
+ border-radius:14px;
  border:none;
  width:180px;
  text-align:center;
- background:#fff;
- color:#000;
 }
+.story{color:#06d6a0;font-size:22px}
+.mentor{color:#ffd166;font-size:20px;min-height:60px}
+.msg{font-size:21px;min-height:120px;line-height:1.8}
+.assistant{color:#a0e7ff;font-size:19px}
 .reportBox{
- background:rgba(0,0,0,0.75);
- padding:22px;
- border-radius:20px;
- margin:20px 0;
  display:none;
- font-size:20px;
+ background:rgba(0,0,0,.75);
+ margin-top:15px;
+ padding:18px;
+ border-radius:18px;
  line-height:1.8;
 }
-.soundBtn{
- background:#ffd166;
- color:#000;
- font-size:16px;
- padding:8px 20px;
- border-radius:14px;
-}
-.assistant{color:#a0e7ff;font-size:20px;margin-top:12px;}
+.soundBtn{background:#ffd166;font-size:15px;padding:6px 18px}
+@keyframes pop{from{transform:scale(.5)}to{transform:scale(1)}}
 </style>
 </head>
 
 <body>
 
-<audio id="successSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-fairy-arcade-sparkle-866.mp3"></audio>
+https://assets.mixkit.co/sfx/preview/mixkit-fairy-arcade-sparkle-866.mp3</audio>
 
+<!-- التسجيل -->
 <div id="register" class="fullscreen">
- <h1>📖 سجل رحلتك مع أسطورة الحكيم نور</h1>
- 👦 اسم الطالب<br>
- <input id="studentName" placeholder="اكتب اسم الطالب هنا"><br><br>
- 👨‍👩‍👦 اسم ولي الأمر<br>
+ <h1>📖 سجل رحلتك</h1>
+ اسم الطالب<br>
+ <input id="studentName" placeholder="اسم الطالب"><br><br>
+ اسم ولي الأمر<br>
  <input id="parentName" placeholder="اسم الأب أو الأم"><br><br>
- <button onclick="saveNames()">✅ ابدأ الرحلة باسم الله</button>
- <div id="regMsg" style="color:#ffd166;margin-top:15px;"></div>
+ <button onclick="saveNames()">✅ ابدأ الرحلة</button>
+ <div id="regMsg" style="color:#ffd166"></div>
 </div>
 
+<!-- المقدمة -->
 <div id="intro" class="fullscreen" style="display:none">
  <h1>🧿 أسطورة الحكيم نور</h1>
- <p style="font-size:26px;max-width:560px;">
- يا بطل، الحكيم نور سيعلمك الجمع حتى ١٠<br>
- بالأرقام العربية فقط<br>
- وإذا عجزت أمامه سيأتيك مساعد خفي بهدوء<br><br>
- إشراف: محمد وجيه – معلم إعدادي
+ <p style="font-size:25px">
+ ستتعلم الجمع حتى ١٠ بالأرقام العربية فقط<br>
+ والمساعد الخفي سيساعدك عند الحاجة
  </p>
- <button onclick="unlockAudio(); startLesson()">🚀 ابدأ الرحلة بسم الله</button>
+ <button onclick="unlockAudio(); startLesson()">🚀 ابدأ بسم الله</button>
 </div>
 
+<!-- الدرس -->
 <div id="lesson" class="box" style="display:none">
- <h2>📜 درس الحكمة اليوم</h2>
- <div class="mentor">قال رسول الله ﷺ: من سلك طريقا يلتمس فيه علما سهل الله له به طريقا إلى الجنة</div>
- <button onclick="unlockAudio(); startGame()">🎮 هيا نبدأ التحدي</button>
+ <h2>📜 درس اليوم</h2>
+ <div class="mentor">
+ قال رسول الله ﷺ: من سلك طريقًا يلتمس فيه علمًا سهل الله له به طريقًا إلى الجنة
+ </div>
+ <button onclick="startGame()">🎮 ابدأ التحدي</button>
 </div>
 
+<!-- اللعبة -->
 <div id="game" class="box" style="display:none">
 
  <button class="soundBtn" onclick="toggleSound()">🔊 الصوت</button>
 
- <h2>🌟 الجمع حتى ١٠ بالأرقام العربية</h2>
- <div class="story" id="gameStory">🏰 مرحبا بك في قصر الحكمة</div>
- <div class="mentor" id="mentorText">🧙‍♂️ تعلم بهدوء وستصبح حكيما</div>
+ <h2>🌟 الجمع حتى ١٠</h2>
+ <div class="story" id="story"></div>
+ <div class="mentor" id="mentor"></div>
 
  ⭐ النقاط <span id="score">٠</span> |
  🎚 المستوى <span id="level">١</span>
 
- <div id="question" class="math"></div>
- <div id="hearts" class="hearts"></div>
- <input id="answer" inputmode="numeric" maxlength="2" placeholder="اكتب الجواب بالأرقام">
+ <div class="math" id="question"></div>
+ <div class="hearts" id="hearts"></div>
+
+ <input id="answer" placeholder="مثال: ٥">
  <br><br>
 
  <button onclick="check()">💡 أجيب</button>
  <button class="help" onclick="help()">🧠 تلميح</button>
- <button class="report" onclick="report()">📘 أرسل تقرير لوالدي</button>
+ <button class="report" onclick="report()">📘 تقرير</button>
 
  <div class="msg" id="msg"></div>
- <div id="assistantMsg" class="assistant"></div>
-
+ <div class="assistant" id="assistant"></div>
  <div class="reportBox" id="reportBox"></div>
 
  <button class="reset" onclick="resetAll()">🔄 إعادة الرحلة</button>
 </div>
 
 <script>
-const q = id => document.getElementById(id);
-const arabic = n => n.toString().replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
-const toEng = s => s.replace(/[٠-٩]/g, d => "0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
+/* أدوات */
+const q=id=>document.getElementById(id);
+const arabic=n=>n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
+const toEng=s=>s.replace(/[٠-٩]/g,d=>"0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
 
-const sound = q("successSound");
-let audioUnlocked = false;
-let muted = false;
+/* الصوت */
+const sound=q("successSound");
+let audioUnlocked=false, muted=false;
 
-let x = 0, y = 0;
-let wrongCount = 0;
-let state = {
-  score: 0,
-  level: 1,
-  streak: 0,
-  maxStreak: 0,
-  studentName: "",
-  parentName: ""
+/* الحالة */
+let x=0,y=0,wrong=0;
+const MAX_LEVEL=5;
+let state={
+ score:0,level:1,streak:0,maxStreak:0,
+ student:"",parent:""
 };
 
-const MAX_LEVEL = 5;
-
-function unlockAudio(){
- if(audioUnlocked) return;
- sound.volume = 0.75;
- sound.play().then(() => {sound.pause(); sound.currentTime = 0; audioUnlocked = true;}).catch(() => {});
+/* حفظ */
+function save(){localStorage.setItem("noorSave",JSON.stringify(state))}
+function load(){
+ const s=localStorage.getItem("noorSave");
+ if(s) Object.assign(state,JSON.parse(s));
 }
 
-function playSuccess(){
- if(muted || !audioUnlocked) return;
- sound.currentTime = 0;
- sound.play().catch(() => {});
-}
-
-function toggleSound(){
- muted = !muted;
- q("msg").textContent = muted ? "🔇 الصوت مكتوم" : "🔊 الصوت يعمل";
- setTimeout(() => {q("msg").textContent = "";}, ٢٠٠٠);
-}
-
-function saveProgress(){
- localStorage.setItem("hakeemNoorProgress", JSON.stringify(state));
-}
-
-function loadProgress(){
- const saved = localStorage.getItem("hakeemNoorProgress");
- if(saved){
-  Object.assign(state, JSON.parse(saved));
- }
-}
-
+/* تسجيل */
 function saveNames(){
- const student = q("studentName").value.trim();
- const parent = q("parentName").value.trim();
- if(!student || !parent){
-  q("regMsg").textContent = "يرجى كتابة اسم الطالب واسم ولي أمره";
-  return;
- }
- state.studentName = student;
- state.parentName = parent;
- q("register").style.display = "none";
- q("intro").style.display = "flex";
+ const s=q("studentName").value.trim();
+ const p=q("parentName").value.trim();
+ if(!s||!p){q("regMsg").textContent="يرجى إدخال الاسمين";return;}
+ state.student=s;state.parent=p;
+ save();
+ q("register").style.display="none";
+ q("intro").style.display="flex";
 }
 
+/* تشغيل */
 function startLesson(){
- q("intro").style.display = "none";
- q("lesson").style.display = "block";
+ q("intro").style.display="none";
+ q("lesson").style.display="block";
 }
-
 function startGame(){
- q("lesson").style.display = "none";
- q("game").style.display = "block";
- loadProgress();
- if(!state.studentName) state.studentName = "يا بطل";
- wrongCount = 0;
- newQ();
- update();
+ q("lesson").style.display="none";
+ q("game").style.display="block";
+ load();
+ newQuestion(); update();
 }
 
-function getMaxForLevel(lvl){
- if(lvl === 1) return 5;
- if(lvl === 2) return 7;
+/* مستويات */
+function maxForLevel(l){
+ if(l===1) return 4;
+ if(l===2) return 6;
+ if(l===3) return 8;
+ if(l===4) return 9;
  return 10;
 }
 
-function createHearts(count){
- let heartsHTML = "";
- for(let i = 0; i < count; i++){
-  heartsHTML += "❤️";
- }
- return heartsHTML;
+/* سؤال */
+function newQuestion(){
+ const max=maxForLevel(state.level);
+ x=Math.floor(Math.random()*max)+1;
+ y=Math.floor(Math.random()*(10-x))+1;
+ q("question").innerHTML=`${arabic(x)} + ${arabic(y)} = ؟`;
+ q("answer").value="";
+ q("msg").textContent="";
+ q("assistant").textContent="";
+ wrong=0;
 }
 
-function newQ(){
- const maxNum = getMaxForLevel(state.level);
- x = Math.floor(Math.random() * maxNum) + 1;
- y = Math.floor(Math.random() * (maxNum - x + 1)) + 1;
- 
- while(x + y > 10){
-  y = Math.floor(Math.random() * (maxNum - x + 1)) + 1;
- }
- 
- const sum = x + y;
- q("question").innerHTML = `
-  <div class="math">
-   ${arabic(x)} + ${arabic(y)} = ؟
-  </div>`;
- 
- q("hearts").innerHTML = "";
- q("answer").value = "";
- q("msg").innerHTML = "";
- q("assistantMsg").innerHTML = "";
- q("answer").focus();
- wrongCount = 0;
-}
-
+/* تحقق */
 function check(){
- unlockAudio();
- const ansStr = q("answer").value.trim();
- if(!ansStr) return;
- 
- const v = parseInt(toEng(ansStr));
- if(isNaN(v)){
-  q("msg").innerHTML = "🌱 اكتب الرقم بالأرقام العربية فقط";
+ const input=q("answer").value.trim();
+ if(!/^[٠-٩]+$/.test(input)){
+  q("msg").textContent="❗ اكتب بالأرقام العربية فقط";
   return;
  }
+ const v=parseInt(toEng(input));
+ const correct=x+y;
 
- const correct = x + y;
- if(v === correct){
-  playSuccess();
-  state.score += 10;
+ if(v===correct){
+  if(!muted&&audioUnlocked){sound.currentTime=0;sound.play()}
+  state.score+=10;
   state.streak++;
-  wrongCount = 0;
-  
-  if(state.streak > state.maxStreak) state.maxStreak = state.streak;
-  
-  const hearts = createHearts(correct);
-  q("hearts").innerHTML = `<div style="color:#ffeb3b;animation:twinkle 1s infinite;">${hearts}</div>`;
-  
-  let praise = `🌟 أحسنت ${state.studentName}! سبحان الله`;
-  
-  if(state.streak === 5){
-   if(state.level < MAX_LEVEL){
-    state.level++;
-    state.streak = 0;
-    praise += `<br>🎉 ارتقيت إلى المستوى ${arabic(state.level)}! اللهم زدنا علما`;
-   } else {
-    praise += `<br>🏆 مبروك! لقد أكملت جميع المستويات`;
-   }
+  if(state.streak>state.maxStreak)state.maxStreak=state.streak;
+  q("hearts").textContent="❤️".repeat(correct);
+  let msg=`🌟 أحسنت ${state.student}`;
+  if(state.streak===5&&state.level<MAX_LEVEL){
+   state.level++;state.streak=0;
+   msg+=`<div style="animation:pop .6s">🎉 صعدت للمستوى ${arabic(state.level)}</div>`;
   }
-  
-  q("msg").innerHTML = praise;
+  q("msg").innerHTML=msg;
+  save();
+  setTimeout(()=>{q("hearts").textContent="";newQuestion();update()},1800);
  }else{
-  state.streak = 0;
-  wrongCount++;
-  q("msg").innerHTML = "🌱 خطأ بسيط يا صديقي، حاول مرة أخرى وتوكل على الله";
-  
-  if(wrongCount >= 2){
-   q("assistantMsg").innerHTML = `🕊️ المساعد الخفي يقول:<br>جرب أن تضيف واحد واحد بهدوء، مثلاً ${arabic(x)} + ١ = ${arabic(x+1)} ثم أكمل حتى تصل إلى ${arabic(correct)}`;
+  wrong++; state.streak=0;
+  q("msg").textContent="🌱 حاول مرة أخرى";
+  if(wrong>=2){
+   q("assistant").innerHTML=
+   `🕊️ أضف واحدًا واحدًا: ${arabic(x)} ثم ${arabic(x+1)} … حتى ${arabic(correct)}`;
   }
  }
- 
- update();
- saveProgress();
- setTimeout(() => {
-  q("hearts").innerHTML = "";
-  if(wrongCount < 3) newQ();
- }, 2000);
 }
 
+/* تلميح */
 function help(){
- const sum = x + y;
- let hint = "";
- if(sum <= 5){
-  hint = "الجواب أقل من أو يساوي ٥";
- } else if(sum <= 7){
-  hint = "الجواب بين ٦ و ٧";
- } else {
-  hint = "الجواب بين ٨ و ١٠";
- }
- q("msg").innerHTML = `تلميح: ${hint}<br>جرب مرة أخرى وقل بسم الله`;
+ const s=x+y;
+ q("msg").textContent=
+  s<=5?"الجواب ≤ ٥":s<=7?"الجواب بين ٦ و٧":"الجواب بين ٨ و١٠";
 }
 
+/* تقرير */
 function report(){
- q("reportBox").style.display = "block";
- q("reportBox").innerHTML = `
- ⭐ اسم الطالب: ${state.studentName}<br>
- ⭐ اسم ولي الأمر: ${state.parentName}<br>
+ q("reportBox").style.display="block";
+ q("reportBox").innerHTML=`
+ 👦 الطالب: ${state.student}<br>
+ 👨‍👩‍👦 ولي الأمر: ${state.parent}<br>
  ⭐ النقاط: ${arabic(state.score)}<br>
- 🎚 المستوى الحالي: ${arabic(state.level)}<br>
- 🔥 أطول تسلسل نجاح: ${arabic(state.maxStreak)}<br><br>
- 🌟 بارك الله في الطالب، يتقدم بخطى ثابتة
+ 🎚 المستوى: ${arabic(state.level)}<br>
+ 🔥 أفضل سلسلة: ${arabic(state.maxStreak)}
  `;
 }
 
+/* تحديث */
 function update(){
- q("score").textContent = arabic(state.score);
- q("level").textContent = arabic(state.level);
- q("gameStory").textContent = `🏰 قصر الحكمة – المستوى ${arabic(state.level)}`;
- 
- const mentorMessages = [
-  "🧙‍♂️ كل إجابة صحيحة تبني ثقتك",
-  "تعلم بهدوء وستصبح قويا",
-  "الله يحب من يتعلم ويصبر",
-  "أنت تتقدم خطوة بخطوة يا بطل"
+ q("score").textContent=arabic(state.score);
+ q("level").textContent=arabic(state.level);
+ q("story").textContent=`🏰 قصر الحكمة – المستوى ${arabic(state.level)}`;
+ const m=[
+  "كل محاولة تقربك من النجاح",
+  "العلم عبادة",
+  "أنت تتقدم بثبات",
+  "الصبر مفتاح الحكمة"
  ];
- q("mentorText").textContent = mentorMessages[Math.floor(Math.random()*mentorMessages.length)];
+ q("mentor").textContent=m[Math.floor(Math.random()*m.length)];
 }
 
+/* أدوات */
+function unlockAudio(){
+ if(audioUnlocked)return;
+ sound.play().then(()=>{sound.pause();sound.currentTime=0;audioUnlocked=true})
+}
+function toggleSound(){
+ muted=!muted;
+ q("msg").textContent=muted?"🔇 الصوت مكتوم":"🔊 الصوت يعمل";
+}
 function resetAll(){
- if(confirm("هل تريد إعادة الرحلة من البداية؟")){
-  localStorage.removeItem("hakeemNoorProgress");
+ if(confirm("إعادة الرحلة من البداية؟")){
+  localStorage.removeItem("noorSave");
   location.reload();
  }
 }
 
-document.addEventListener('keydown', function(e){
- if(e.key === "Enter" && q("game").style.display === "block"){
-  check();
- }
-});
-</script>
-
-<style>
-@keyframes twinkle {
-  0%,100% {opacity:1;}
-  50% {opacity:0.6;}
+/* بدء */
+load();
+if(state.student){
+ q("register").style.display="none";
+ q("intro").style.display="flex";
 }
-</style>
+</script>
 
 </body>
 </html>
