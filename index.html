@@ -45,12 +45,10 @@ button{
 .math{font-size:34px;margin:15px 0;color:#ffe066}
 .hearts span{font-size:30px}
 
-#mentor{color:#ffd166;font-size:20px;margin:14px;min-height:45px}
-#story{color:#06d6a0;font-size:18px;margin:8px}
-#msg{min-height:150px;font-size:18px;white-space:pre-line}
+.mentor{color:#ffd166;font-size:20px;margin:14px;min-height:45px}
+.story{color:#06d6a0;font-size:18px;margin:8px}
+.msg{min-height:150px;font-size:18px;white-space:pre-line}
 
-.soft{background:#ffd166;color:#000}
-.next{background:#06d6a0;color:#000}
 .reset{background:#ef476f;color:#000}
 .reflect{background:#9bf6ff;color:#000}
 .success{animation:glow 0.6s ease-in-out 2}
@@ -79,16 +77,16 @@ button{
 <!-- التمهيد -->
 <div id="lesson" class="box" style="display:none">
   <h2>📜 درس الحكمة</h2>
-  <div id="mentor"></div>
-  <div id="msg"></div>
+  <div id="lessonMentor" class="mentor"></div>
+  <div id="lessonMsg" class="msg"></div>
   <button id="lessonBtn" onclick="nextLesson()">➡️ تابع</button>
 </div>
 
 <!-- اللعبة -->
 <div id="game" class="box" style="display:none">
   <h2>🌟 رحلة الحكمة</h2>
-  <div id="story"></div>
-  <div id="mentor"></div>
+  <div id="gameStory" class="story"></div>
+  <div id="gameMentor" class="mentor"></div>
 
   <div>
     ⭐ النقاط: <span id="score">٠</span>
@@ -97,13 +95,13 @@ button{
   </div>
 
   <div id="question"></div>
-  <input id="answer" type="number" placeholder="اكتب الجواب">
+  <input id="answer" type="text" placeholder="اكتب الجواب">
   <br>
 
   <button onclick="attack()">💡 أجيب</button>
   <button class="reflect" onclick="reflect()">🧠 أفكر أولًا</button>
 
-  <div id="msg"></div>
+  <div id="gameMsg" class="msg"></div>
 
   <hr>
   <button class="reset" onclick="resetProgress()">🔄 تصفير التقدم</button>
@@ -112,6 +110,17 @@ button{
 <script>
 /* ===== الحالة ===== */
 let state={score:0,level:1,streak:0};
+
+/* ===== أدوات أرقام ===== */
+function arabic(n){
+  return n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);
+}
+function toEnglishDigits(str){
+  return str.replace(/[٠-٩]/g,d=>"0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
+}
+function hearts(n){
+  return "<span>❤️</span>".repeat(n);
+}
 
 /* ===== تحميل / حفظ ===== */
 function load(){
@@ -123,24 +132,24 @@ function save(){
 }
 
 /* ===== عناصر ===== */
-const intro=intro=document.getElementById("intro");
+const intro=document.getElementById("intro");
 const lesson=document.getElementById("lesson");
 const game=document.getElementById("game");
-const mentorBox=document.getElementById("mentor");
-const msgBox=document.getElementById("msg");
+
+const lessonMentor=document.getElementById("lessonMentor");
+const lessonMsg=document.getElementById("lessonMsg");
+const gameMentor=document.getElementById("gameMentor");
+const gameMsg=document.getElementById("gameMsg");
+
 const scoreSpan=document.getElementById("score");
 const levelSpan=document.getElementById("level");
 const question=document.getElementById("question");
 const answer=document.getElementById("answer");
-const storyBox=document.getElementById("story");
-
-/* ===== أدوات ===== */
-function arabic(n){return n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);}
-function hearts(n){return "<span>❤️</span>".repeat(n);}
+const storyBox=document.getElementById("gameStory");
 
 /* ===== الحكيم ===== */
-function mentor(text){
-  mentorBox.textContent="🧙‍♂️ نور: "+text;
+function mentor(box,text){
+  box.textContent="🧙‍♂️ نور: "+text;
 }
 
 /* ===== التمهيد ===== */
@@ -153,25 +162,24 @@ function startLesson(){
 function nextLesson(){
   lessonStep++;
   if(lessonStep===1){
-    mentor("الفهم أهم من السرعة");
-    msgBox.textContent="🌱 نحن لا نخمن… نحن نعد";
+    mentor(lessonMentor,"الفهم أهم من السرعة");
+    lessonMsg.textContent="🌱 نحن لا نخمن… نحن نعد";
   }else if(lessonStep===2){
-    mentor("انظر إلى القلوب");
-    msgBox.innerHTML=hearts(3);
+    mentor(lessonMentor,"انظر إلى القلوب");
+    lessonMsg.innerHTML=hearts(3);
   }else if(lessonStep===3){
-    mentor("نضيف بهدوء");
-    msgBox.innerHTML=hearts(3)+" + "+hearts(2);
+    mentor(lessonMentor,"نضيف بهدوء");
+    lessonMsg.innerHTML=hearts(3)+" + "+hearts(2);
   }else{
-    mentor("أنت مستعد");
-    msgBox.textContent="✨ الرحلة تبدأ الآن";
-    lessonBtn.textContent="🎮 ابدأ التحدي";
-    lessonBtn.onclick=startGame;
+    mentor(lessonMentor,"أنت مستعد");
+    lessonMsg.textContent="✨ الرحلة تبدأ الآن";
+    document.getElementById("lessonBtn").textContent="🎮 ابدأ التحدي";
+    document.getElementById("lessonBtn").onclick=startGame;
   }
 }
 
 /* ===== اللعبة ===== */
 let x=1,y=1;
-
 function startGame(){
   lesson.style.display="none";
   game.style.display="block";
@@ -184,9 +192,9 @@ function newQuestion(){
   answer.value="";
   let max=3+state.level*2;
   x=Math.floor(Math.random()*max)+1;
-  y=Math.floor(Math.random()*(max-x))+1; // لا صفر
+  y=Math.floor(Math.random()*(max-x))+1;
 
-  mentor("فكر قبل أن تجيب");
+  mentor(gameMentor,"فكر قبل أن تجيب");
   storyBox.textContent="🌱 المعرفة تنمو بالتأمل";
 
   question.innerHTML=`
@@ -197,25 +205,25 @@ function newQuestion(){
 
 /* ===== التفكير ===== */
 function reflect(){
-  mentor("قسّم المسألة");
-  msgBox.innerHTML=
+  mentor(gameMentor,"قسّم المسألة");
+  gameMsg.innerHTML=
     hearts(x)+"<br>ثم أضف إليها<br>"+hearts(y);
 }
 
 /* ===== التحقق ===== */
 function attack(){
-  let ans=parseInt(answer.value);
+  let ans=parseInt(toEnglishDigits(answer.value));
   if(ans===x+y){
     state.score+=10;
     state.streak++;
-    mentor("أحسنت");
-    msgBox.textContent="✅ إجابة صحيحة";
+    mentor(gameMentor,"أحسنت");
+    gameMsg.textContent="✅ إجابة صحيحة";
     game.classList.add("success");
 
     if(state.streak>=3){
       state.level++;
       state.streak=0;
-      msgBox.textContent+="\n🎉 الحكيم فخور بك!";
+      gameMsg.textContent+="\n🎉 الحكيم فخور بك!";
     }
 
     save();
@@ -223,13 +231,11 @@ function attack(){
       game.classList.remove("success");
       newQuestion();
     },900);
-
   }else{
     state.streak=0;
-    mentor("لا بأس");
-    msgBox.textContent="🌱 نعد مرة أخرى بهدوء";
+    mentor(gameMentor,"لا بأس");
+    gameMsg.innerHTML=hearts(x)+" "+hearts(y)+"<br>عدّهم بهدوء";
   }
-
   updateUI();
 }
 
