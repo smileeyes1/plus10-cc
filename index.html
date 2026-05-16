@@ -3,79 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>منصة أوراق العمل الاحترافية</title>
+<title>نظام أوراق العمل الاحترافي</title>
 
 <style>
-*{box-sizing:border-box;direction:rtl}
+*{
+ box-sizing:border-box;
+ direction:rtl;
+}
 
 body{
-margin:0;
-font-family:"Tajawal",sans-serif;
-background:#f1f5f9;
+ margin:0;
+ font-family:"Tajawal",sans-serif;
+ background:#f1f5f9;
 }
 
 .panel{
-background:#fff;
-padding:15px;
-border-bottom:4px solid #0f766e;
+ background:#fff;
+ padding:15px;
+ border-bottom:4px solid #0f766e;
 }
 
 .grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-gap:10px;
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+ gap:10px;
 }
 
 input,select,button{
-padding:8px;
-border:1px solid #ccc;
-border-radius:5px;
-width:100%;
+ padding:8px;
+ border:1px solid #ccc;
+ border-radius:5px;
+ width:100%;
 }
 
 button{
-background:#0f766e;color:#fff;font-weight:bold;cursor:pointer
+ background:#0f766e;
+ color:#fff;
+ font-weight:bold;
+ cursor:pointer;
 }
 
 #output{
-display:flex;
-flex-direction:column;
-align-items:center;
-padding:10px;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ padding:10px;
 }
 
-/* A4 */
+/* ✅ صفحة A4 */
 .page{
-width:210mm;
-height:297mm;
-background:#fff;
-padding:12mm;
-border:1px solid #ccc;
-display:flex;
-flex-direction:column;
-overflow:hidden;
+ width:210mm;
+ height:297mm;
+ background:#fff;
+ padding:12mm;
+ border:1px solid #ccc;
+ display:flex;
+ flex-direction:column;
+ overflow:hidden;
 }
 
-/* Question */
+/* ✅ السؤال */
 .question{
-border:1px solid #000;
-padding:8px;
-margin-bottom:8px;
-border-radius:6px;
-break-inside:avoid;
+ border:1px solid #000;
+ padding:8px;
+ margin-bottom:8px;
+ border-radius:6px;
+ break-inside:avoid;
+ direction:rtl;
 }
 
-/* Answer */
+/* ✅ الإجابة */
 .answer{
-border:1px solid #000;
-height:28px;
-margin-top:5px;
+ border:1px solid #000;
+ height:30px;
+ margin-top:5px;
 }
 
-/* Print */
+/* ✅ الطباعة */
 @media print{
-.panel{display:none}
-.page{page-break-after:always;border:none;margin:0}
+ .panel{display:none}
+ .page{
+  page-break-after:always;
+  border:none;
+  margin:0;
+ }
 }
 </style>
 </head>
@@ -96,278 +107,257 @@ margin-top:5px;
 
 <script>
 
-/* ===== Utilities ===== */
+/* ================= UTIL ================= */
 const Utils={
-rand:(a,b)=>Math.floor(Math.random()*(b-a+1))+a,
-ar:n=>String(n).replace(/[0-9]/g,d=>"٠١٢٣٤٥٦٧٨٩"[d])
+ rand:(a,b)=>Math.floor(Math.random()*(b-a+1))+a,
+ ar:n=>String(n).replace(/[0-9]/g,d=>"٠١٢٣٤٥٦٧٨٩"[d])
 }
 
-/* ===== Storage ===== */
+/* ================= STORAGE ================= */
 const Storage={
-save(d){localStorage.setItem("edu_ws",JSON.stringify(d))},
-load(){try{return JSON.parse(localStorage.getItem("edu_ws"))||[]}catch{return[]}}
+ save(d){localStorage.setItem("ws",JSON.stringify(d))},
+ load(){try{return JSON.parse(localStorage.getItem("ws"))||[]}catch{return[]}}
 }
 
-/* ===== Curriculum ===== */
+/* ================= CURRICULUM ================= */
 const Curriculum={
-data:{
-"1":{
-units:[
-{name:"الأعداد",lessons:[
-{name:"عد",skill:"count"},
-{name:"مقارنة",skill:"compare"}
-]},
-{name:"عمليات",lessons:[
-{name:"جمع",skill:"add"},
-{name:"طرح",skill:"sub"}
-]}
-]
-}
-},
+ data:{
+  "1":{
+   units:[
+    {name:"الأعداد",lessons:[
+     {name:"عد",skill:"count"},
+     {name:"مقارنة",skill:"compare"}
+    ]},
+    {name:"العمليات",lessons:[
+     {name:"جمع",skill:"add"},
+     {name:"طرح",skill:"sub"}
+    ]}
+   ]
+  }
+ },
 
-init(){
-grade.innerHTML=""
-Object.keys(this.data).forEach(k=>{
-let o=document.createElement("option")
-o.value=k;o.textContent="الصف "+k
-grade.appendChild(o)
-})
-this.updateUnits()
-},
+ init(){
+  grade.innerHTML=""
+  Object.keys(this.data).forEach(k=>{
+   let o=document.createElement("option")
+   o.value=k
+   o.textContent="الصف "+k
+   grade.appendChild(o)
+  })
+  this.updateUnits()
+ },
 
-updateUnits(){
-unit.innerHTML=""
-this.data[grade.value].units.forEach((u,i)=>{
-let o=document.createElement("option")
-o.value=i;o.textContent=u.name
-unit.appendChild(o)
-})
-this.updateLessons()
-},
+ updateUnits(){
+  unit.innerHTML=""
+  this.data[grade.value].units.forEach((u,i)=>{
+   let o=document.createElement("option")
+   o.value=i
+   o.textContent=u.name
+   unit.appendChild(o)
+  })
+  this.updateLessons()
+ },
 
-updateLessons(){
-lesson.innerHTML=""
-this.data[grade.value].units[unit.value].lessons.forEach(l=>{
-let o=document.createElement("option")
-o.value=l.skill
-o.textContent=l.name
-lesson.appendChild(o)
-})
-}
-}
-
-/* ===== Curriculum AI ===== */
-const CurriculumAI={
-dist(n){
-return{easy:Math.ceil(n*0.4),med:Math.ceil(n*0.4)}
-},
-level(i,d){
-if(i<d.easy) return "easy"
-if(i<d.easy+d.med) return "medium"
-return "hard"
-}
+ updateLessons(){
+  lesson.innerHTML=""
+  this.data[grade.value].units[unit.value].lessons.forEach(l=>{
+   let o=document.createElement("option")
+   o.value=l.skill
+   o.textContent=l.name
+   lesson.appendChild(o)
+  })
+ }
 }
 
-/* ===== Validation ===== */
+/* ================= VALIDATION ================= */
 const Validation={
-usedQ:new Set(),
-usedA:new Map(),
 
-reset(){
-this.usedQ.clear()
-this.usedA.clear()
-},
+ usedQ:new Set(),
+ usedA:new Map(),
 
-duplicate(q){
-if(this.usedQ.has(q.text)) return true
-this.usedQ.add(q.text)
-return false
-},
+ reset(){
+  this.usedQ.clear()
+  this.usedA.clear()
+ },
 
-balance(a){
-let c=this.usedA.get(a)||0
-if(c>=3) return true
-this.usedA.set(a,c+1)
-return false
-},
+ duplicate(q){
+  if(this.usedQ.has(q.text)) return true
+  this.usedQ.add(q.text)
+  return false
+ },
 
-math(q){
-if(q.type==="add") return q.a+q.b===q.ans
-if(q.type==="sub") return q.a-q.b===q.ans
-return true
-},
+ balance(a){
+  let c=this.usedA.get(a)||0
+  if(c>=3) return true
+  this.usedA.set(a,c+1)
+  return false
+ },
 
-check(q){
-if(!q) return false
-if(!this.math(q)) return false
-if(this.duplicate(q)) return false
-if(q.ans!==undefined && this.balance(q.ans)) return false
-return true
-}
+ math(q){
+  if(q.type==="add") return q.a+q.b===q.ans
+  if(q.type==="sub") return q.a-q.b===q.ans
+  return true
+ },
+
+ check(q){
+  return q && this.math(q) && !this.duplicate(q) &&
+         (q.ans===undefined || !this.balance(q.ans))
+ }
 }
 
-/* ===== Generators ===== */
+/* ================= GENERATORS ================= */
 const Gen={
-count(lvl){
-let max=lvl==="hard"?20:(lvl==="medium"?12:9)
-let n=Utils.rand(1,max)
-return{type:"count",text:`اكتب العدد ${Utils.ar(n)}`,ans:n}
-},
 
-compare(lvl){
-let max=lvl==="hard"?20:9
-let a=Utils.rand(1,max),b
-do{b=Utils.rand(1,max)}while(a===b)
-return{type:"compare",text:`${Utils.ar(a)} ___ ${Utils.ar(b)}`,ans:a>b?">":"<"}
-},
+ count(){
+  let n=Utils.rand(1,9)
+  return{type:"count",text:`اكتب العدد ${Utils.ar(n)}`,ans:n}
+ },
 
-add(lvl){
-let max=lvl==="hard"?30:(lvl==="medium"?15:9)
-let a=Utils.rand(1,max),b=Utils.rand(1,max)
-return{type:"add",a,b,ans:a+b,text:`${Utils.ar(a)} + ${Utils.ar(b)} =`}
-},
+ compare(){
+  let a=Utils.rand(1,9),b
+  do{b=Utils.rand(1,9)}while(a===b)
+  return{type:"compare",text:`${Utils.ar(a)} ___ ${Utils.ar(b)}`,ans:a>b?">":"<"}
+ },
 
-sub(lvl){
-let max=lvl==="hard"?30:(lvl==="medium"?15:9)
-let a=Utils.rand(5,max),b=Utils.rand(1,a-1)
-return{type:"sub",a,b,ans:a-b,text:`${Utils.ar(a)} - ${Utils.ar(b)} =`}
-}
+ add(){
+  let a=Utils.rand(1,9),b=Utils.rand(1,9)
+  return{type:"add",a,b,ans:a+b,text:`${Utils.ar(a)} + ${Utils.ar(b)} =`}
+ },
+
+ sub(){
+  let a=Utils.rand(5,9),b=Utils.rand(1,a-1)
+  return{type:"sub",a,b,ans:a-b,text:`${Utils.ar(a)} - ${Utils.ar(b)} =`}
+ }
+
 }
 
-/* ===== Layout ===== */
+/* ================= LAYOUT ================= */
 const Layout={
-MAX:1100,
 
-create(){
-let p=document.createElement("div")
-p.className="page"
-p.dataset.used=0
-return p
-},
+ MAX:1100,
 
-measure(el){
-el.style.visibility="hidden"
-document.body.appendChild(el)
-let h=el.offsetHeight
-document.body.removeChild(el)
-return h
-},
+ create(){
+  let p=document.createElement("div")
+  p.className="page"
+  p.dataset.used=0
+  return p
+ },
 
-fit(p,h){
-return (+p.dataset.used+h)<this.MAX
-},
+ measure(el){
+  el.style.visibility="hidden"
+  document.body.appendChild(el)
+  let h=el.offsetHeight
+  document.body.removeChild(el)
+  return h
+ },
 
-add(p,el){
-p.appendChild(el)
-p.dataset.used=(+p.dataset.used+el.offsetHeight)
-}
-}
+ fit(p,h){
+  return (+p.dataset.used+h)<this.MAX
+ },
 
-/* ===== AutoFix ===== */
-const AutoFix={
-fix(p){
-if(p.scrollHeight>p.clientHeight){
-p.style.overflow="hidden"
-p.style.border="2px solid red"
-}
-}
+ add(p,el){
+  p.appendChild(el)
+  p.dataset.used=(+p.dataset.used+el.offsetHeight)
+ }
 }
 
-/* ===== Render ===== */
+/* ================= POST VALIDATION ================= */
+const PostValidation={
+ fix(p){
+  if(p.scrollHeight>p.clientHeight){
+   p.style.overflow="hidden"
+   p.style.border="2px solid red"
+  }
+ }
+}
+
+/* ================= RENDER ================= */
 const Render={
 
-create(q,i){
-let d=document.createElement("div")
-d.className="question"
+ create(q,i){
+  let d=document.createElement("div")
+  d.className="question"
 
-let t=document.createElement("div")
-t.textContent="س"+Utils.ar(i)
+  let t=document.createElement("div")
+  t.textContent="س"+Utils.ar(i)
 
-let txt=document.createElement("div")
-txt.textContent=q.text
+  let txt=document.createElement("div")
+  txt.textContent=q.text
 
-let a=document.createElement("div")
-a.className="answer"
+  let a=document.createElement("div")
+  a.className="answer"
 
-d.append(t,txt,a)
-return d
-},
+  d.append(t,txt,a)
+  return d
+ },
 
-draw(list){
+ draw(list){
 
-output.innerHTML=""
-let frag=document.createDocumentFragment()
-let page=Layout.create()
+  output.innerHTML=""
 
-list.forEach((q,i)=>{
+  let frag=document.createDocumentFragment()
+  let page=Layout.create()
 
-let el=this.create(q,i+1)
-let h=Layout.measure(el)
+  list.forEach((q,i)=>{
 
-if(!Layout.fit(page,h)){
-AutoFix.fix(page)
-frag.appendChild(page)
-page=Layout.create()
+   let el=this.create(q,i+1)
+   let h=Layout.measure(el)
+
+   if(!Layout.fit(page,h)){
+    PostValidation.fix(page)
+    frag.appendChild(page)
+    page=Layout.create()
+   }
+
+   page.appendChild(el)
+   page.dataset.used=(+page.dataset.used + h)
+  })
+
+  PostValidation.fix(page)
+  frag.appendChild(page)
+  output.appendChild(frag)
+ }
 }
 
-Layout.add(page,el)
-
-})
-
-AutoFix.fix(page)
-frag.appendChild(page)
-output.appendChild(frag)
-}
-}
-
-/* ===== Core ===== */
+/* ================= CORE ================= */
 const Core={
 
-generate(){
+ generate(){
+  Validation.reset()
 
-Validation.reset()
+  let skill=lesson.value
+  let n=parseInt(count.value)
 
-let skill=lesson.value
-let n=parseInt(document.getElementById("count").value)
+  let list=[]
 
-let dist=CurriculumAI.dist(n)
+  for(let i=0;i<n;i++){
+   let tries=0,q
 
-let list=[]
+   while(tries<20){
+    if(skill==="count") q=Gen.count()
+    if(skill==="compare") q=Gen.compare()
+    if(skill==="add") q=Gen.add()
+    if(skill==="sub") q=Gen.sub()
+    if(Validation.check(q)) break
+    tries++
+   }
 
-for(let i=0;i<n;i++){
+   if(q) list.push(q)
+  }
 
-let lvl=CurriculumAI.level(i,dist)
-
-let q,tries=0
-
-while(tries<25){
-
-if(skill==="count") q=Gen.count(lvl)
-if(skill==="compare") q=Gen.compare(lvl)
-if(skill==="add") q=Gen.add(lvl)
-if(skill==="sub") q=Gen.sub(lvl)
-
-if(Validation.check(q)) break
-tries++
+  Storage.save(list)
+  Render.draw(list)
+ }
 }
 
-if(q) list.push(q)
-}
-
-Storage.save(list)
-Render.draw(list)
-}
-}
-
-/* ===== INIT ===== */
+/* ================= INIT ================= */
 grade.onchange=()=>Curriculum.updateUnits()
 unit.onchange=()=>Curriculum.updateLessons()
 
 window.onload=()=>{
-Curriculum.init()
-const saved=Storage.load()
-if(saved.length) Render.draw(saved)
-else Core.generate()
+ Curriculum.init()
+ let saved=Storage.load()
+ saved.length?Render.draw(saved):Core.generate()
 }
 
 const Edu={Core}
