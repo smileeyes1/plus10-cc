@@ -2,198 +2,735 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مغامرة الحكيم نور 🧙‍♂️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>منصة التميز التربوي - النظام المعماري الاحترافي المطور</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+
 <style>
-body{margin:0;font-family:Tahoma;background:linear-gradient(#a0e7ff,#b4f8c8);display:flex;justify-content:center;align-items:center;height:100vh;overflow:hidden;}
-#welcome,#lesson,#game{width:700px;max-width:95%;background:rgba(255,255,255,0.95);padding:25px;border-radius:20px;text-align:center;position:relative;}
-input{font-size:22px;width:220px;padding:8px;border-radius:10px;border:1px solid #ccc;text-align:center;margin:5px;}
-button{padding:10px 20px;margin:5px;border:none;border-radius:12px;background:#ffd166;cursor:pointer;font-size:16px;}
-.character{font-size:70px;transition:0.3s;}
-.item{font-size:50px;margin:5px;}
-.number{font-size:36px;font-weight:bold;color:#ff6b6b;margin:5px;}
-.progress{width:100%;background:#eee;border-radius:10px;margin:10px 0;}
-.bar{height:20px;background:#ffd166;width:0%;border-radius:10px;}
+:root {
+  --primary: #0f766e;
+  --primary-hover: #115e59;
+  --secondary: #4338ca;
+  --accent: #b45309;
+  --bg-main: #f8fafc;
+  --bg-panel: #ffffff;
+  --text-dark: #0f172a;
+  --text-muted: #475569;
+  --border-color: #cbd5e1;
+  --print-border: #000000;
+  --a4-width: 210mm;
+  --a4-height: 296mm;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Tajawal', system-ui, sans-serif;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-main);
+  color: var(--text-dark);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  -webkit-text-size-adjust: 100%;
+}
+
+.admin-panel {
+  background: var(--bg-panel);
+  border-bottom: 4px solid var(--primary);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 20px;
+  position: relative;
+  z-index: 10;
+}
+
+.panel-title {
+  margin-top: 0;
+  color: var(--primary);
+  font-size: 20px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 12px;
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+.input-group label { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+.input-group select, .input-group input {
+  padding: 10px 12px; border: 1.5px solid var(--border-color); border-radius: 8px;
+  font-size: 14px; background-color: #fff; color: var(--text-dark); transition: border-color 0.2s ease;
+}
+.input-group select:focus, .input-group input:focus { outline: none; border-color: var(--primary); }
+
+.action-buttons { display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end; flex-wrap: wrap; }
+button { padding: 12px 24px; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; transition: background 0.2s ease; }
+.btn-generate { background: var(--primary); color: #fff; }
+.btn-generate:hover { background: var(--primary-hover); }
+.btn-print { background: var(--text-dark); color: #fff; }
+.btn-reset { background: #e2e8f0; color: var(--text-dark); }
+
+#output-container { padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 30px; }
+
+/* هندسة استقرار أبعاد الصفحات ومنع التدفق الخارجي */
+.a4-page {
+  width: var(--a4-width);
+  height: var(--a4-height);
+  max-height: var(--a4-height);
+  background: #ffffff;
+  padding: 12mm 14mm;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border: 1px solid var(--border-color);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  page-break-after: always;
+  break-after: page;
+  overflow: hidden;
+}
+
+.official-header {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  align-items: center;
+  border-bottom: 2.5px solid var(--print-border);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.ministry-info { font-size: 11px; line-height: 1.6; font-weight: 700; }
+.document-title-area { text-align: center; }
+.document-title { font-size: 18px; font-weight: 900; margin: 0; color: #000; }
+.pedagogical-goal {
+  font-size: 11px; color: #1e293b; margin-top: 6px; background: #f1f5f9; 
+  padding: 5px 10px; border-radius: 4px; border-right: 4px solid var(--primary); font-weight: 500;
+}
+
+.student-info-bar {
+  border: 1.5px solid var(--print-border); background: #f8fafc; padding: 8px; display: grid;
+  grid-template-columns: 2fr 1fr 1fr; font-size: 12px; font-weight: 700; gap: 10px; margin-bottom: 16px;
+}
+
+.questions-layout {
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 16px;
+  flex-grow: 1;
+  align-content: start;
+}
+
+.question-card {
+  border: 1.5px solid var(--print-border);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  page-break-inside: avoid;
+  break-inside: avoid;
+  overflow: hidden;
+}
+
+.q-top-meta { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; margin-bottom: 8px; }
+.q-number { font-weight: 900; color: var(--primary); font-size: 13px; }
+.q-instruction { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #000; line-height: 1.5; }
+
+.visual-render-zone { display: flex; justify-content: center; align-items: center; padding: 6px 0; min-height: 50px; }
+
+/* معمارية الوسائل البصرية المصاحبة */
+.ten-frame-wrapper { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; direction: ltr; }
+.ten-frame-grid { display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(2, 1fr); border: 2px solid #000; gap: 1px; background: #000; width: 110px; height: 44px; }
+.ten-frame-cell { background: #fff; display: flex; align-items: center; justify-content: center; }
+.math-dot { width: 12px; height: 12px; border-radius: 50%; }
+.math-dot.filled { background: #000; }
+
+/* ضبط استقرار كتل العمليات الحسابية أفقياً وعمودياً وبثبات كامل للـ RTL */
+.math-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 700;
+  direction: rtl;
+  unicode-bidi: isolate;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+.math-item { display: inline-block; min-width: auto; text-align: center; }
+
+.vertical-math-container {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 4px 12px;
+  position: relative;
+  width: 70px;
+  margin: 0 auto;
+}
+.vertical-digit-row { letter-spacing: 2px; text-align: left; width: 100%; display: flex; justify-content: flex-end; }
+.vertical-operation { position: absolute; left: 4px; bottom: 26px; font-size: 16px; }
+.vertical-line { width: 100%; height: 2px; background: #000; margin: 4px 0 6px 0; }
+
+.math-box {
+  width: 55px;
+  height: 34px;
+  border: 1.5px solid #000;
+  border-radius: 4px;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 4px;
+}
+.teacher-answer { color: var(--accent); font-weight: 900; font-size: 16px; text-decoration: underline; text-underline-offset: 4px; }
+
+/* تهيئة محرك الطباعة ومعايير Grayscale للتصوير المدرسي */
+@media print {
+  @page { size: A4 portrait; margin: 0; }
+  .admin-panel { display: none !important; }
+  body { background: #fff; padding: 0; margin: 0; filter: grayscale(100%); }
+  #output-container { padding: 0; gap: 0; }
+  .a4-page {
+    box-shadow: none; margin: 0; border: none; outline: none;
+    width: var(--a4-width); height: var(--a4-height); max-height: var(--a4-height);
+    overflow: hidden; page-break-after: always; break-after: page;
+  }
+}
 </style>
 </head>
 <body>
 
-<!-- شاشة الترحيب -->
-<div id="welcome">
-<h2>مرحباً بك في مغامرة الحكيم نور 🧙‍♂️!</h2>
-<p>أدخل اسم الطالب واسم ولي أمره:</p>
-<input id="studentName" placeholder="اسم الطالب"><br>
-<input id="parentName" placeholder="اسم ولي الأمر"><br>
-<button onclick="startLesson()">لنبدأ التعلم 🎓</button>
+<div class="admin-panel">
+  <h2 class="panel-title">⚙️ المنظومة المعمارية الاحترافية لإنتاج واشتقاق أوراق العمل التعليمية</h2>
+  <div class="control-grid">
+    <div class="input-group"><label>المديرية</label><input id="cfg-dir" value="مديرية التربية والتعليم - طوباس"></div>
+    <div class="input-group"><label>المدرسة</label><input id="cfg-school" value="مدرسة عاطوف الأساسية المختلطة"></div>
+    <div class="input-group"><label>المعلم / المعلمة</label><input id="cfg-teacher" value="محمد وجيه غنام"></div>
+    <div class="input-group"><label>القيمة التربوية المصاحبة</label><input id="cfg-value" value="تقدير الوقت والاعتزاز بالهوية الفلسطينية"></div>
+    <div class="input-group"><label>اسم الطالب (اختياري)</label><input id="cfg-student" placeholder="دعه فارغاً للطباعة الجماعية"></div>
+    <div class="input-group">
+      <label>الصف الدراسي</label>
+      <select id="cfg-grade" onchange="EduSystem.CurriculumEngine.updateSkillsDropdown()">
+        <option value="1">الأول الأساسي</option>
+        <option value="2">الثاني الأساسي</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>الفصل الدراسي</label>
+      <select id="cfg-semester" onchange="EduSystem.CurriculumEngine.updateSkillsDropdown()">
+        <option value="1">الفصل الأول</option>
+        <option value="2">الفصل الثاني</option>
+      </select>
+    </div>
+    <div class="input-group"><label>المهارة المستهدفة</label><select id="cfg-skill"></select></div>
+    <div class="input-group">
+      <label>نوع ورقة العمل</label>
+      <select id="cfg-type">
+        <option value="standard">تطبيقية (تمرن قياسي)</option>
+        <option value="diagnostic">تشخيصية (تحديد مستوى)</option>
+        <option value="remedial">علاجية (دعم وتثبيت)</option>
+        <option value="enrichment">إثرائية (قدرات عليا)</option>
+      </select>
+    </div>
+    <div class="input-group"><label>عدد الأسئلة المطلوبة</label><input id="cfg-count" type="number" value="6" min="2" max="24"></div>
+    <div class="input-group">
+      <label>إصدار النسخة</label>
+      <select id="cfg-mode">
+        <option value="student">ورقة الطالب (بدون حل)</option>
+        <option value="teacher">ورقة المعلم (نموذج الإجابة)</option>
+      </select>
+    </div>
+  </div>
+  <div class="action-buttons">
+    <button class="btn-reset" onclick="EduSystem.Utils.resetConfiguration()">إعادة تعيين</button>
+    <button class="btn-generate" onclick="EduSystem.CoreEngine.generate()">⚙️ توليد ورقة العمل</button>
+    <button class="btn-print" onclick="EduSystem.PrintEngine.execute()">🖨️ طباعة / تصدير PDF</button>
+  </div>
 </div>
 
-<!-- المرحلة التعليمية -->
-<div id="lesson" style="display:none;">
-<div class="character" id="char">🧙‍♂️</div>
-<h2>تعلم الجمع مع الحكيم نور 🧙‍♂️</h2>
-<div id="story" class="item"></div>
-<div id="visual"></div>
-<div id="numbers" class="number"></div>
-<button id="nextBtn" onclick="nextStep()" style="display:none;">التالي ➡️</button>
-</div>
-
-<!-- اللعبة الرئيسية -->
-<div id="game" style="display:none;">
-<h2>الآن نلعب ونحسب! 🎮</h2>
-<p>⭐ النقاط: <span id="score">٠</span> | 🎚 المستوى: <span id="level">١</span></p>
-<div class="progress"><div class="bar" id="bar"></div></div>
-<div class="story" id="gameStory"></div>
-<div class="visual" id="gameVisual"></div>
-<input id="answer" placeholder="اكتب الرقم هنا"><br>
-<button onclick="check()">أجب</button>
-<button onclick="hint()">تلميح من ولي الأمر 👪</button>
-<button onclick="teacherBoost()" style="display:none;">تشجيع المعلم 👨‍🏫</button>
-<div id="msg"></div>
-<div id="explain"></div>
-</div>
+<div id="output-container"></div>
 
 <script>
-// عناصر
-const q=id=>document.getElementById(id);
-let student="",parent="",step=0,steps=[],x=0,y=0,correct=0;
+/**
+ * نظام الإنتاج التربوي الهندسي المتكامل (SaaS Architecture Model)
+ */
+const EduSystem = {
+  
+  Utils: {
+    toArabicDigits(num) {
+      const arabicDigits = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
+      return String(num).replace(/[0-9]/g, d => arabicDigits[parseInt(d, 10)]);
+    },
+    
+    generateRandom(min, max) { 
+      return Math.floor(Math.random() * (max - min + 1)) + min; 
+    },
+    
+    resetConfiguration() { 
+      document.getElementById("cfg-student").value = "";
+      EduSystem.CoreEngine.generate();
+    },
+    
+    // محرك بناء كتل DOM معزول ومنيع بالكامل ضد ثغرات XSS
+    buildNode(tag, options = {}) {
+      const el = document.createElement(tag);
+      if (options.className) el.className = options.className;
+      if (options.text) el.textContent = options.text;
+      
+      if (options.styles) {
+        Object.assign(el.style, options.styles);
+      }
+      if (options.parent) options.parent.appendChild(el);
+      return el;
+    }
+  },
 
-// بيانات المرحلة التعليمية
-steps=[
-  {text:"مرحباً يا {name}! أنا الحكيم نور 🧙‍♂️ وسأعلمك الجمع اليوم!",items:[]},
-  {text:"انظر! لدي تفاحة واحدة 🍎",items:["🍎"]},
-  {text:"الآن أضفت تفاحة أخرى 🍎، كم أصبح معي؟",items:["🍎","🍎"]},
-  {text:"دعنا نعدها معاً: واحد… اثنان!",items:["🍎","🍎"],numbers:["١","٢"]},
-  {text:"رائع! أنت فهمت الجمع، الآن هيا لنلعب!",items:[]}
-];
+  CurriculumEngine: {
+    matrix: {
+      "1": {
+        "1": [
+          { id: "count_1_9", name: "الأعداد ضمن ٩: قراءة وكتابة وتمثيل ببعثرة بصرية" },
+          { id: "compare_1_9", name: "المقارنة والترتيب ضمن العدد ٩" },
+          { id: "add_sub_9", name: "مفهوم وحقائق الجمع والطرح ضمن العدد ٩" }
+        ],
+        "2": [
+          { id: "numbers_99", name: "الأعداد وضمن القيمة المنزلية للعدد ٩٩" },
+          { id: "add_sub_99_no_carry", name: "الجمع والطرح ضمن ٩٩ (بدون حمل أو استلاف)" }
+        ]
+      },
+      "2": {
+        "1": [
+          { id: "numbers_999", name: "الأعداد والمقارنة المنزلية ضمن العدد ٩٩٩" },
+          { id: "add_carry_99", name: "الجمع العمودي والأفقي ضمن ٩٩ مع الحمل" },
+          { id: "sub_borrow_99", name: "الطرح العمودي والأفقي ضمن ٩٩ مع الاستلاف" }
+        ],
+        "2": [
+          { id: "multiplication_table", name: "مفهوم وعناصر حقائق الضرب الإشاري" }
+        ]
+      }
+    },
+    
+    updateSkillsDropdown() {
+      const grade = document.getElementById("cfg-grade").value;
+      const sem = document.getElementById("cfg-semester").value;
+      const select = document.getElementById("cfg-skill");
+      select.innerHTML = "";
+      
+      const mixOpt = document.createElement("option");
+      mixOpt.value = "mix"; mixOpt.textContent = "🔄 خليط كفايات مهارية متدرجة";
+      select.appendChild(mixOpt);
 
-// تحويل الأرقام العربية
-function arabic(n){return n.toString().replace(/\d/g,d=>"٠١٢٣٤٥٦٧٨٩"[d]);}
-function parseArabicNumber(str){return parseInt(str.replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)));}
+      if (this.matrix[grade] && this.matrix[grade][sem]) {
+        this.matrix[grade][sem].forEach(sk => {
+          const opt = document.createElement("option");
+          opt.value = sk.id; opt.textContent = sk.name;
+          select.appendChild(opt);
+        });
+      }
+    }
+  },
 
-// الصوت
-function speakText(text,rate=1,pitch=1){
-  speechSynthesis.cancel();
-  let u=new SpeechSynthesisUtterance(text);
-  u.lang="ar-SA";
-  u.rate=rate;
-  u.pitch=pitch;
-  speechSynthesis.speak(u);
-}
+  VisualEngine: {
+    renderTenFrame(count) {
+      const wrapper = EduSystem.Utils.buildNode("div", { className: "ten-frame-wrapper" });
+      const frames = Math.ceil(count / 10) || 1;
+      for (let f = 0; f < frames; f++) {
+        const grid = EduSystem.Utils.buildNode("div", { className: "ten-frame-grid", parent: wrapper });
+        for (let c = 0; c < 10; c++) {
+          const cell = EduSystem.Utils.buildNode("div", { className: "ten-frame-cell", parent: grid });
+          if ((f * 10 + c) < count) {
+            EduSystem.Utils.buildNode("div", { className: "math-dot filled", parent: cell });
+          }
+        }
+      }
+      return wrapper;
+    },
+    
+    renderVerticalMath(num1, num2, sign) {
+      const u = EduSystem.Utils;
+      const container = u.buildNode("div", { className: "vertical-math-container" });
+      u.buildNode("div", { className: "vertical-digit-row", text: u.toArabicDigits(num1), parent: container });
+      u.buildNode("div", { className: "vertical-digit-row", text: u.toArabicDigits(num2), parent: container });
+      u.buildNode("span", { className: "vertical-operation", text: sign, parent: container });
+      u.buildNode("div", { className: "vertical-line", parent: container });
+      return container;
+    }
+  },
 
-// ابدأ المرحلة التعليمية
-function startLesson(){
-  student=q("studentName").value.trim() || "طفلي";
-  parent=q("parentName").value.trim() || "ولي الأمر";
-  q("welcome").style.display="none";
-  q("lesson").style.display="block";
-  step=0;
-  showStep();
-  setTimeout(()=>{q("nextBtn").style.display="inline-block";},2000);
-}
+  ValidationEngine: {
+    registry: new Set(),
+    reset() { this.registry.clear(); },
+    
+    // الفحص الحسابي والرياضي الصارم لمنع تكرار أو كسر البنية الحسابية تربوياً
+    validateAndRegister(type, num1, num2, result, condition = true) {
+      if (!condition) return false;
+      if (result < 0 || result > 999) return false; // منع القيم السالبة والطفح العددي
+      
+      const signature = `${type}_${num1}_${num2}_${result}`;
+      if (this.registry.has(signature)) return false;
+      
+      this.registry.add(signature);
+      return true;
+    }
+  },
 
-// عرض خطوة
-function showStep(){
-  let s=steps[step];
-  q("story").innerHTML=s.text.replace("{name}",student);
-  q("visual").innerHTML=s.items.map(i=>`<span class="item">${i}</span>`).join("");
-  q("numbers").innerHTML=s.numbers ? s.numbers.join(" ") : "";
-  if(step>0) q("nextBtn").style.display="inline-block"; else q("nextBtn").style.display="none";
-  speakText(s.text.replace("{name}",student),1,1);
-}
+  QuestionGenerators: {
+    getMultiplier(docType) {
+      const map = { remedial: 0.7, standard: 1, diagnostic: 1.1, enrichment: 1.4 };
+      return map[docType] || 1;
+    },
+    
+    count_1_9(docType) {
+      const u = EduSystem.Utils;
+      const v = EduSystem.ValidationEngine;
+      let num = 0, valid = false;
+      
+      for(let a=0; a<50; a++) {
+        num = u.generateRandom(1, 9);
+        if(v.validateAndRegister("count", num, 0, num)) { valid = true; break; }
+      }
+      return {
+        instruction: "تأمّل الإطار البصري التالي، ثم اكتب العدد المقابل له بشكل صحيح داخل الصندوق:",
+        visual: EduSystem.VisualEngine.renderTenFrame(num),
+        layoutType: "box_render",
+        parts: { prefix: "العَدَد المُمَثَّل = ", suffix: "" },
+        answer: u.toArabicDigits(num)
+      };
+    },
 
-// التالي في الشرح
-function nextStep(){
-  step++;
-  if(step>=steps.length){
-    startGame();
-    return;
+    compare_1_9(docType) {
+      const u = EduSystem.Utils;
+      const v = EduSystem.ValidationEngine;
+      let n1 = 0, n2 = 0, valid = false;
+      
+      for(let a=0; a<50; a++) {
+        n1 = u.generateRandom(1, 9);
+        n2 = u.generateRandom(1, 9);
+        if(n1 !== n2 && v.validateAndRegister("compare", n1, n2, 0)) { valid = true; break; }
+      }
+      return {
+        instruction: "قارن بين العددين بوضع الإشارة المناسبة ( > ، < ، = ) داخل المربع المجاور:",
+        visual: null,
+        layoutType: "inline_box",
+        parts: { left: u.toArabicDigits(n1), right: u.toArabicDigits(n2) },
+        answer: n1 > n2 ? ">" : "<"
+      };
+    },
+
+    add_sub_9(docType) {
+      const u = EduSystem.Utils;
+      const v = EduSystem.ValidationEngine;
+      let n1 = 0, n2 = 0, res = 0, isPlus = true, valid = false;
+      
+      for(let a=0; a<50; a++) {
+        isPlus = u.generateRandom(1, 2) === 1;
+        if(isPlus) {
+          n1 = u.generateRandom(1, 8);
+          n2 = u.generateRandom(1, 9 - n1);
+          res = n1 + n2;
+        } else {
+          n1 = u.generateRandom(2, 9);
+          n2 = u.generateRandom(1, n1 - 1);
+          res = n1 - n2;
+        }
+        if(v.validateAndRegister("addsub9", n1, n2, res)) { valid = true; break; }
+      }
+      return {
+        instruction: isPlus ? "احسب ناتج الجمع البسيط بالاستعانة بمكونات الأعداد:" : "أوجد ناتج الطرح الأفقي الصحيح دون تجاوز مكونات العدد المعطى:",
+        visual: null,
+        layoutType: "equation",
+        parts: { left: `${u.toArabicDigits(n1)} ${isPlus ? " + " : " - "} ${u.toArabicDigits(n2)} = ` },
+        answer: u.toArabicDigits(res)
+      };
+    },
+
+    add_sub_99_no_carry(docType) {
+      const u = EduSystem.Utils;
+      const v = EduSystem.ValidationEngine;
+      let n1 = 0, n2 = 0, res = 0, isPlus = true, valid = false;
+      
+      for(let a=0; a<50; a++) {
+        isPlus = u.generateRandom(1, 2) === 1;
+        if (isPlus) {
+          const u1 = u.generateRandom(1, 7); const u2 = u.generateRandom(1, 8 - u1);
+          const t1 = u.generateRandom(1, 7); const t2 = u.generateRandom(1, 8 - t1);
+          n1 = t1 * 10 + u1; n2 = t2 * 10 + u2; res = n1 + n2;
+        } else {
+          const u1 = u.generateRandom(2, 9); const u2 = u.generateRandom(1, u1);
+          const t1 = u.generateRandom(2, 9); const t2 = u.generateRandom(1, t1 - 1);
+          n1 = t1 * 10 + u1; n2 = t2 * 10 + u2; res = n1 - n2;
+        }
+        if(v.validateAndRegister("addsub99nc", n1, n2, res)) { valid = true; break; }
+      }
+      return {
+        instruction: isPlus ? "حل مسألة الجمع الرأسية التالية مع مراعاة ترتيب الخانات (دون حمل):" : "أوجد ناتج الطرح الرياضي التالي مع محاذاة الآحاد والعشرات (دون استلاف):",
+        visual: isPlus ? EduSystem.VisualEngine.renderVerticalMath(n1, n2, "+") : null,
+        layoutType: isPlus ? "vertical_render" : "equation",
+        parts: isPlus ? {} : { left: `${u.toArabicDigits(n1)} − ${u.toArabicDigits(n2)} = ` },
+        answer: u.toArabicDigits(res)
+      };
+    },
+
+    add_carry_99(docType) {
+      const u = EduSystem.Utils;
+      const v = EduSystem.ValidationEngine;
+      let n1 = 0, n2 = 0, res = 0, valid = false;
+      
+      for(let a=0; a<50; a++) {
+        const u1 = u.generateRandom(4, 9); const u2 = u.generateRandom(10 - u1, 9); 
+        const t1 = u.generateRandom(1, 6); const t2 = u.generateRandom(1, 7 - t1);
+        n1 = t1 * 10 + u1; n2 = t2 * 10 + u2; res = n1 + n2;
+        if(v.validateAndRegister("addcarry", n1, n2, res, (u1 + u2 >= 10))) { valid = true; break; }
+      }
+      return {
+        instruction: "أوجد ناتج عملية الجمع العمودي التالية مع ترحيل الحمل فوق خانة العشرات بالتتابع الفعلي:",
+        visual: EduSystem.VisualEngine.renderVerticalMath(n1, n2, "+"),
+        layoutType: "vertical_render",
+        parts: {},
+        answer: u.toArabicDigits(res)
+      };
+    },
+
+    sub_borrow_99(docType) {
+      const u = EduSystem.Utils;
+      const v = EduSystem.ValidationEngine;
+      let n1 = 0, n2 = 0, res = 0, valid = false;
+      
+      for(let a=0; a<50; a++) {
+        const u1 = u.generateRandom(0, 5); const u2 = u.generateRandom(u1 + 1, 9);
+        const t1 = u.generateRandom(3, 9); const t2 = u.generateRandom(1, t1 - 1);
+        n1 = t1 * 10 + u1; n2 = t2 * 10 + u2; res = n1 - n2;
+        if(v.validateAndRegister("subborrow", n1, n2, res, (u1 < u2))) { valid = true; break; }
+      }
+      return {
+        instruction: "احسب ناتج عملية الطرح الأفقية المركبة التالية بالاستعانة بإعادة التجميع والاستلاف الحقيقي من خانة العشرات:",
+        visual: null,
+        layoutType: "equation",
+        parts: { left: `${u.toArabicDigits(n1)} − ${u.toArabicDigits(n2)} = ` },
+        answer: u.toArabicDigits(res)
+      };
+    },
+
+    multiplication_table(docType) {
+      const u = EduSystem.Utils;
+      const v = EduSystem.ValidationEngine;
+      let n1 = 0, n2 = 0, res = 0, valid = false;
+      
+      for(let a=0; a<50; a++) {
+        n1 = u.generateRandom(2, 5);
+        n2 = u.generateRandom(1, 9);
+        res = n1 * n2;
+        if(v.validateAndRegister("mult", n1, n2, res)) { valid = true; break; }
+      }
+      return {
+        instruction: "اعتماداً على مفهوم المجموعات المتساوية المترابطة؛ جد ناتج عملية الضرب المباشر:",
+        visual: null,
+        layoutType: "equation",
+        parts: { left: `${u.toArabicDigits(n1)} × ${u.toArabicDigits(n2)} = ` },
+        answer: u.toArabicDigits(res)
+      };
+    },
+
+    numbers_99(docType) {
+      return this.count_1_9(docType);
+    },
+    numbers_999(docType) {
+      return this.compare_1_9(docType);
+    },
+    _fallback(docType) {
+      return this.add_sub_9(docType);
+    }
+  },
+
+  LayoutEngine: {
+    paginate(questionsData, config) {
+      const u = EduSystem.Utils;
+      const container = document.getElementById("output-container");
+      container.innerHTML = ""; 
+      
+      const fragment = document.createDocumentFragment();
+      const columns = questionsData.length <= 3 ? 1 : 2;
+      const capacity = columns === 1 ? 3 : 6; // تقسيم وتوزيع دقيق لحجم الكروت لمنع تخطي الارتفاع الكلي الفعلي للورقة
+      
+      const chunks = [];
+      for (let i = 0; i < questionsData.length; i += capacity) {
+        chunks.push(questionsData.slice(i, i + capacity));
+      }
+
+      chunks.forEach((chunk, p) => {
+        const page = u.buildNode("div", { className: "a4-page", parent: fragment });
+        
+        // ترويسة الوزارة والمدرسة الرسمية
+        const header = u.buildNode("div", { className: "official-header", parent: page });
+        
+        const rightMeta = u.buildNode("div", { className: "ministry-info", parent: header });
+        u.buildNode("div", { text: "دولة فلسطين" }, { parent: rightMeta });
+        u.buildNode("div", { text: config.dir }, { parent: rightMeta });
+        u.buildNode("div", { text: config.school }, { parent: rightMeta });
+
+        const centerMeta = u.buildNode("div", { className: "document-title-area", parent: header });
+        const titleText = `ورقة عمل ${config.docTypeNames[config.docType] || ""} ${config.isTeacherMode ? " (نموذج الإجابة)" : ""}`;
+        u.buildNode("h1", { className: "document-title", text: titleText, parent: centerMeta });
+        
+        const goalBox = u.buildNode("div", { className: "pedagogical-goal", parent: centerMeta });
+        u.buildNode("span", { text: "التركيز القيمي المصاحب: ", parent: goalBox });
+        u.buildNode("strong", { text: config.valTheme, parent: goalBox });
+
+        const leftMeta = u.buildNode("div", { className: "ministry-info", parent: header });
+        leftMeta.style.textAlign = "left";
+        u.buildNode("div", { text: `المبحث: الرياضيات المعمارية` , parent: leftMeta });
+        u.buildNode("div", { text: `الصف: ${config.grade === "1" ? "الأول" : "الثاني"} الأساسي` , parent: leftMeta });
+        u.buildNode("div", { text: `المعلم: ${config.teacher}` , parent: leftMeta });
+
+        // شريط بيانات الطالب القياسي المستقر
+        const infoBar = u.buildNode("div", { className: "student-info-bar", parent: page });
+        u.buildNode("div", { text: `اسم الطالب التنافسي: ${config.student || "........................................................"}` }, { parent: infoBar });
+        u.buildNode("div", { text: `التاريخ: ..... / ..... / ٢٠٢٦م` }, { parent: infoBar });
+        u.buildNode("div", { text: `الصفحة رقم: ${u.toArabicDigits(p+1)} من ${u.toArabicDigits(chunks.length)}` }, { parent: infoBar });
+
+        // شبكة توزيع وعرض الأسئلة هندسياً
+        const grid = u.buildNode("div", { className: "questions-layout", parent: page });
+        grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+
+        chunk.forEach(q => {
+          const card = u.buildNode("div", { className: "question-card", parent: grid });
+          
+          const topMeta = u.buildNode("div", { className: "q-top-meta", parent: card });
+          u.buildNode("span", { className: "q-number", text: `السؤال رقم (${u.toArabicDigits(q.id)}):` , parent: topMeta });
+          u.buildNode("span", { text: "العلامة التقديرية: [  ]", parent: topMeta }).style.fontSize = "11px";
+          
+          u.buildNode("div", { className: "q-instruction", text: q.data.instruction, parent: card });
+          
+          if(q.data.visual) {
+            const vZone = u.buildNode("div", { className: "visual-render-zone", parent: card });
+            vZone.appendChild(q.data.visual);
+          }
+
+          const mRow = u.buildNode("div", { className: "math-row", parent: card });
+          
+          // حوكمة ومعالجة طريقة الإخراج الرياضي البصري بناءً على نوع التخطيط المعزول لمنع التداخل والتعاكس اللغوي
+          if(q.data.layoutType === "equation") {
+            u.buildNode("span", { className: "math-item", text: q.data.parts.left, parent: mRow });
+            const box = u.buildNode("div", { className: "math-box", parent: mRow });
+            if(config.isTeacherMode) {
+              u.buildNode("span", { className: "teacher-answer", text: q.data.answer, parent: box });
+            }
+          } 
+          else if(q.data.layoutType === "inline_box") {
+            u.buildNode("span", { className: "math-item", text: q.data.parts.left, parent: mRow });
+            const box = u.buildNode("div", { className: "math-box", parent: mRow });
+            box.style.width = "40px";
+            if(config.isTeacherMode) {
+              u.buildNode("span", { className: "teacher-answer", text: q.data.answer, parent: box });
+            }
+            u.buildNode("span", { className: "math-item", text: q.data.parts.right, parent: mRow });
+          }
+          else if(q.data.layoutType === "box_render") {
+            u.buildNode("span", { className: "math-item", text: q.data.parts.prefix, parent: mRow });
+            const box = u.buildNode("div", { className: "math-box", parent: mRow });
+            if(config.isTeacherMode) {
+              u.buildNode("span", { className: "teacher-answer", text: q.data.answer, parent: box });
+            }
+          }
+          else if(q.data.layoutType === "vertical_render") {
+            if(config.isTeacherMode) {
+              const teacherSolutionBox = u.buildNode("div", { parent: mRow });
+              teacherSolutionBox.style.textAlign = "center";
+              u.buildNode("div", { text: "الجواب النموذجي:", parent: teacherSolutionBox }).style.fontSize = "11px";
+              u.buildNode("span", { className: "teacher-answer", text: q.data.answer, parent: teacherSolutionBox });
+            } else {
+              const emptyBoxPlaceholder = u.buildNode("div", { className: "math-box", parent: mRow });
+              emptyBoxPlaceholder.style.height = "38px";
+              emptyBoxPlaceholder.style.width = "75px";
+            }
+          }
+        });
+      });
+      
+      container.appendChild(fragment);
+    }
+  },
+
+  PrintEngine: {
+    execute() {
+      window.print();
+    }
+  },
+
+  CoreEngine: {
+    generate() {
+      EduSystem.ValidationEngine.reset();
+      
+      const config = {
+        dir: document.getElementById("cfg-dir").value,
+        school: document.getElementById("cfg-school").value,
+        teacher: document.getElementById("cfg-teacher").value,
+        valTheme: document.getElementById("cfg-value").value,
+        student: document.getElementById("cfg-student").value,
+        grade: document.getElementById("cfg-grade").value,
+        docType: document.getElementById("cfg-type").value,
+        isTeacherMode: document.getElementById("cfg-mode").value === "teacher",
+        selectedSkill: document.getElementById("cfg-skill").value,
+        requestedCount: parseInt(document.getElementById("cfg-count").value, 10) || 6,
+        docTypeNames: { diagnostic: "التشخيصية التراكمية", remedial: "العلاجية الداعمة", standard: "التطبيقية القياسية", enrichment: "الإثرائية المتقدمة" }
+      };
+
+      const questions = [];
+      const grade = config.grade;
+      const sem = document.getElementById("cfg-semester").value;
+      
+      // جلب المعيار المهاراتي المستهدف من مصفوفة المناهج الفلسطينية
+      let availableSkills = [];
+      if (EduSystem.CurriculumEngine.matrix[grade] && EduSystem.CurriculumEngine.matrix[grade][sem]) {
+        availableSkills = EduSystem.CurriculumEngine.matrix[grade][sem].map(s => s.id);
+      }
+      if (availableSkills.length === 0) availableSkills = ["add_sub_9"];
+
+      for (let i = 1; i <= config.requestedCount; i++) {
+        let currentSkillId = config.selectedSkill;
+        
+        // توزيع المهام وبناء الخليط المتجانس في حال تفعيل الخيار الشامل
+        if (config.selectedSkill === "mix") {
+          currentSkillId = availableSkills[(i - 1) % availableSkills.length];
+        }
+        
+        const generator = EduSystem.QuestionGenerators[currentSkillId] || EduSystem.QuestionGenerators._fallback;
+        const qData = generator.call(EduSystem.QuestionGenerators, config.docType);
+        
+        questions.push({ id: i, data: qData });
+      }
+      
+      EduSystem.LayoutEngine.paginate(questions, config);
+    }
   }
-  showStep();
-}
+};
 
-// ---------- اللعبة ----------
-let score=0,level=1,progress=0,difficulty=1,wrong=0,hintCount=0,consecCorrect=0,consecWrong=0;
-const items=["🍎","⭐","🍬","🍌"];
-
-function startGame(){
-  q("lesson").style.display="none";
-  q("game").style.display="block";
-  score=0; level=1; progress=0; difficulty=1;
-  newQ();
-  update();
-}
-
-function newQ(){
-  let maxY = Math.min(10-x, difficulty*2);
-  if(maxY<1) maxY=1;
-  x=Math.floor(Math.random()*5)+1;
-  y=Math.floor(Math.random()*maxY)+1;
-  correct=x+y;
-  let item=items[Math.floor(Math.random()*items.length)];
-  q("gameStory").innerHTML=`${student}، لديك ${arabic(x)} ${item} ثم أضفت ${arabic(y)} أخرى. كم مجموعها؟`;
-  q("gameVisual").innerHTML=item.repeat(x)+" + "+item.repeat(y);
-  q("answer").value="";
-  q("msg").innerHTML="";
-  q("explain").innerHTML="";
-  hintCount=0;
-  checkTeacherButton();
-}
-
-// التحقق من الإجابة
-function check(){
-  let v=q("answer").value.trim();
-  if(!v){q("msg").innerHTML=`اكتب الرقم يا ${student}!`; speakText("اكتب الرقم من فضلك"); return;}
-  if(!/^[0-9٠-٩]+$/.test(v)){q("msg").innerHTML="اكتب رقماً صحيحاً"; speakText("الرجاء كتابة رقم صحيح"); return;}
-  v=parseArabicNumber(v);
-  if(v===correct){
-    score+=10; progress+=20; wrong=0; consecCorrect++; consecWrong=0;
-    q("msg").innerHTML=`🌟 أحسنت يا ${student}!`;
-    q("explain").innerHTML=`${arabic(x)} + ${arabic(y)} = ${arabic(correct)}`;
-    speakText(`رائع! أحسنت يا ${student}`);
-    if(progress>=100){level++;progress=0;difficulty++;q("msg").innerHTML+=`<br>🎉 لقد انتقلت لمستوى جديد!`;}
-    update();
-    checkTeacherButton();
-    setTimeout(newQ,2000);
-  } else {
-    wrong++; consecWrong++; consecCorrect=0;
-    if(wrong===1) q("msg").innerHTML=`حاول مرة أخرى 🌱، ${parent} يقول: ركز على العد خطوة خطوة`;
-    else if(wrong===2) q("msg").innerHTML=`لا بأس، ${parent} ينصحك: استخدم أصابعك أو الأشياء أمامك للعد`;
-    else q("msg").innerHTML=`${parent} يشجعك: الحكيم نور هنا ليساعدك على التفكير`;
-    speakText(q("msg").innerHTML);
-    checkTeacherButton();
-  }
-}
-
-// تلميحات عند الضغط على زر ولي الأمر
-function hint(){
-  hintCount++;
-  if(hintCount===1){q("msg").innerHTML=`ابدأ بالعد من ${arabic(x)}، ${parent} يذكرك بالصبر`; speakText("ابدأ بالعد من "+arabic(x));}
-  else if(hintCount===2){q("msg").innerHTML="الجمع يعني جمع الأشياء معاً لتعرف الكل"; speakText("الجمع يعني جمع الأشياء معاً");}
-  else {q("msg").innerHTML="هذا كل ما لدي من تلميحات"; speakText("هذا كل ما لدي من تلميحات");}
-}
-
-// زر المعلم للتشجيع يظهر عند ٥ نجاحات أو أخطاء متتالية
-function checkTeacherButton(){
-  const btn = document.querySelector("button[onclick='teacherBoost()']");
-  if(consecCorrect>=5 || consecWrong>=5){btn.style.display="inline-block";}
-  else {btn.style.display="none";}
-}
-
-function teacherBoost(){
-  q("msg").innerHTML=`👨‍🏫 ${student}، أحسنت! ضع نجمة على دفترك ⭐ لتعزز نجاحك!`;
-  speakText(`${student}، أحسنت! ضع نجمة على دفترك لتعزز نجاحك!`);
-  consecCorrect=0; consecWrong=0;
-  checkTeacherButton();
-}
-
-function update(){
-  q("score").innerHTML=arabic(score);
-  q("level").innerHTML=arabic(level);
-  q("bar").style.width=progress+"%";
-}
-
-document.addEventListener("keydown",e=>{if(e.key==="Enter")check();});
+// تفعيل وتحميل المنظومة عند اكتمال الواجهة البرمجية مباشرة وثبات المحاذاة المستهدفة
+window.addEventListener("DOMContentLoaded", () => {
+  EduSystem.CurriculumEngine.updateSkillsDropdown();
+  EduSystem.CoreEngine.generate();
+});
 </script>
-
 </body>
 </html>
