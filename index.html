@@ -2,359 +2,684 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>نظام أوراق العمل المدرسي</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="منصة رُقِيّ التعليمية - النظام المعماري المتكامل لإنتاج أوراق العمل الاحترافية">
+<title>منصة رُقِيّ - مِعْمارِيَّةُ الإِنْتَاجِ الِاحْتِرَافِيِّ V6.5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box;direction:rtl}
-
-body{
-margin:0;
-font-family:"Tajawal",sans-serif;
-background:#f1f5f9;
+/* 
+ * Ruqi SaaS Core Stylesheet - Version 6.5 (Production Level)
+ * Enterprise-grade Print Architecture & Strict Responsive Viewport
+ */
+:root {
+  --primary: #0f766e;
+  --primary-hover: #115e59;
+  --bg-main: #f1f5f9;
+  --bg-panel: #ffffff;
+  --text-dark: #0f172a;
+  --text-muted: #475569;
+  --border-color: #cbd5e1;
+  --print-border: #000000;
+  --a4-width: 210mm;
+  --a4-height: 297mm; 
+  --page-padding: 15mm;
 }
 
-/* Panel */
-.panel{
-background:#fff;
-padding:15px;
-border-bottom:3px solid #0f766e;
+* {
+  box-sizing: border-box;
+  font-family: 'Tajawal', system-ui, -apple-system, sans-serif;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-gap:8px;
+html, body {
+  margin: 0; padding: 0;
+  background-color: var(--bg-main);
+  color: var(--text-dark);
+  -webkit-text-size-adjust: 100%;
 }
 
-input,select,button{
-padding:8px;
-border:1px solid #ccc;
-border-radius:5px;
-width:100%;
+/* لوحة التحكم الهندسية المتقدمة */
+.admin-panel {
+  background: var(--bg-panel);
+  border-bottom: 4px solid var(--primary);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  margin-bottom: 25px;
+  position: relative;
+  z-index: 1000;
 }
 
-button{
-background:#0f766e;
-color:#fff;
-font-weight:bold;
-cursor:pointer;
+.panel-title {
+  margin: 0 0 20px 0; color: var(--primary); font-size: 22px; font-weight: 900;
+  border-bottom: 2px solid #f1f5f9; padding-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
 }
 
-/* Output */
-#output{
-display:flex;
-flex-direction:column;
-align-items:center;
+.control-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px;
 }
 
-/* A4 */
-.page{
-width:210mm;
-height:297mm;
-background:#fff;
-padding:10mm;
-border:1px solid #ccc;
-overflow:hidden;
-display:flex;
-flex-direction:column;
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+.input-group label { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+.input-group select, .input-group input {
+  padding: 12px 14px; border: 1.5px solid var(--border-color); border-radius: 6px;
+  font-size: 14px; transition: all 0.2s ease; background-color: #fff;
+  color: var(--text-dark);
+}
+.input-group select:focus, .input-group input:focus { 
+  outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
 }
 
-/* Question */
-.question{
-border:1px solid #000;
-padding:8px;
-margin-bottom:8px;
-border-radius:6px;
-break-inside:avoid;
+.action-buttons { display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end; }
+button { 
+  padding: 12px 28px; border: none; border-radius: 6px; font-weight: 700; font-size: 15px; 
+  cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+}
+button:active { transform: scale(0.97); }
+.btn-generate { background: var(--primary); color: #fff; }
+.btn-generate:hover { background: var(--primary-hover); }
+.btn-print { background: var(--text-dark); color: #fff; }
+.btn-print:hover { background: #1e293b; }
+
+/* بيئة العرض والمحاكاة الذكية */
+.print-viewport {
+  width: 100%; overflow-x: auto; display: flex; flex-direction: column;
+  align-items: center; gap: 30px; padding: 20px 10px;
 }
 
-/* Answer */
-.answer{
-border:1px solid #000;
-height:28px;
-margin-top:5px;
+/* هندسة بناء صفحات A4 القياسية */
+.a4-page {
+  width: var(--a4-width); min-width: var(--a4-width);
+  height: var(--a4-height); min-height: var(--a4-height);
+  background: #ffffff; padding: var(--page-padding);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  display: flex; flex-direction: column;
+  position: relative; overflow: hidden;
+  page-break-after: always; break-after: page;
 }
 
-/* Print */
-@media print{
-.panel{display:none}
-.page{
-margin:0;
-border:none;
-page-break-after:always;
+/* ترويسة معيارية رسمية للمنهاج الفلسطيني */
+.official-header {
+  display: grid; grid-template-columns: 1fr 1.3fr 1fr; align-items: start;
+  border-bottom: 2.5px solid var(--print-border); padding-bottom: 12px; margin-bottom: 14px;
 }
+.ministry-info { font-size: 13px; font-weight: 700; line-height: 1.6; color: #000; }
+.document-title-area { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.document-title { font-family: 'Amiri', serif; font-size: 24px; font-weight: 700; margin: 0 0 6px 0; color: #000; }
+.pedagogical-goal { 
+  font-size: 12px; background: #f8fafc; padding: 4px 14px; border-radius: 4px; 
+  border-right: 4px solid var(--primary); font-weight: 700; color: #000;
+}
+
+.student-info-bar {
+  border: 1.5px solid var(--print-border); background: #fcfcfc; padding: 10px 12px;
+  display: grid; grid-template-columns: 2fr 1fr 1fr; font-size: 14px; font-weight: 700; margin-bottom: 18px;
+  color: #000;
+}
+
+/* بيئة توزيع الأسئلة الحسابية */
+.questions-layout { 
+  display: grid; gap: 14px; flex-grow: 1; align-content: start;
+}
+.grid-2-col { grid-template-columns: repeat(2, 1fr); }
+.grid-1-col { grid-template-columns: 1fr; }
+
+/* بطاقات الأسئلة الاحترافية لمنع الكسر العشوائي */
+.question-card {
+  border: 1.5px solid var(--print-border); border-radius: 6px; padding: 14px;
+  background: #fff; display: flex; flex-direction: column; justify-content: space-between;
+  break-inside: avoid; page-break-inside: avoid;
+}
+.q-top-meta { 
+  display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border-color); 
+  padding-bottom: 6px; margin-bottom: 10px; 
+}
+.q-number { font-weight: 900; color: var(--text-dark); font-size: 14px; }
+.q-score { font-size: 12px; color: var(--text-muted); font-weight: 700; }
+.q-instruction { font-size: 14px; font-weight: 700; color: #000; margin-bottom: 12px; }
+
+/* أنماط القوالب الرياضية الأساسية */
+.math-row {
+  display: flex; justify-content: center; align-items: center; gap: 10px;
+  font-size: 26px; font-weight: 700; padding: 6px 0;
+  direction: rtl; unicode-bidi: isolate;
+}
+.math-box {
+  width: 55px; height: 42px; border: 2048 solid #000; border: 2px solid #000; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center; background: #fff;
+}
+.teacher-answer { color: #dc2626; font-weight: 900; font-size: 24px; font-family: 'Amiri', serif; }
+
+/* ضبط الحساب العمودي الصارم */
+.vertical-math-container {
+  display: grid; grid-template-columns: 36px 36px; grid-template-rows: repeat(4, auto);
+  justify-content: center; align-items: center; font-size: 28px; font-weight: 700;
+  row-gap: 2px; margin: 8px auto; position: relative; unicode-bidi: bidi-override;
+}
+.v-op { position: absolute; right: -25px; top: 36px; font-size: 24px; }
+.v-line { grid-column: 1 / -1; height: 3px; background: #000; margin: 4px 0; width: 100%; }
+.v-ans-box { grid-column: 1 / -1; display: flex; justify-content: center; min-height: 38px; }
+
+/* أنماط المقارنة والترتيب */
+.comparison-container {
+  display: flex; justify-content: center; align-items: center; gap: 24px; font-size: 28px; font-weight: 700;
+}
+.comparison-circle {
+  width: 50px; height: 50px; border: 2px dashed #000; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.page-footer {
+  margin-top: auto; border-top: 1.5px solid #000; padding-top: 8px;
+  display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #000;
+}
+
+/* ملاءمة العرض عبر الهاتف لمتصفحات Chrome Android */
+@media screen and (max-width: 850px) {
+  .a4-page { transform: scale(0.85); transform-origin: top center; margin-bottom: -15%; }
+}
+@media screen and (max-width: 650px) {
+  .a4-page { transform: scale(0.62); margin-bottom: -45%; }
+}
+
+/* محرك الطباعة الأحادي والرمادي الصارم */
+@media print {
+  @page { size: A4 portrait; margin: 0; }
+  body { background: #fff; filter: grayscale(100%); }
+  .admin-panel { display: none !important; }
+  .print-viewport { gap: 0; padding: 0; display: block; }
+  .a4-page { 
+    transform: none !important; margin: 0 !important; box-shadow: none !important;
+    width: var(--a4-width) !important; height: var(--a4-height) !important;
+  }
+  .pedagogical-goal { background: #fff !important; border-color: #000 !important; }
+  .teacher-answer { color: #000 !important; text-decoration: underline; font-weight: 900; }
 }
 </style>
 </head>
-
 <body>
 
-<div class="panel">
-<div class="grid">
-<select id="grade"></select>
-<select id="unit"></select>
-<select id="lesson"></select>
-<input id="count" type="number" value="12">
-</div>
-<button onclick="Edu.Core.generate()">توليد</button>
+<div class="admin-panel">
+  <h2 class="panel-title">⚙️ منظومة رُقِيّ التعليمية - المعمارية الاحترافية V6.5</h2>
+  <div class="control-grid">
+    <div class="input-group"><label>المديرية</label><input id="cfg-dir" type="text" placeholder="مديرية التربية والتعليم..."></div>
+    <div class="input-group"><label>المدرسة</label><input id="cfg-school" type="text" placeholder="اسم المدرسة..."></div>
+    <div class="input-group"><label>المعلم</label><input id="cfg-teacher" type="text" placeholder="اسم المعلم..."></div>
+    <div class="input-group"><label>القيمة التربوية</label><input id="cfg-value" type="text" value="النظام والدقة في العمل"></div>
+    <div class="input-group">
+      <label>الصف الدراسي</label>
+      <select id="cfg-grade" onchange="RuqiSaaS.CurriculumEngine.updateOptions()">
+        <option value="1">الصف الأول الأساسي</option>
+        <option value="2">الصف الثاني الأساسي</option>
+      </select>
+    </div>
+    <div class="input-group"><label>المهارة المستهدفة</label><select id="cfg-lesson"></select></div>
+    <div class="input-group"><label>عدد الأسئلة المطلوبة</label><input id="cfg-count" type="text" value="٦" dir="rtl"></div>
+    <div class="input-group">
+      <label>نموذج الطباعة المخرجة</label>
+      <select id="cfg-mode">
+        <option value="student">ورقة عمل نموذجية للطالب</option>
+        <option value="teacher">مفتاح الحل والتقييم للمعلم</option>
+      </select>
+    </div>
+  </div>
+  <div class="action-buttons">
+    <button class="btn-generate" onclick="RuqiSaaS.ApplicationCore.buildDocument()">⚙️ توليد الهيكل والأسئلة</button>
+    <button class="btn-print" onclick="window.print()">🖨️ طباعة PDF</button>
+  </div>
 </div>
 
-<div id="output"></div>
+<div class="print-viewport" id="print-viewport"></div>
 
 <script>
+/**
+ * Ruqi SaaS Educational Platform - Core Architecture v6.5
+ * Fully Decoupled Engines based on Registry and Factory Engineering Patterns.
+ */
+const RuqiSaaS = (() => {
 
-/* ===== UTIL ===== */
-const Utils={
-rand:(a,b)=>Math.floor(Math.random()*(b-a+1))+a,
-ar:n=>String(n).replace(/[0-9]/g,d=>"٠١٢٣٤٥٦٧٨٩"[d])
-}
+  // ==========================================
+  // 1. SECURITY UTILITY ENGINE
+  // ==========================================
+  const SecurityEngine = {
+    escapeHTML(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  };
 
-/* ===== STORAGE ===== */
-const Storage={
-save(d){localStorage.setItem("ws",JSON.stringify(d))},
-load(){try{return JSON.parse(localStorage.getItem("ws"))||[]}catch{return[]}}
-}
+  // ==========================================
+  // 2. DOM RENDERING ENGINE (Pure Nodes Creation)
+  // ==========================================
+  const DOMEngine = {
+    el(tag, props = {}) {
+      const element = document.createElement(tag);
+      if (props.c) element.className = props.c;
+      if (props.t !== undefined) element.textContent = props.t; 
+      if (props.p) props.p.appendChild(element);
+      return element;
+    },
+    empty(element) {
+      element.replaceChildren();
+    },
+    rtlStr(str) { return `\u200F${str}\u200F`; },
+    toEasternDigits(num) {
+      const easternArray = ["٠","١","٢","٣","٤","٥","٦","٧","٨","٩"];
+      return this.rtlStr(String(num).replace(/[0-9]/g, x => easternArray[x]));
+    },
+    parseEasternDigits(str) {
+      const mapping = {"٠":0,"١":1,"٢":2,"٣":3,"٤":4,"٥":5,"٦":6,"٧":7,"٨":8,"٩":9};
+      const parsed = parseInt(String(str).replace(/[٠-٩]/g, x => mapping[x]), 10);
+      return isNaN(parsed) ? 6 : parsed;
+    },
+    randomRange(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+  };
 
-/* ===== CURRICULUM ===== */
-const Curriculum={
-data:{
-"1":{
-units:[
-{name:"الأعداد",lessons:[
-{name:"عد",skill:"count"},
-{name:"مقارنة",skill:"compare"}
-]},
-{name:"العمليات",lessons:[
-{name:"جمع",skill:"add"},
-{name:"طرح",skill:"sub"}
-]}
-]
-}
-},
+  // ==========================================
+  // 3. PERSISTENT STORAGE ENGINE
+  // ==========================================
+  const StorageEngine = {
+    prefix: "ruqi_saas_",
+    fields: ['cfg-dir', 'cfg-school', 'cfg-teacher', 'cfg-value'],
+    saveState() {
+      this.fields.forEach(field => {
+        const input = document.getElementById(field);
+        if (input) localStorage.setItem(this.prefix + field, input.value);
+      });
+    },
+    loadState() {
+      this.fields.forEach(field => {
+        const cachedValue = localStorage.getItem(this.prefix + field);
+        const input = document.getElementById(field);
+        if (cachedValue && input) input.value = cachedValue;
+        if (input) input.addEventListener('input', () => this.saveState());
+      });
+    }
+  };
 
-init(){
-grade.innerHTML=""
-Object.keys(this.data).forEach(k=>{
-let o=document.createElement("option")
-o.value=k
-o.textContent="صف "+k
-grade.appendChild(o)
-})
-this.updateUnits()
-},
+  // ==========================================
+  // 4. MATHEMATICAL PEDAGOGICAL LOGIC
+  // ==========================================
+  const MathPedagogy = {
+    hasCarry(n1, n2) { return ((n1 % 10) + (n2 % 10)) > 9; },
+    hasBorrow(n1, n2) { return (n1 % 10) < (n2 % 10); }
+  };
 
-updateUnits(){
-unit.innerHTML=""
-this.data[grade.value].units.forEach((u,i)=>{
-let o=document.createElement("option")
-o.value=i
-o.textContent=u.name
-unit.appendChild(o)
-})
-this.updateLessons()
-},
+  // ==========================================
+  // 5. SMART VALIDATION & ADJUSTER ENGINE
+  // ==========================================
+  const ValidationEngine = {
+    historySignatures: new Set(),
+    sequenceAnswers: [],
+    sequenceFirstDigits: [],
 
-updateLessons(){
-lesson.innerHTML=""
-this.data[grade.value].units[unit.value].lessons.forEach(l=>{
-let o=document.createElement("option")
-o.value=l.skill
-o.textContent=l.name
-lesson.appendChild(o)
-})
-}
-}
+    resetSession() {
+      this.historySignatures.clear();
+      this.sequenceAnswers = [];
+      this.sequenceFirstDigits = [];
+    },
 
-/* ===== VALIDATION ===== */
-const Validation={
-usedQ:new Set(),
-usedA:new Map(),
+    /**
+     * @param {string} sig Signature unique identifier
+     * @param {any} ans Calculated answer
+     * @param {number} firstDigit Tracking variable for pattern variation
+     * @param {number} depth Recursion current loop counter
+     */
+    validateQuestion(sig, ans, firstDigit, depth) {
+      if (depth > 120) return true; // Fail-safe fallback
 
-reset(){
-this.usedQ.clear()
-this.usedA.clear()
-},
+      // Rule 1: No identical questions allowed
+      if (this.historySignatures.has(sig)) return false;
 
-dup(q){
-if(this.usedQ.has(q.text)) return true
-this.usedQ.add(q.text)
-return false
-},
+      // Rule 2: Strict Sequential Answer variation (Anti-boredom)
+      if (this.sequenceAnswers.length > 0) {
+        if (this.sequenceAnswers[this.sequenceAnswers.length - 1] === ans) return false;
+      }
 
-balance(a){
-let c=this.usedA.get(a)||0
-if(c>=3) return true
-this.usedA.set(a,c+1)
-return false
-},
+      // Rule 3: Balance Distribution (Prevent consecutive reliance on same parameters)
+      if (this.sequenceFirstDigits.filter(d => d === firstDigit).length >= 2) return false;
 
-math(q){
-if(q.type==="add") return q.a+q.b===q.ans
-if(q.type==="sub") return q.a-q.b===q.ans
-return true
-},
+      this.historySignatures.add(sig);
+      this.sequenceAnswers.push(ans);
+      this.sequenceFirstDigits.push(firstDigit);
 
-check(q){
-return q && this.math(q) &&
-!this.dup(q) &&
-(q.ans===undefined || !this.balance(q.ans))
-}
-}
+      if (this.sequenceAnswers.length > 3) this.sequenceAnswers.shift();
+      if (this.sequenceFirstDigits.length > 4) this.sequenceFirstDigits.shift();
 
-/* ===== GENERATORS ===== */
-const Gen={
-count(){
-let n=Utils.rand(1,9)
-return{type:"count",text:`اكتب العدد ${Utils.ar(n)}`,ans:n}
-},
-compare(){
-let a=Utils.rand(1,9),b
-do{b=Utils.rand(1,9)}while(a===b)
-return{type:"compare",text:`${Utils.ar(a)} ___ ${Utils.ar(b)}`,ans:a>b?">":"<"}
-},
-add(){
-let a=Utils.rand(1,9),b=Utils.rand(1,9)
-return{type:"add",a,b,ans:a+b,text:`${Utils.ar(a)} + ${Utils.ar(b)} =`}
-},
-sub(){
-let a=Utils.rand(5,9),b=Utils.rand(1,a-1)
-return{type:"sub",a,b,ans:a-b,text:`${Utils.ar(a)} - ${Utils.ar(b)} =`}
-}
-}
+      return true;
+    }
+  };
 
-/* ===== LAYOUT ===== */
-const Layout={
-MAX:1050,
+  // ==========================================
+  // 6. CURRICULUM MANAGEMENT ENGINE
+  // ==========================================
+  const CurriculumEngine = {
+    registry: {},
+    registerGrade(gradeId, gradeName) {
+      if (!this.registry[gradeId]) {
+        this.registry[gradeId] = { name: gradeName, skills: [] };
+      }
+    },
+    registerSkillToGrade(gradeId, skillObject) {
+      if (this.registry[gradeId]) {
+        this.registry[gradeId].skills.push(skillObject);
+      }
+    },
+    updateOptions() {
+      const currentGrade = document.getElementById("cfg-grade").value;
+      const lessonSelector = document.getElementById("cfg-lesson");
+      DOMEngine.empty(lessonSelector);
 
-create(){
-let p=document.createElement("div")
-p.className="page"
-p.dataset.used=0
-return p
-},
+      if (this.registry[currentGrade]) {
+        this.registry[currentGrade].skills.forEach(skill => {
+          const opt = document.createElement("option");
+          opt.value = skill.id;
+          opt.textContent = skill.name;
+          lessonSelector.appendChild(opt);
+        });
+      }
+    }
+  };
 
-measure(el){
-el.style.visibility="hidden"
-document.body.appendChild(el)
-let h=el.offsetHeight
-document.body.removeChild(el)
-return h
-},
+  // ==========================================
+  // 7. QUESTION FACTORY & GENERATORS REGISTER
+  // ==========================================
+  const QuestionFactory = {
+    generators: {},
+    registerGenerator(skillId, generationLogic) {
+      this.generators[skillId] = generationLogic;
+    },
+    generate(skillId) {
+      if (this.generators[skillId]) {
+        return this.generators[skillId]();
+      }
+      throw new Error(`Skill Generator [${skillId}] is not registered inside the factory.`);
+    }
+  };
 
-fit(p,h){
-return (+p.dataset.used + h) < this.MAX
-}
+  // ==========================================
+  // 8. PLUGGABLE LAYOUT ENGINE
+  // ==========================================
+  const LayoutEngine = {
+    layouts: {},
+    registerLayout(layoutId, drawingFunction) {
+      this.layouts[layoutId] = drawingFunction;
+    },
+    render(layoutId, data, isTeacherMode, container) {
+      if (this.layouts[layoutId]) {
+        this.layouts[layoutId](data, isTeacherMode, container);
+      } else {
+        console.error(`Layout template [${layoutId}] is missing.`);
+      }
+    }
+  };
 
-}
+  // ==========================================
+  // REGISTRATION & MODULE WIRING (Setup Domain Data)
+  // ==========================================
+  
+  // Setup Grades
+  CurriculumEngine.registerGrade("1", "الصف الأول الأساسي");
+  CurriculumEngine.registerGrade("2", "الصف الثاني الأساسي");
 
-/* ===== AUTOFIX ===== */
-const AutoFix={
-fix(p){
-if(p.scrollHeight > p.clientHeight){
-p.style.overflow="hidden"
-}
-}
-}
+  // Skill 1: Grade 1 Horizontal Addition
+  CurriculumEngine.registerSkillToGrade("1", { id: "g1_add_9", name: "الجمع ضمن ٩ (أفقي)" });
+  QuestionFactory.registerGenerator("g1_add_9", () => {
+    const num1 = DOMEngine.randomRange(1, 8);
+    const num2 = DOMEngine.randomRange(1, 9 - num1);
+    const summary = num1 + num2;
+    return {
+      sig: `${num1}+${num2}`, ansRaw: summary, firstDigit: num1, tpl: "hz",
+      q: "جِدْ نَاتِجَ جَمْعِ الأَعْدَادِ الآتِيَةِ:", n1: DOMEngine.toEasternDigits(num1),
+      n2: DOMEngine.toEasternDigits(num2), op: "+", ans: DOMEngine.toEasternDigits(summary)
+    };
+  });
 
-/* ===== RENDER ===== */
-const Render={
+  // Skill 2: Grade 1 Horizontal Subtraction
+  CurriculumEngine.registerSkillToGrade("1", { id: "g1_sub_9", name: "الطرح ضمن ٩ (أفقي)" });
+  QuestionFactory.registerGenerator("g1_sub_9", () => {
+    const num1 = DOMEngine.randomRange(2, 9);
+    const num2 = DOMEngine.randomRange(1, num1 - 1);
+    const remainder = num1 - num2;
+    return {
+      sig: `${num1}-${num2}`, ansRaw: remainder, firstDigit: num1, tpl: "hz",
+      q: "أوْجِدْ نَاتِجَ الطَّرْحِ الحِسَابِيِّ:", n1: DOMEngine.toEasternDigits(num1),
+      n2: DOMEngine.toEasternDigits(num2), op: "-", ans: DOMEngine.toEasternDigits(remainder)
+    };
+  });
 
-create(q,i){
-let d=document.createElement("div")
-d.className="question"
+  // Skill 3: Grade 1 Comparison
+  CurriculumEngine.registerSkillToGrade("1", { id: "g1_comp", name: "مقارنة الأعداد ضمن ٩" });
+  QuestionFactory.registerGenerator("g1_comp", () => {
+    const num1 = DOMEngine.randomRange(1, 9);
+    const num2 = DOMEngine.randomRange(1, 9);
+    const sign = num1 > num2 ? ">" : (num1 < num2 ? "<" : "=");
+    return {
+      sig: `${num1}c${num2}`, ansRaw: sign, firstDigit: num1, tpl: "comp",
+      q: "ضَعْ إِشَارَةَ (> أو < أو =) فِي المَكَانِ المُنَاسِبِ:",
+      n1: DOMEngine.toEasternDigits(num1), n2: DOMEngine.toEasternDigits(num2), ans: sign
+    };
+  });
 
-let t=document.createElement("div")
-t.textContent="س"+Utils.ar(i)
+  // Skill 4: Grade 2 Vertical Addition (No Carry)
+  CurriculumEngine.registerSkillToGrade("2", { id: "g2_add_nc", name: "الجمع ضمن ٩٩ (بدون حمل - عمودي)" });
+  QuestionFactory.registerGenerator("g2_add_nc", () => {
+    let num1, num2, total;
+    do {
+      num1 = DOMEngine.randomRange(10, 85);
+      num2 = DOMEngine.randomRange(10, 99 - num1);
+      total = num1 + num2;
+    } while (MathPedagogy.hasCarry(num1, num2));
+    return {
+      sig: `v${num1}+${num2}`, ansRaw: total, firstDigit: Math.floor(num1 / 10), tpl: "vt",
+      q: "رَتِّبْ عَمُودِيًّا ثُمَّ جِدْ نَاتِجَ الجَمْعِ:", n1: String(num1), n2: String(num2),
+      op: "+", ans: DOMEngine.toEasternDigits(total)
+    };
+  });
 
-let txt=document.createElement("div")
-txt.textContent=q.text
+  // Skill 5: Grade 2 Vertical Subtraction (No Borrow)
+  CurriculumEngine.registerSkillToGrade("2", { id: "g2_sub_nb", name: "الطرح ضمن ٩٩ (بدون استلاف - عمودي)" });
+  QuestionFactory.registerGenerator("g2_sub_nb", () => {
+    let num1, num2, total;
+    do {
+      num1 = DOMEngine.randomRange(20, 99);
+      num2 = DOMEngine.randomRange(10, num1 - 1);
+      total = num1 - num2;
+    } while (MathPedagogy.hasBorrow(num1, num2));
+    return {
+      sig: `v${num1}-${num2}`, ansRaw: total, firstDigit: Math.floor(num1 / 10), tpl: "vt",
+      q: "أوْجِدْ نَاتِجَ الطَّرْحِ العَمُودِيِّ الأَمْثَلِ:", n1: String(num1), n2: String(num2),
+      op: "-", ans: DOMEngine.toEasternDigits(total)
+    };
+  });
 
-let ans=document.createElement("div")
-ans.className="answer"
+  // Skill 6: Grade 2 Ascending Ordering
+  CurriculumEngine.registerSkillToGrade("2", { id: "g2_ord_asc", name: "الترتيب التصاعدي الأكاديمي" });
+  QuestionFactory.registerGenerator("g2_ord_asc", () => {
+    const numbersSet = new Set();
+    while (numbersSet.size < 4) numbersSet.add(DOMEngine.randomRange(10, 99));
+    const randomArray = Array.from(numbersSet);
+    const sortedArray = [...randomArray].sort((x, y) => x - y);
+    const sequenceString = sortedArray.map(n => DOMEngine.toEasternDigits(n)).join(" ، ");
+    return {
+      sig: `o${sortedArray.join("")}`, ansRaw: sequenceString, firstDigit: Math.floor(randomArray[0] / 10), tpl: "ord",
+      q: "رَتِّبِ الأَعْدَادَ العَشْوَائِيَّةَ الآتِيَةَ تَصَاعُدِيًّا:",
+      nums: randomArray.map(n => DOMEngine.toEasternDigits(n)), ans: sequenceString
+    };
+  });
 
-d.append(t,txt,ans)
-return d
-},
+  // Register Layout: Horizontal View Architecture
+  LayoutEngine.registerLayout("hz", (data, isT, container) => {
+    const row = DOMEngine.el("div", { c: "math-row", p: container });
+    DOMEngine.el("span", { t: data.n1, p: row });
+    DOMEngine.el("span", { t: data.op, p: row });
+    DOMEngine.el("span", { t: data.n2, p: row });
+    DOMEngine.el("span", { t: "=", p: row });
+    const outputBox = DOMEngine.el("div", { c: "math-box", p: row });
+    if (isT) DOMEngine.el("span", { c: "teacher-answer", t: data.ans, p: outputBox });
+  });
 
-draw(list){
+  // Register Layout: Vertical Grid View Architecture
+  LayoutEngine.registerLayout("vt", (data, isT, container) => {
+    const grid = DOMEngine.el("div", { c: "vertical-math-container", p: container });
+    const topTens = data.n1[0] || " ", topOnes = data.n1[1] || data.n1[0];
+    const bottomTens = data.n2[0] || " ", bottomOnes = data.n2[1] || data.n2[0];
+    
+    DOMEngine.el("div", { t: DOMEngine.toEasternDigits(topTens), p: grid });
+    DOMEngine.el("div", { t: DOMEngine.toEasternDigits(topOnes), p: grid });
+    DOMEngine.el("div", { t: DOMEngine.toEasternDigits(bottomTens), p: grid });
+    DOMEngine.el("div", { t: DOMEngine.toEasternDigits(bottomOnes), p: grid });
+    DOMEngine.el("div", { c: "v-op", t: data.op, p: grid });
+    DOMEngine.el("div", { c: "v-line", p: grid });
+    const outputArea = DOMEngine.el("div", { c: "v-ans-box", p: grid });
+    if (isT) DOMEngine.el("span", { c: "teacher-answer", t: data.ans, p: outputArea });
+  });
 
-output.innerHTML=""
+  // Register Layout: Compare Symbol Circle Architecture
+  LayoutEngine.registerLayout("comp", (data, isT, container) => {
+    const box = DOMEngine.el("div", { c: "comparison-container", p: container });
+    DOMEngine.el("span", { t: data.n1, p: box });
+    const middleCircle = DOMEngine.el("div", { c: "comparison-circle", p: box });
+    if (isT) DOMEngine.el("span", { c: "teacher-answer", t: data.ans, p: middleCircle });
+    DOMEngine.el("span", { t: data.n2, p: box });
+  });
 
-let frag=document.createDocumentFragment()
-let page=Layout.create()
+  // Register Layout: Sorting Row Architecture
+  LayoutEngine.registerLayout("ord", (data, isT, container) => {
+    const baseRow = DOMEngine.el("div", { c: "math-row", p: container });
+    baseRow.style.justifyContent = "space-around";
+    data.nums.forEach(n => DOMEngine.el("span", { t: n, p: baseRow }));
+    const functionalRow = DOMEngine.el("div", { c: "math-row", p: container });
+    functionalRow.style.fontSize = "18px";
+    if (isT) {
+      DOMEngine.el("span", { c: "teacher-answer", t: data.ans, p: functionalRow });
+    } else {
+      DOMEngine.el("span", { t: DOMEngine.rtlStr("التَّرْتِيبُ التَّصَاعُدِيُّ: ..........................................."), p: functionalRow });
+    }
+  });
 
-list.forEach((q,i)=>{
 
-let el=this.create(q,i+1)
-let h=Layout.measure(el)
+  // ==========================================
+  // 9. CORE APPLICATION CORE ENGINE (Orchestrator)
+  // ==========================================
+  const ApplicationCore = {
+    buildDocument() {
+      ValidationEngine.resetSession();
 
-if(!Layout.fit(page,h)){
-AutoFix.fix(page)
-frag.appendChild(page)
-page=Layout.create()
-}
+      // Gather verified and sanitized parameters
+      const configurations = {
+        dir: SecurityEngine.escapeHTML(document.getElementById("cfg-dir").value || 'مديرية التربية والتعليم'),
+        sch: SecurityEngine.escapeHTML(document.getElementById("cfg-school").value || 'المدرسة الأساسية المختلطة'),
+        tch: SecurityEngine.escapeHTML(document.getElementById("cfg-teacher").value || 'معلم المادة'),
+        val: SecurityEngine.escapeHTML(document.getElementById("cfg-value").value || 'النظام والأمانة'),
+        grd: DOMEngine.toEasternDigits(document.getElementById("cfg-grade").value),
+        les: document.getElementById("cfg-lesson").value,
+        cnt: Math.min(Math.max(DOMEngine.parseEasternDigits(document.getElementById("cfg-count").value), 2), 24),
+        isTeacherMode: document.getElementById("cfg-mode").value === "teacher"
+      };
 
-page.appendChild(el)
-page.dataset.used = (+page.dataset.used + h)
+      const viewportContainer = document.getElementById("print-viewport");
+      DOMEngine.empty(viewportContainer);
 
-})
+      // Determine visual constraints for layout rendering pagination
+      const dynamicSample = QuestionFactory.generate(configurations.les);
+      const itemsPerPage = (dynamicSample.tpl === "vt" || dynamicSample.tpl === "ord") ? 4 : 6;
+      
+      let chunkedQuestions = [];
+      let totalLoopsCounter = 0;
 
-AutoFix.fix(page)
-frag.appendChild(page)
-output.appendChild(frag)
-}
-}
+      for (let index = 1; index <= configurations.cnt; index++) {
+        let uniqueQuestion;
+        let internalAttempts = 0;
 
-/* ===== CORE ===== */
-const Core={
+        do {
+          uniqueQuestion = QuestionFactory.generate(configurations.les);
+          internalAttempts++;
+          totalLoopsCounter++;
+          if(totalLoopsCounter > 600) break; // Engine execution protection
+        } while (!ValidationEngine.validateQuestion(uniqueQuestion.sig, uniqueQuestion.ansRaw, uniqueQuestion.firstDigit, internalAttempts));
 
-generate(){
+        chunkedQuestions.push({ id: DOMEngine.toEasternDigits(index), data: uniqueQuestion });
 
-Validation.reset()
+        // Pagination condition check for strict grid rendering
+        if (chunkedQuestions.length === itemsPerPage || index === configurations.cnt) {
+          this.executePageRender(chunkedQuestions, configurations, viewportContainer, dynamicSample.tpl);
+          chunkedQuestions = []; // Reset sub-pool
+        }
+      }
+    },
 
-let skill=lesson.value
-let n=parseInt(count.value)
+    executePageRender(questionsBatch, configurations, parentViewport, currentTemplateId) {
+      const pageNode = DOMEngine.el("div", { c: "a4-page", p: parentViewport });
+      
+      // Top Educational Framing
+      const headerGrid = DOMEngine.el("div", { c: "official-header", p: pageNode });
+      const rightMeta = DOMEngine.el("div", { c: "ministry-info", p: headerGrid });
+      DOMEngine.el("div", { t: "دولة فلسطين", p: rightMeta }); 
+      DOMEngine.el("div", { t: configurations.dir, p: rightMeta }); 
+      DOMEngine.el("div", { t: configurations.sch, p: rightMeta });
+      
+      const centerMeta = DOMEngine.el("div", { c: "document-title-area", p: headerGrid });
+      DOMEngine.el("h1", { c: "document-title", t: `ورقة عمل - الصف ${configurations.grd}`, p: centerMeta });
+      DOMEngine.el("div", { c: "pedagogical-goal", t: `القيمة الأسبوعية: ${configurations.val}`, p: centerMeta });
+      
+      const leftMeta = DOMEngine.el("div", { c: "ministry-info", p: headerGrid }); 
+      leftMeta.style.textAlign = "left";
+      DOMEngine.el("div", { t: "المبحث: الرياضيات", p: leftMeta }); 
+      DOMEngine.el("div", { t: `مُعِدّ الورقة: ${configurations.tch}`, p: leftMeta });
 
-let list=[]
+      // Student Meta Context Identity Box
+      const identityBar = DOMEngine.el("div", { c: "student-info-bar", p: pageNode });
+      DOMEngine.el("div", { t: DOMEngine.rtlStr("اسم الطالب الرُّباعي: ............................................"), p: identityBar });
+      DOMEngine.el("div", { t: DOMEngine.rtlStr("التاريخ:       /       / ٢٠٢٦ م"), p: identityBar });
+      DOMEngine.el("div", { t: DOMEngine.rtlStr("الدرجة: ................."), p: identityBar });
 
-for(let i=0;i<n;i++){
+      // Build Multi-column CSS Grid dynamically
+      const columnStyleClass = (currentTemplateId === "vt" || currentTemplateId === "ord") ? "grid-1-col" : "grid-2-col";
+      const layoutGrid = DOMEngine.el("div", { c: `questions-layout ${columnStyleClass}`, p: pageNode });
 
-let q,tries=0
+      // Distribute questions inside the structured cards
+      questionsBatch.forEach(questionInstance => {
+        const card = DOMEngine.el("div", { c: "question-card", p: layoutGrid });
+        const metaHeader = DOMEngine.el("div", { c: "q-top-meta", p: card });
+        
+        DOMEngine.el("span", { c: "q-number", t: `السؤال (${questionInstance.id}):`, p: metaHeader });
+        DOMEngine.el("span", { c: "q-score", t: "تقدير: علامتان", p: metaHeader });
+        DOMEngine.el("div", { c: "q-instruction", t: questionInstance.data.q, p: card });
+        
+        // Dynamic Strategy Execution using structural lookup
+        LayoutEngine.render(currentTemplateId, questionInstance.data, configurations.isTeacherMode, card);
+      });
 
-while(tries<20){
+      // Secure Bottom Stamp
+      const footerArea = DOMEngine.el("div", { c: "page-footer", p: pageNode });
+      DOMEngine.el("span", { t: "منصة رُقِيّ التعليمية - تطوير هندسي ذكي ومستدام", p: footerArea });
+      DOMEngine.el("span", { t: "وزارة التربية والتعليم الفلسطينية", p: footerArea });
+    }
+  };
 
-if(skill==="count") q=Gen.count()
-if(skill==="compare") q=Gen.compare()
-if(skill==="add") q=Gen.add()
-if(skill==="sub") q=Gen.sub()
+  return {
+    Boot: () => {
+      StorageEngine.loadState();
+      CurriculumEngine.updateOptions();
+      ApplicationCore.buildDocument();
+    },
+    CurriculumEngine,
+    ApplicationCore
+  };
+})();
 
-if(Validation.check(q)) break
-tries++
-}
-
-if(q) list.push(q)
-}
-
-Storage.save(list)
-Render.draw(list)
-}
-}
-
-/* ===== INIT ===== */
-grade.onchange=()=>Curriculum.updateUnits()
-unit.onchange=()=>Curriculum.updateLessons()
-
-window.onload=()=>{
-Curriculum.init()
-let saved=Storage.load()
-saved.length ? Render.draw(saved) : Core.generate()
-}
-
-const Edu={Core}
-
+// Application Bootstrap Execution Trigger
+window.onload = RuqiSaaS.Boot;
 </script>
-
 </body>
 </html>
