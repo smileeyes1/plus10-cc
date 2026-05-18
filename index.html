@@ -313,7 +313,7 @@
                 outline-offset: -12px !important;
                 background-image: none !important;
             }
-            .question-block, .creative-box {
+            .question-block, .creative-box, .math-column-form {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
@@ -458,8 +458,9 @@
 
         function seededRandom(seedStr) {
             let hash = 0;
-            for (let i = 0; i < seedStr.length; i++) {
-                hash = seedStr.charCodeAt(i) + ((hash << 5) - hash);
+            let str = String(seedStr);
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
                 hash = hash & hash; 
             }
             const x = Math.sin(hash) * 10000;
@@ -472,15 +473,23 @@
         }
 
         function saveMetadata() {
-            localStorage.setItem('math_schoolName', document.getElementById("schoolInput").value);
-            localStorage.setItem('math_teacherName', document.getElementById("teacherInput").value);
-            localStorage.setItem('math_modelLetter', document.getElementById("modelSelector").value);
+            try {
+                localStorage.setItem('math_schoolName', document.getElementById("schoolInput").value);
+                localStorage.setItem('math_teacherName', document.getElementById("teacherInput").value);
+                localStorage.setItem('math_modelLetter', document.getElementById("modelSelector").value);
+            } catch (e) {
+                console.warn('Storage saving failed', e);
+            }
         }
 
         function loadMetadata() {
-            if(localStorage.getItem('math_schoolName')) document.getElementById("schoolInput").value = localStorage.getItem('math_schoolName');
-            if(localStorage.getItem('math_teacherName')) document.getElementById("teacherInput").value = localStorage.getItem('math_teacherName');
-            if(localStorage.getItem('math_modelLetter')) document.getElementById("modelSelector").value = localStorage.getItem('math_modelLetter');
+            try {
+                if(localStorage.getItem('math_schoolName')) document.getElementById("schoolInput").value = localStorage.getItem('math_schoolName');
+                if(localStorage.getItem('math_teacherName')) document.getElementById("teacherInput").value = localStorage.getItem('math_teacherName');
+                if(localStorage.getItem('math_modelLetter')) document.getElementById("modelSelector").value = localStorage.getItem('math_modelLetter');
+            } catch (e) {
+                console.warn('Storage loading failed', e);
+            }
         }
 
         const curriculumRepository = {
@@ -497,7 +506,7 @@
                     { id: "g1_u1_d6", type: "ordering", minVal: 0, maxVal: 9, title: "الوحدة ١: الترتيب التصاعدي والتنازلي ضمن ٩" },
                     { id: "g1_u1_exam", type: "unit_exam", minVal: 0, maxVal: 9, title: "اختبار الوحدة الأولى التقييمي الشامل" },
                     { id: "g1_u2_d1", type: "operation_add", minVal: 1, maxVal: 9, title: "الوحدة ٢: مفهوم الجمع البصري ضمن العدد ٩" },
-                    { id: "g2_u2_d2", type: "components", minVal: 2, maxVal: 9, title: "الوحدة ٢: مكونات الأعداد (مكونات الأعداد من ٢ إلى ٩)" },
+                    { id: "g1_u2_d2", type: "components", minVal: 2, maxVal: 9, title: "الوحدة ٢: مكونات الأعداد (مكونات الأعداد من ٢ إلى ٩)" },
                     { id: "g1_u2_d3", type: "operation_sub", minVal: 1, maxVal: 9, title: "الوحدة ٢: مفهوم الطرح بالشطب والمحسوس" },
                     { id: "g1_u2_d4", type: "operation_mixed", minVal: 1, maxVal: 9, title: "الوحدة ٢: العلاقة المتبادلة بين الجمع والطرح" },
                     { id: "g1_u2_exam", type: "unit_exam", minVal: 1, maxVal: 9, title: "اختبار الوحدة الثانية: العمليات الحسابية ومكونات الأعداد" },
@@ -626,14 +635,13 @@
             document.getElementById("outTeacher").innerText = "المعلم: " + teacherName;
             document.getElementById("outGrade").innerText = "الصف: " + gradeData.name;
             document.getElementById("outDirectorate").innerText = gradeData.directorate;
-            document.getElementById("outModel").innerText = "نموذget: " + modelLetter;
+            document.getElementById("outModel").innerText = "نموذج: " + modelLetter;
             document.getElementById("outLessonTitle").innerText = lessonObj.title;
             
             const bodyContainer = document.getElementById("sheetBody");
             const existingBlocks = bodyContainer.querySelectorAll('.question-block');
             
             let finalBlocks = [];
-            let currentPinnedIdx = 0;
             
             const runTimestamp = Math.floor(Math.random() * 999999);
             const baseSeed = lessonId + "_" + modelLetter + "_" + runTimestamp + "_";
@@ -780,7 +788,7 @@
                     body = `<b>سُؤالُ الِابْتِكاَرِ:</b> اكْتُبْ كَلِمَةً أَوْ ارْسُمْ رَسْمَةً مَبْنِيَّةً عَلَى خَيَالِكَ التَّامِّ تُعَبِّرُ عَنْ تَمْثِيلِ العَدَدِ المُنْضَبِطِ [ <b>${toEasternArabicDigits(v)}</b> ]: <br><br> [ ........................................................................................ ]`;
                     break;
                 case "comparison":
-                    body = `<b>فَكِّرْ ثُمَّ أَجِبْ:</b> اكْتُبْ عَدَدًا مَفْقُودًا فِي الفَرَاغِ Lِتَكُونَ الجُمْلَةُ الرِّيَاضِيَّةُ صَحِيحَةً تَمَامًا: <br><p style="text-align:center; font-size:15pt;"><span class="blank-space"></span> &gt; ${toEasternArabicDigits((lessonObj.minVal || 0) + 1)}</p>`;
+                    body = `<b>فَكِّرْ ثُمَّ أَجِبْ:</b> اكْتُبْ عَدَدًا مَفْقُودًا فِي الفَرَاغِ لِتَكُونَ الجُمْلَةُ الرِّيَاضِيَّةُ صَحِيحَةً تَمَامًا: <br><p style="text-align:center; font-size:15pt;"><span class="blank-space"></span> &gt; ${toEasternArabicDigits((lessonObj.minVal || 0) + 1)}</p>`;
                     break;
                 case "ordering":
                     body = `<b>تحدّي التَّرْتِيبِ:</b> اكْتُبْ ثَلَاثَةَ أَعْدَادٍ مُخْتَلِفَةٍ مِنْ عِنْدِكَ تَقَعُ تَمَامًا بَيْنَ العَدَدِ [ ${toEasternArabicDigits(lessonObj.minVal || 0)} ] وَالعَدَدِ [ ${toEasternArabicDigits(lessonObj.maxVal || 10)} ] مُرَتَّبَةً تَصَاعُدِيًّا: <br><br> <span class="blank-space"></span> ، <span class="blank-space"></span> ، <span class="blank-space"></span>`;
@@ -1036,12 +1044,16 @@
                 case "ordering":
                     let arr = [];
                     let attempts = 0;
-                    while(arr.length < 3 && attempts < 20) {
+                    while(arr.length < 3 && attempts < 50) {
                         let r = getRandomIntSeeded(currentMin, currentMax, seed + attempts);
                         if(!arr.includes(r)) arr.push(r);
                         attempts++;
                     }
-                    while(arr.length < 3) arr.push(arr.length + 1); 
+                    while(arr.length < 3) {
+                        let fallback = currentMin + arr.length;
+                        if(!arr.includes(fallback)) arr.push(fallback);
+                        else arr.push(currentMax + arr.length + 1);
+                    }
                     
                     if (mode === 0 || mode === 2) {
                         title += ` رَتِّبِ المَجْمُوعَةَ العَدَدِيَّةَ التَّالِيَةَ تَرْتِيباً تَصَاعُدِيّاً صَحِيحاً (مِنَ الأَصْغَرِ إِلَى الأَكْبَرِ):`;
@@ -1121,7 +1133,7 @@
                         body = `<div class="math-column-form">${toEasternArabicDigits(m1)} + ${toEasternArabicDigits(m2)} = <span class="blank-space"></span></div>`;
                     } else {
                         const m2 = getRandomIntSeeded(0, m1, seed + "mix_sub");
-                        title += ` أَوْجِدِ البَاقِي الدَّقِيقَ الحِسَابِيَّ لِلْعَمَلِيَّةِ Mُرَتَّبَةِ:`;
+                        title += ` أَوْجِدِ البَاقِي الدَّقِيقَ الحِسَابِيَّ لِلْعَمَلِيَّةِ المُرَتَّبَةِ:`;
                         body = `<div class="math-column-form">${toEasternArabicDigits(m1)} - ${toEasternArabicDigits(m2)} = <span class="blank-space"></span></div>`;
                     }
                     break;
